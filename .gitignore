@@ -7,3 +7,4 @@ video/build/
 *.wav
 *.mov
 *.m4a
+video/src/node_modules/
