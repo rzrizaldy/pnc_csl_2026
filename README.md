@@ -4,6 +4,8 @@ A student concept for PNC Private Bank, built for the 2026 CSL case competition,
 
 Family members say privately what they want from the sale. The advisor sees where they disagree early enough to bring everyone to the table, and meets the next generation before the assets leave.
 
+**Live:** [showcase](https://rzrizaldy.github.io/pnc_csl_2026/) · [prototype](https://rzrizaldy.github.io/pnc_csl_2026/prototype/?reset)
+
 Team: Alen Ilmi · Rizaldy Utomo · Nindy Aditya Dewi · Aditya Mulya Pratama, Carnegie Mellon University.
 
 ## What's here

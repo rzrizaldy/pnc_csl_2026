@@ -39,9 +39,7 @@ Updated 2026-10-26 evening ET. This file is overwritten, not appended.
 - The Canva deck `DAHY7Vfs02I` belongs to the team; don't edit it without asking.
 
 ## Environment gotchas
-- **Push is blocked.** `git push` and `gh repo create` were denied twice by the auto-mode permission classifier. Rizaldy needs to run them, or allow them:
-  - `gh repo create rzrizaldy/pnc_csl_2026 --public --source . --remote origin --push`
-  - then enable Pages from main, root
+- **Repo:** https://github.com/rzrizaldy/pnc_csl_2026 (public). Pages serves `main` root at https://rzrizaldy.github.io/pnc_csl_2026/.
 - **ffmpeg has no drawtext or subtitles filter**, so captions are rendered in the page. `geq` and `alphamerge` are available for the face bubble.
 - **Playwright headless shell:** `~/Library/Caches/ms-playwright/chromium_headless_shell-1234/...`, using `playwright-core@1.48.2` in `video/src/node_modules` (gitignored).
 - **Previewing the PPTX:** `qlmanage -t -s 1600 -o <dir> file.pptx`. Quick Look substitutes Times for Barlow.
@@ -54,7 +52,7 @@ Updated 2026-10-26 evening ET. This file is overwritten, not appended.
 - The Claude slides were published. They were **not** visually checked: the Slides type says not to verify unless asked.
 
 ## Next steps
-1. Rizaldy pushes the repo and enables Pages, then adds the Pages link to the slides and TEAM_NOTES.
+1. Add the Pages link to the team deck (slide 7 or 8 footer) so judges can click through.
 2. The team reviews the script by Tue noon. Then build `video/src/{narration.json,tts.py,render.js,ingest.py,make_music.py}` following `VIDEO_PLAN.md` §5, and render the TTS draft.
 3. Nindy records Tue 6 PM. Ingest and render the final; upload to Drive with link sharing (ask Rizaldy first).
 4. Interviews: still the biggest scoring gap (20%). See TEAM_NOTES §4.
