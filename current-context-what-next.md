@@ -39,7 +39,7 @@ Updated 2026-10-26 evening ET. This file is overwritten, not appended.
 - The Canva deck `DAHY7Vfs02I` belongs to the team; don't edit it without asking.
 
 ## Environment gotchas
-- **Push is blocked.** `git push` and `gh repo create` were denied twice by the auto-mode permission classifier. Rizaldy has to run them himself, or allow them:
+- **Push is blocked.** `git push` and `gh repo create` were denied twice by the auto-mode permission classifier. Rizaldy needs to run them, or allow them:
   - `gh repo create rzrizaldy/pnc_csl_2026 --public --source . --remote origin --push`
   - then enable Pages from main, root
 - **ffmpeg has no drawtext or subtitles filter**, so captions are rendered in the page. `geq` and `alphamerge` are available for the face bubble.
