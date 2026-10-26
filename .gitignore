@@ -1,0 +1,9 @@
+.DS_Store
+node_modules/
+__pycache__/
+# raw recordings and render intermediates stay local
+video/raw/
+video/build/
+*.wav
+*.mov
+*.m4a
