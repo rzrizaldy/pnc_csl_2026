@@ -38,14 +38,17 @@ Roadmap can merge into slide 10 to stay within 10 slides, or it can replace slid
 
 ## 3. Rizaldy's deliverables (next 36 h)
 
-| What | Where | When |
+| What | Where | Status |
 |---|---|---|
-| Clickable prototype, 8 screens (4 advisor + 4 family), fictional Wilson family | `prototype/` → public link | v1 Tue AM, final Tue 6 PM |
-| Secret Sauce slide (editable shapes, imported into Canva) | `slides/` → Canva p9 | Tue noon |
-| Recording script for Nindy | `video/RECORDING_SCRIPT.md` | **Tue noon** |
-| Draft video with a placeholder robot voice, for team review | `video/` | Tue 6 PM |
-| Final video (Nindy's voice + face bubble, captions, music) | `video/` → Drive link | Wed 6 AM |
-| Prototype screenshots for slides 7–8 | `prototype/shots/` | Tue night |
+| Clickable prototype, 8 screens (4 advisor + 4 family), fictional Wilson family, PNC Private Bank design system | `prototype/` (run locally; public link once the repo is pushed) | ✅ v1 done |
+| Showcase page (architecture, AI components, prototype links) for GitHub Pages | `index.html` | ✅ done, not yet pushed |
+| Slides 7, 8, 9 + privacy backup, consulting style | Claude Slides: https://claude.ai/artifact/B7bV9cQnWU4FCvbQWLHYf2 (source in `slides/claude_deck/`) | ✅ draft; Rz shares the link |
+| Secret Sauce slide as editable PPTX (Canva drag-and-drop import) | `slides/secret_sauce.pptx` | ✅ alternative |
+| Video plan + recording script for Nindy | `video/VIDEO_PLAN.md`, `video/RECORDING_SCRIPT.md` | ✅ **please review by Tue noon** |
+| Draft video (robot voice), then final with Nindy's voice and face bubble | `video/` → Drive link | Tue after script lock |
+| Prototype screenshots for slides 7–8 | `prototype/shots/` | ✅ done |
+
+**Design system:** the prototype and slides follow the PNC Private Bank design system (annaboyle-design.com/pncpb-designsystems). It uses a navy banner with the triangle pattern, orange tab underlines, Barlow as a stand-in for DIN, a green/slate/blue/purple data palette, and the five notification banner types. If the Canva deck adopts the same look, the deck will read as one product.
 
 ## 4. Customer discovery: what we still need (20% of score)
 

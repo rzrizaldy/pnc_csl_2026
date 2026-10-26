@@ -3,7 +3,7 @@
     python3 build_secret_sauce.py  ->  secret_sauce.pptx (one 16:9 slide)
 
 Every box, label and tick is a separate shape or text box, so it stays editable after Canva import.
-Colors follow the team deck: cream page, navy panels, orange accent.
+Colors follow the PNC Private Bank design system: grey page, navy panels, orange accent, data-viz palette.
 """
 from pathlib import Path
 
@@ -15,15 +15,15 @@ from pptx.util import Inches, Pt
 
 OUT = Path(__file__).with_name("secret_sauce.pptx")
 
-CREAM = RGBColor(0xFD, 0xF1, 0xDE)
-NAVY = RGBColor(0x16, 0x23, 0x3A)
-SLATE = RGBColor(0x44, 0x56, 0x6C)
-ORANGE = RGBColor(0xE2, 0x70, 0x1F)
-PLUM = RGBColor(0x6A, 0x5A, 0x8E)
-SAGE = RGBColor(0x4F, 0x85, 0x71)
+PAGE = RGBColor(0xF2, 0xF3, 0xF5)
+NAVY = RGBColor(0x10, 0x21, 0x4D)
+SLATE = RGBColor(0x5E, 0x64, 0x6E)
+ORANGE = RGBColor(0xEF, 0x6A, 0x00)
+PLUM = RGBColor(0x6D, 0x4A, 0xA0)
+SAGE = RGBColor(0x6F, 0x9A, 0x4B)
 WHITE = RGBColor(0xFF, 0xFF, 0xFF)
-LINE = RGBColor(0xE6, 0xD8, 0xC2)
-FONT = "Arial"
+LINE = RGBColor(0xDD, 0xE0, 0xE4)
+FONT = "Barlow"
 
 
 def box(slide, x, y, w, h, fill, line=None, shape=MSO_SHAPE.ROUNDED_RECTANGLE, radius=0.06):
@@ -70,7 +70,7 @@ def build():
     s = prs.slides.add_slide(prs.slide_layouts[6])
     bg = s.background.fill
     bg.solid()
-    bg.fore_color.rgb = CREAM
+    bg.fore_color.rgb = PAGE
 
     text(s, 0.6, 0.38, 9, 0.3, "THE SECRET SAUCE & CORE INNOVATION", size=11, color=ORANGE, bold=True)
     text(s, 0.6, 0.66, 12.2, 0.9, "A signal only PNC can see, and answers only a family member would give in private", size=26, bold=True)
@@ -117,7 +117,7 @@ def build():
         text(s, c - 0.4, 2.26, 0.85, 0.25, label, size=9.5, bold=True, color=RGBColor(0xC9, 0xD0, 0xD8), align=PP_ALIGN.CENTER)
     ry = 2.6
     for label, marks in rows:
-        box(s, X + 0.2, ry - 0.05, W - 0.4, 0.42, RGBColor(0x22, 0x31, 0x4B), radius=0.2)
+        box(s, X + 0.2, ry - 0.05, W - 0.4, 0.42, RGBColor(0x1A, 0x2B, 0x5C), radius=0.2)
         text(s, X + 0.35, ry + 0.04, 1.8, 0.3, label, size=10, color=WHITE)
         for c, m in zip(cx, marks):
             col = ORANGE if m == "if shared" else (WHITE if m == "✓" else RGBColor(0x8A, 0x97, 0xA8))
