@@ -1,0 +1,66 @@
+# Revision file inventory
+
+Changed or added in the October 26 revision (baseline 2420b22). Git history preserves originals.
+
+- `.github/workflows/pages.yml`
+- `.gitignore`
+- `README.md`
+- `TEAM_NOTES.md`
+- `architecture.html`
+- `case.html`
+- `current-context-what-next.md`
+- `docs/DEVILS_ADVOCATE_REVIEW.md`
+- `docs/DISCOVERY_WORKSHEET.md`
+- `index.html`
+- `package-lock.json`
+- `package.json`
+- `playwright.config.js`
+- `prototype/app.js`
+- `prototype/data.js`
+- `prototype/shots/advisor.png`
+- `prototype/shots/advisor_align.png`
+- `prototype/shots/advisor_align_m.png`
+- `prototype/shots/advisor_docs.png`
+- `prototype/shots/advisor_m.png`
+- `prototype/shots/advisor_plan.png`
+- `prototype/shots/ask_alex_prep.png`
+- `prototype/shots/ask_dale_clause.png`
+- `prototype/shots/me_dale.png`
+- `prototype/shots/me_dale_m.png`
+- `prototype/shots/me_dale_options.png`
+- `prototype/shots/me_dale_options_m.png`
+- `prototype/shots/me_kyle.png`
+- `prototype/shots/me_sloane.png`
+- `prototype/shots/me_sloane_checkin.png`
+- `prototype/shots/me_sloane_checkin_m.png`
+- `prototype/shots/me_walt.png`
+- `prototype/shots/me_walt_plan.png`
+- `prototype/shots/picker.png`
+- `prototype/shots/picker_m.png`
+- `prototype/shots/story_cast.png`
+- `prototype/shots/story_close.png`
+- `prototype/shots/story_hook.png`
+- `prototype/shots/story_problem.png`
+- `prototype/shots/story_sauce.png`
+- `prototype/styles.css`
+- `scripts/export-deck.cjs`
+- `slides/claude_deck/deck.json`
+- `slides/claude_deck/slides/advisor.html`
+- `slides/claude_deck/slides/architecture.html`
+- `slides/claude_deck/slides/case.html`
+- `slides/claude_deck/slides/cover.html`
+- `slides/claude_deck/slides/discovery.html`
+- `slides/claude_deck/slides/economics.html`
+- `slides/claude_deck/slides/family.html`
+- `slides/claude_deck/slides/pilot.html`
+- `slides/claude_deck/slides/privacy.html`
+- `slides/claude_deck/slides/sauce.html`
+- `slides/deck.css`
+- `slides/family-table-review.pdf`
+- `slides/index.html`
+- `tests/prototype.spec.js`
+- `video/RECORDING_SCRIPT.md`
+- `video/VIDEO_PLAN.md`
+- `video/src/shots.js`
+
+Also added this inventory and one scoped vault harvest: `/Users/rzrizaldy/NoteFolder/RZ-Notes/sources/sessions/harvested/2026-10-26-family-table-consent-and-evidence-review.md`. No existing vault source was edited.

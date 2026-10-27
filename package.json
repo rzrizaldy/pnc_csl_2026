@@ -1,0 +1,1 @@
+{"name":"family-table","private":true,"scripts":{"test":"playwright test","check":"node --check prototype/app.js && node --check prototype/data.js","serve":"python3 -m http.server 4311"},"devDependencies":{"@playwright/test":"1.58.2"}}

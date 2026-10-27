@@ -1,9 +1,9 @@
 // node shots.js [baseUrl]  -> desktop (1920x1080) and mobile (390x844) PNGs in ../../prototype/shots, plus console errors
-const { chromium } = require("playwright-core");
+const { chromium } = require("../../node_modules/@playwright/test");
 const fs = require("fs");
 const path = require("path");
 
-const BIN = path.join(process.env.HOME, "Library/Caches/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-mac-arm64/chrome-headless-shell");
+const BIN = process.env.CHROMIUM_PATH;
 const BASE = process.argv[2] || "http://localhost:4311/prototype/";
 const OUT = path.join(__dirname, "../../prototype/shots");
 const DESKTOP = [
@@ -41,7 +41,7 @@ async function shoot(browser, viewport, routes, suffix, errors) {
 
 (async () => {
   fs.mkdirSync(OUT, { recursive: true });
-  const browser = await chromium.launch({ executablePath: BIN, args: ["--hide-scrollbars"] });
+  const browser = await chromium.launch({ ...(BIN ? { executablePath: BIN } : {}), args: ["--hide-scrollbars"] });
   const errors = [];
   await shoot(browser, { width: 1920, height: 1080 }, DESKTOP, "", errors);
   await shoot(browser, { width: 390, height: 844 }, MOBILE, "m", errors);

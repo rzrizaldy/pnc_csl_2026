@@ -1,67 +1,34 @@
-# Family Table (CSL 2026): current context and what next
+# Family Table: current state and next actions
 
-Updated 2026-10-26, late ET (round 2 rework). This file is overwritten, not appended.
+Updated October 26, 2026 (ET). Supersedes the former round-2/round-3 handoff.
 
-## Current deliverable
-- **Deadline:** Wed Oct 28, 11:59 PM ET. Submit a deck PDF (8–10 slides) plus a 2-min video.
-- **Rizaldy's scope:** prototype, video, Secret Sauce slide. In round 2 Rizaldy asked for:
-  - a Succession case study and personas
-  - a mobile-first prototype in plain words, with more visuals and an adaptive UI
-  - simulated Claude/OpenAI AI features
-  - reworked Pages with a clear architecture
-- **Live site:** https://rzrizaldy.github.io/pnc_csl_2026/ (repo `rzrizaldy/pnc_csl_2026`, public; Pages serves `main` root).
-  - `index.html`: overview, problem stats, phone iframe, 4-step journey, AI, sauce, value and hypotheses
-  - `case.html`: six Succession patterns, the Hale personas, sources
-  - `architecture.html`: 6-layer stack, privacy boundary, request flow, JSON contract, AI component table, pilot plan
-  - `site.css`: shared styles for the three pages
-- **Prototype** (`prototype/`, hash routes). Round 3 redesign (Rizaldy asked for it): there is no plain/detailed toggle, the copy is professional product writing, and the look borrows Robinhood/Uber patterns (one big number, a trip progress track, a single "Ask about the sale" bar, list rows, bottom sheets) on PNC tokens. Personalization is explained once, via the "Sorted for you" sheet.
-  - Picker: `#/`
-  - Advisor: `#/advisor`, `/align`, `/docs`, `/plan`
-  - Members: `#/me/<walt|marisa|dale|kyle|ross|sloane>[/checkin|/options|/plan]`
-  - Video cards: `#/story/{hook,cast,problem,sauce,close}`
-- **Screenshots** in `prototype/shots/`:
-  - 17 desktop (1920×1080) and 6 mobile (`*_m.png`, 390×844 @2x)
-  - 2 Ask-sheet runs
-  - Regenerate with `cd video/src && node shots.js`, using a local server on 4311 serving the repo root.
-- **Slides:** Claude Slides artifact https://claude.ai/artifact/B7bV9cQnWU4FCvbQWLHYf2, refreshed to the Hale case. 7 slides: cover, case (Succession patterns table), family (two phone shots), advisor (watchlist and alignment), sauce, architecture (6 bands), privacy (backup). The source is copied to `slides/claude_deck/`. The artifact is private until shared.
-- **Video:** plan and script v2 only (`video/VIDEO_PLAN.md`, `video/RECORDING_SCRIPT.md`, 226 words). Don't build the pipeline until the script is locked.
+## Objective and deliverable
+CSL 2026 family-business sale concept. Due October 28, 11:59 PM ET: 8–10-slide PDF and two-minute video. This revision implements the requested adversarial review and product/pitch improvements, with GitHub CI/CD.
 
-## Conventions
-- **Design system:** PNC Private Bank. Tokens are at the top of `prototype/styles.css` and `site.css`:
-  - navy `#10214D` / `#1A2B5C`, orange `#EF6A00` (`#B84F00` for small text)
-  - data viz `#6F9A4B` `#424B5A` `#6593C9` `#6D4AA0`
-  - Barlow font, 4px radius
-  - 5 banner types: ok / attn / req / rec / info
-- **CSS gotcha:** the app bar class is `.appbar`. `.bar` is the progress-bar style. Don't reuse it.
-- **Person colours:** Walt `#10214D`, Marisa `#8C929B`, Dale `#6593C9`, Kyle `#6F9A4B`, Ross `#E39A2E`, Sloane `#6D4AA0`.
-- **Numbers** (`prototype/data.js`):
-  - offer $48.0M; earnout $8.0M, contingent; debt $3.5M; fees $1.5M; tax $8.0M → net $27.0M
-  - buckets: live on $9.0M, give $12.0M, invest $6.0M
-- **Split formula:** rollover equity Kyle $1.5M, Ross $0.5M. Gift = (12 + w·2)/4 − w·equity, so the gifts always sum to $12.0M.
-- **Gaps:** (max − min)/4. Fairness is 1.00, sell-now 0.75. The claims are Kyle, Ross and Sloane.
-- **Privacy rule in the UI:** the advisor sees anonymous dots and gap sizes, never stances by name. Names appear only for shared answers. Default shared is Sloane's q2.
-- **AI is simulated.** Answers are in `SEED.ask`, per viewer, with Claude and GPT variants. Live tags come from regex rules in `RULES` in `app.js`. Everything is labelled "Simulated".
+## Latest implementation
+- Public showcase leads with the Hale family decision; Succession is optional background, not discovery evidence.
+- Prototype starts with nothing shared. Alex sees only selected answers, no private themes/gap scores/leadership counts. Editing or withdrawal clears approval; an editing withdrawal is logged. Typed text is escaped.
+- Owner-authorized referral replaces an unsupported predictive sale score. Document routing is not family-release authorization. Fixed ordering and scripted assistant are labeled honestly.
+- Deterministic money is unchanged: $48M offer − $8M contingent earnout − $3.5M debt − $1.5M fees − $8M tax = $27M. $12M gifts are inside the $27M. Dale/Ross/Sloane total $9–10M. $2M buyer equity assumed separate from Walt's offer; tax/capitalization need real review.
+- Ten-slide review draft: slides/index.html, deck.css, claude_deck fragments and family-table-review.pdf. Source screenshots refreshed. Canva and prior Claude artifact unchanged; old PPTX/builder are legacy.
+- Video v3 script and storyboard revised; no final recording or video rendered.
+- docs/DEVILS_ADVOCATE_REVIEW.md has scorecard, four perspectives, kill shots, Q&A, factual corrections and priorities. docs/DISCOVERY_WORKSHEET.md provides non-leading interview prompts and empty evidence table.
+- GitHub workflow validates syntax, runs desktop/mobile regression tests, exports PDF and deploys only allowlisted public files after success. PRs test; main deploys. It does not configure branch protection.
 
-## Decisions and why
-- Succession is used as commentary/case study (Rizaldy's request). The Hales are fictional mid-market stand-ins, not the Roy characters. Episode facts were checked via web search; the sources are listed on `case.html`.
-- Stats used: Cerulli 13% (2019), Julius Baer 37% informal (2024), PNC 75% regret, 50% involuntary, 80–90% net worth. Don't add uncited numbers.
-- No real PNC logo. The mark is our own family-table icon. "Student concept" disclaimers stay on every page.
+## Verification completed locally
+- Twelve browser tests passed: all 29 persona routes at 1440px and 390px; explicit sharing, withdrawal and approval invalidation; re-sharing after edits and markup escaping; all 101 gift weights; document routing gate; showcase/deck rendering.
+- Existing capture tool regenerated 17 desktop, 6 mobile and 2 Ask screenshots, no console/page errors.
+- Native browser verified answer 2 sharing and Alex receiving exactly that answer; mobile check-in inspected at 390×844.
+- PDF has exactly ten pages with extractable text; every slide screenshot reviewed as a contact sheet and export found no container overflow.
+- Initial parallel local test run hit socket failures on the reused Python server. Single-worker run passed; configuration uses one worker for stability.
+- Remote GitHub run and live verification: pending push at this checkpoint; final receipt will replace this line.
 
-## Do not touch
-- `data.js` figures are internally consistent. Change them only as a set.
-- The team's Canva deck `DAHY7Vfs02I`: don't edit without asking.
+## Constraints and remaining gaps
+Fictional, public, static demonstration; no authentication, secure storage, PNC integration, real models or legal clearance. No primary interview evidence has been fabricated. Budget/fee assumptions and pilot thresholds are proposals. Preserve the team's core concept and disclose AI-assisted revision. Do not edit Canva without specific authorization. Do not use old screenshots, v2 script or older artifact as the latest deck.
 
-## Environment gotchas
-- ffmpeg has no drawtext or subtitles filter; render captions in-page.
-- Playwright headless shell is `~/Library/Caches/ms-playwright/chromium_headless_shell-1234`, using `playwright-core` in `video/src/node_modules` (gitignored).
-- The browser pane can't drive `file://`; serve with `python3 -m http.server 4311` from the repo root.
-
-## Verification completed
-- `node shots.js`: 17 desktop + 6 mobile routes + 2 Ask runs, zero console or page errors. Desktop and mobile shots were reviewed visually, including the Ask sheet with trace, answer and card.
-- Site pages rendered at 1440 and 390 widths: no errors, no horizontal overflow.
-
-## Next steps
-1. Team reads `case.html` and agrees on Succession (TEAM_NOTES §0).
-2. Canva persona and journey slides to the Hale case and the 4 steps (Nindy and Adit). The Claude slides are already refreshed.
-3. Lock script v2 → build the video pipeline (VIDEO_PLAN §5) → TTS draft → Nindy records.
-4. Interviews remain the biggest scoring gap (TEAM_NOTES §4).
+## Exact next actions
+1. Verify GitHub Actions deploy succeeds and live Pages matches the revised overview; record run URL here.
+2. Team conducts two owner/heir and two advisor interviews, fills discovery worksheet with actual permissioned evidence, and revises slide 3 accordingly.
+3. Team validates assumed pilot costs, engagement/conflict approach and eligible referral pipeline.
+4. Narrative owner approves v3; Nindy records; Rz assembles/captions and verifies ≤120s actual video.
+5. Team checks final ten-slide PDF and video, resolves Canva divergence and submits. No competition submission has been made.

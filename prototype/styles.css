@@ -285,3 +285,5 @@ body.story .appbar, body.story .bnav { display: none; }
   .scrim { background: rgba(16,33,77,.18); }
 }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+
+.demo-notice{padding:9px 16px;background:#fff4e8;color:#663400;font-size:12px;text-align:center} :focus-visible{outline:3px solid #B84F00;outline-offset:3px} .hero h1{font-size:clamp(30px,5vw,46px);line-height:1.15;color:var(--navy)} .quote p{overflow-wrap:anywhere}

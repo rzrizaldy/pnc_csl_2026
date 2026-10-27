@@ -8,3 +8,6 @@ video/build/
 *.mov
 *.m4a
 video/src/node_modules/
+test-results/
+playwright-report/
+_site/
