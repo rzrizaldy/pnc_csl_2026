@@ -1,12 +1,13 @@
 // node qa.js [base] -> full QA report: links/assets, console errors, overflow at 5 widths, clipped text,
-// dead buttons, missing alt text, small tap targets (mobile), the guided tour end to end, every Ask answer on both models.
+// dead buttons, missing alt text, small tap targets (mobile), the guided demo end to end from the splash, and the
+// ask-Alex loop for every member (question sent, AI draft approved in Alex's inbox, reply shown on the family side).
 const { chromium } = require("playwright-core");
 const path = require("path");
 const BIN = path.join(process.env.HOME, "Library/Caches/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-mac-arm64/chrome-headless-shell");
-const BASE = process.argv[2] || "http://localhost:4311/";
+const BASE = process.argv[2] || "http://localhost:4320/";
 const PAGES = ["index.html", "case.html", "architecture.html"];
-const ROUTES = ["", "advisor", "advisor/align", "advisor/docs", "advisor/plan",
-  ...["margaret", "tom", "ben", "claire", "sam"].flatMap(p => [`me/${p}`, `me/${p}/checkin`, `me/${p}/options`, `me/${p}/plan`])];
+const ROUTES = ["", "advisor", "advisor/align", "advisor/docs", "advisor/inbox", "advisor/plan", "year-one",
+  ...["margaret", "tom", "ben", "claire", "sam"].flatMap(p => [`me/${p}`, `me/${p}/checkin`, `me/${p}/options`, `me/${p}/ask`, `me/${p}/plan`])];
 const WIDTHS = [360, 390, 768, 1024, 1440];
 const out = { links: [], errors: [], overflow: [], clipped: [], dead: [], noAlt: [], smallTaps: [], tour: [], ask: [] };
 
@@ -57,47 +58,50 @@ const out = { links: [], errors: [], overflow: [], clipped: [], dead: [], noAlt:
     p.on("console", m => m.type() === "error" && out.errors.push(`@${w} ${p.url()}: ${m.text()}`));
     for (const pg of PAGES) { await p.goto(BASE + pg, { waitUntil: "networkidle" }); await p.waitForTimeout(200); await check(p, pg, w); }
     await p.goto(BASE + "prototype/?reset#/", { waitUntil: "networkidle" });
-    for (const r of ROUTES) { await p.evaluate(h => { location.hash = "#/" + h; }, r); await p.waitForTimeout(150); await check(p, "#/" + (r || "picker"), w); }
+    for (const r of ROUTES) { await p.evaluate(h => { location.hash = "#/" + h; }, r); await p.waitForTimeout(150); await check(p, "#/" + (r || "splash"), w); }
     await p.close();
   }
 
-  // 5. tour end to end on a phone, clicking each target
+  // 5. guided demo end to end on a phone, from the splash, tapping each highlighted target
   {
     const p = await ctx.newPage(); await p.setViewportSize({ width: 390, height: 844 }); await p.emulateMedia({ reducedMotion: "reduce" });
     p.on("pageerror", e => out.errors.push("tour: " + e.message));
     await p.goto(BASE + "prototype/?tour", { waitUntil: "networkidle" });
-    for (let i = 0; i < 6; i++) {
+    out.tour.push("start: " + (await p.evaluate(() => location.hash + (document.querySelector('.onb [data-act="tour-start"]') ? " (splash with start button)" : " (NO SPLASH)"))));
+    await p.click('[data-act="tour-start"]');
+    for (let i = 0; i < 8; i++) {
       await p.waitForTimeout(500);
-      const step = await p.evaluate(() => ({ route: location.hash, title: document.querySelector(".tour b")?.textContent, target: !!document.querySelector(".tour-target") }));
-      if (!step.target) { out.tour.push(`step ${i + 1} ${step.title}: no highlighted target`); }
-      else await p.click(".tour-target");
+      const step = await p.evaluate(() => ({ route: location.hash, title: document.querySelector(".tour b")?.textContent, target: !!document.querySelector(".tour-target"), last: document.querySelector('[data-act="tour-next"]')?.textContent === "Finish" }));
+      if (step.target) await p.click(".tour-target");
+      else if (!step.last) out.tour.push(`step ${i + 1} ${step.title}: NO HIGHLIGHTED TARGET`);
       await p.waitForTimeout(300);
       const after = await p.evaluate(() => ({ btn: document.querySelector('[data-act="tour-next"]')?.textContent, msg: document.querySelector(".tour p")?.textContent }));
-      out.tour.push(`step ${i + 1} ${step.title} @ ${step.route}: after tap -> button “${after.btn}”, “${after.msg}”`);
+      out.tour.push(`step ${i + 1} ${step.title} @ ${step.route}: ${step.target ? "tapped target" : "no action needed"} -> “${after.btn}”, “${after.msg}”`);
       await p.click('[data-act="tour-next"]');
     }
     await p.waitForTimeout(400);
-    out.tour.push("after finish: " + (await p.evaluate(() => location.hash + (document.querySelector(".tour") ? " (tour still showing!)" : " (tour closed)"))));
+    out.tour.push("after finish: " + (await p.evaluate(() => location.hash + (document.querySelector(".tour") ? " (demo bar still showing!)" : " (demo bar closed)"))));
     await p.close();
   }
 
-  // 6. every Ask answer, both models
+  // 6. ask-Alex loop for every member: send each suggested question, Alex approves every AI draft, replies come back
   {
-    const p = await ctx.newPage(); await p.setViewportSize({ width: 1440, height: 900 });
+    const p = await ctx.newPage(); await p.setViewportSize({ width: 1440, height: 900 }); await p.emulateMedia({ reducedMotion: "reduce" });
     p.on("pageerror", e => out.errors.push("ask: " + e.message));
     await p.goto(BASE + "prototype/?reset#/", { waitUntil: "networkidle" });
-    const viewers = { alex: "advisor", margaret: "me/margaret", tom: "me/tom", ben: "me/ben", claire: "me/claire", sam: "me/sam" };
-    for (const [v, r] of Object.entries(viewers)) for (const model of ["claude", "gpt"]) {
-      await p.evaluate(h => { location.hash = "#/" + h; }, r); await p.waitForTimeout(200);
-      const count = await p.evaluate(v => (window.SEED.ask[v] || []).length, v);
-      for (let i = 0; i < count; i++) {
-        await p.click('[data-act="ask-open"]'); await p.waitForTimeout(150);
-        await p.click(`[data-act="model"][data-id="${model}"]`); await p.waitForTimeout(100);
-        await p.click(`.sheet [data-act="ask"][data-id="${i}"]`); await p.waitForTimeout(4200);
-        const res = await p.evaluate(() => ({ answer: document.querySelector(".answer")?.textContent.length || 0, card: !!document.querySelector(".mini"), src: document.querySelector(".answer .src")?.textContent }));
-        out.ask.push(`${v}/${model} q${i + 1}: answer ${res.answer} chars, card ${res.card ? "yes" : "MISSING"}, ${res.src}`);
-        await p.keyboard.press("Escape"); await p.waitForTimeout(100);
-      }
+    const members = ["margaret", "tom", "ben", "claire", "sam"];
+    for (const v of members) {
+      await p.evaluate(h => { location.hash = "#/" + h; }, `me/${v}/ask`); await p.waitForTimeout(200);
+      while (await p.$('[data-act="send-q"]')) { await p.click('[data-act="send-q"]'); await p.waitForTimeout(80); }
+    }
+    await p.evaluate(() => { location.hash = "#/advisor/inbox"; }); await p.waitForTimeout(200);
+    const queued = await p.$$eval('[data-act="send"]', b => b.length);
+    while (await p.$('[data-act="send"]')) { await p.click('[data-act="send"]'); await p.waitForTimeout(80); }
+    out.ask.push(`inbox: ${queued} AI drafts approved and sent`);
+    for (const v of members) {
+      await p.evaluate(h => { location.hash = "#/" + h; }, `me/${v}/ask`); await p.waitForTimeout(200);
+      const r = await p.evaluate(() => ({ asked: document.querySelectorAll(".msg.mine").length, replies: document.querySelectorAll(".msg.alex").length, cards: document.querySelectorAll(".msg.alex .mini").length }));
+      out.ask.push(`${v}: ${r.asked} asked, ${r.replies} replies from Alex, ${r.cards} number cards`);
     }
     await p.close();
   }

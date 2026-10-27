@@ -46,14 +46,18 @@ Stages match the team deck (Signal, Join, Align, Allocate, Activate, Continue). 
 | Activate | One next step each; documents routed | Specialist tasks, and intros the family agreed to | Routes the will to an estate attorney; introduces PNC to Claire and Sam |
 | Continue | Margaret starts her next chapter; the plan and log stay current | Check-ins repeat yearly | Keeps the relationship with all five, not one |
 
-## The tour, alternating sides
+## The demo, alternating sides
 
-1. **Advisor:** the signal. Call Margaret.
-2. **Family:** Margaret invites her family.
-3. **Family:** Claire shares one private answer.
-4. **Advisor:** Alex sees four voices instead of one, and approves the brief.
-5. **Family:** Sam sees his number move as the split changes.
-6. **Advisor:** Alex introduces PNC to Claire before the gift arrives.
+The app opens on a splash (what it does, the six stages, the end state). Its button runs eight steps:
+
+1. **Advisor, Signal:** the score is 81. Call Margaret.
+2. **Family, Join:** Margaret sees $27.0M and invites her family.
+3. **Family, Align:** Claire shares one private answer.
+4. **Advisor, Align:** the AI trace turns four check-ins into one finding, fairness at 1.00. Alex approves the brief.
+5. **Family, Allocate:** Sam sees his number under each option and votes in private.
+6. **Family, Activate:** Sam asks Alex a question.
+7. **Advisor, Activate:** the AI drafts the reply; Alex edits and sends it.
+8. **Both sides, Continue:** one year on. The sale has closed and the plan is business as usual.
 
 ## What stays the same
 - **Privacy model:** nothing is shared by default. Members can opt out of the summary. The summary needs at least 3 contributors, shows no per-person positions, and escapes all text.

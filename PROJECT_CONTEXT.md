@@ -223,17 +223,26 @@ A gap of 0.75 or more recommends a facilitator.
 | `video/src/*.js` | Playwright tooling, listed in §9 |
 | `docs/TWO_WAY_JOURNEY.md` | Reassessment: each persona goal mapped to a screen |
 | `docs/DEVILS_ADVOCATE_REVIEW.md` | Scorecard, kill shots, judge Q&A, economics |
+| `docs/DEVILS_ADVOCATE_APP_REWORK.md` | Why the app was rebuilt around a splash, a story mode and big numbers; the screen list |
 | `docs/DISCOVERY_WORKSHEET.md` | Interview guide (four interviews still to do) |
 | `TEAM_NOTES.md`, `current-context-what-next.md` | Team coordination; short working log |
 
-**Prototype routes:**
-- Picker: `#/`
-- Advisor: `#/advisor`, `/align`, `/docs`, `/plan`
-- Members: `#/me/<margaret|tom|ben|claire|sam>` with `/checkin`, `/options` or `/plan`
+**Prototype routes** (rebuilt Oct 27, round 6):
+- Splash `#/`: what Family Table does, the six stages, the end state as three big numbers, one button that starts the demo. "Explore on your own" opens a View as sheet.
+- Advisor (Alex):
+  - `#/advisor` Signal: 81 out of 100, the line, three reasons, Call Margaret; $8.0–9.0M at stake
+  - `#/advisor/align` AI brief: fairness 1.00 against Margaret's quote, then a six-step AI trace that plays on arrival (read check-ins, score gaps with the formula, compare with her plan, read documents, draft the brief) and ends with Alex approving. `#/advisor/docs` is an alias.
+  - `#/advisor/inbox` Inbox: family questions with an editable AI draft, its checks, and Approve and send; call requests to confirm
+  - `#/advisor/plan` Plan: heirs who bank elsewhere, introductions, the vote tally (counts only), specialists, decision log
+- Members `#/me/<margaret|tom|ben|claire|sam>`: Home (one big number), `/checkin`, `/options` (Vote; `/vote` is an alias), `/ask` (Ask Alex), `/plan` (next step; Margaret's next chapter)
+- `#/year-one`: one year on, the BAU payoff (fictional, derived: Balanced split, $8.5M to Claire and Sam, 5 of 5 with PNC, about $216K a year at the illustrative 0.8%)
 - Video cards: `#/story/{hook,cast,problem,sauce,close}`
-- `?tour` runs the 6-step guided tour, alternating the advisor and family sides. `?reset` clears state.
-- localStorage key: `family-table-v6`
-- Debug: `window.FT.reset()`, `FT.ask(i)`, `FT.why()`
+- `?tour` resets and opens the splash; its button runs the 8-step story: Signal (Alex), Margaret invites, Claire shares, the AI at work (Alex approves), Sam votes, Sam asks Alex, Alex sends the AI draft, one year on. `?reset` clears state.
+- **Voting:** three options (Equal, Balanced, Equity counted). Each vote is private; the tally shows counts only, once `MIN_GROUP` (3) have voted; advisory input to Nov 12; changeable until then. Seeded: Margaret and Ben have voted.
+- **Ask Alex:** a member sends a suggested or typed question; the AI drafts from the plan and the calculator (or flags that Alex must write it); Alex edits and sends; the member can share the answer with the family (off by default) and book a call. The old instant AI Ask sheet and the Claude/GPT toggle are gone.
+- localStorage key: `family-table-v7`
+- Debug: `window.FT.reset()`, `FT.state()`, `FT.set(patch)`, `FT.step(i)`
+- The phone iframe on `index.html` shows `#/me/sam/options`.
 
 **Live:**
 - https://rzrizaldy.github.io/pnc_csl_2026/ (GitHub Pages, legacy build from `main` /)
@@ -284,24 +293,25 @@ A gap of 0.75 or more recommends a facilitator.
 
 ## 9. Tooling and checks
 
-Serve the repo root first: `python3 -m http.server 4311`.
+Serve the repo root first: `python3 -m http.server 4320` (the scripts default to 4320; pass a base URL to use another port).
 
 | Script (`video/src/`) | What it does |
 |---|---|
-| `shots.js` | Desktop and mobile screenshots into `prototype/shots/` (reduced motion) |
+| `shots.js` | Desktop and mobile screenshots into `prototype/shots/` (reduced motion); some set demo state first via `FT.set` |
 | `slide_crops.js` | 1100×518 @2x crops of the advisor screens, for slides |
-| `qa.js [base]` | Links, console errors, overflow and clipped text at 360/390/768/1024/1440, dead buttons, alt text, tap targets, the tour end to end, every Ask on both models |
-| `motion_check.js` | Entrance frames, privacy opt-out, XSS escaping |
+| `qa.js [base]` | Links, console errors, overflow and clipped text at 360/390/768/1024/1440 on every route, dead buttons, alt text, tap targets, the 8-step demo from the splash, and the ask-Alex loop for all five members |
+| `motion_check.js [base] [out]` | Entrance and AI-trace frames, the option tween, the vote tally below and above `MIN_GROUP`, privacy opt-out, XSS escaping in check-ins, questions and replies |
 | `slides_check.js <artifact root> <out>` | Renders each slide at 1920×1080 and flags anything past the 920px line. Its `BLOBS` map ties `/_blob/<id>` images to local shots |
 
 **Environment:**
 - `playwright-core` is installed in `video/src/node_modules`. The headless shell is `~/Library/Caches/ms-playwright/chromium_headless_shell-1234`.
 - ffmpeg has no drawtext or subtitles filter, so captions are drawn in the page.
 
-**Last full QA, Oct 27, local:**
-- 0 errors, overflow, clipped text, dead buttons or missing alt text
-- the tour completes
-- 22 of 22 Ask answers render on both models
+**Last full QA, Oct 27 (round 6), local on port 4320:**
+- 0 console errors, overflow, clipped text, dead buttons or missing alt text, on all 32 routes at 5 widths
+- the 8-step demo completes from the splash, and the bar closes on one year on
+- ask-Alex loop: 9 AI drafts approved and sent, every member sees Alex's replies with their number cards
+- motion_check: opt-out drops the summary from gap 1.00 (4 people) to 0.75 (3); tally hidden at 2 votes, counts only at 3; no injected markup anywhere
 - known false positives: the font preconnect hints, and the 32px switches, which have an expanded tap area
 
 ## 10. History (why things are the way they are)
@@ -320,13 +330,13 @@ Serve the repo root first: `python3 -m http.server 4311`.
    - The fairness insight.
    - The tour alternates sides.
    - The two-lane journey and the service blueprint.
-6. **Next (requested Oct 27):** a devil's-advocate rework of the app into a simpler, hook-first demo:
-   - an onboarding splash: what it does, the process, the end state
-   - big numbers and visuals instead of dashboards
-   - the AI advisor in action
-   - how family voting works
-   - how the family interacts with the advisor
-   - the end state after the plan becomes business as usual
+6. **Round 6, Oct 27:** Rz asked to rework the app totally: a splash that says what it does, the process and the end state; big numbers instead of dashboards; a hook demo. After a devil's-advocate pass (`docs/DEVILS_ADVOCATE_APP_REWORK.md`):
+   - the splash and an 8-step story mode replace the picker and the 6-step tour
+   - the AI brief plays as a visible trace and ends with Alex approving
+   - private, advisory family voting with a `MIN_GROUP` tally
+   - Ask Alex (AI drafts, Alex sends) replaces the instant AI Ask and its model toggle
+   - one year on, the BAU payoff
+   - cut: the watchlist, the slider and trust switch, the documents tab (folded into the trace), the counsel's-summary flow
 
 ## 11. Open items for the team
 1. Four interviews, with permission to quote (`docs/DISCOVERY_WORKSHEET.md`). This is the biggest scoring gap.

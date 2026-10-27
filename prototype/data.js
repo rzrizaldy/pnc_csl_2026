@@ -113,41 +113,68 @@ window.SEED = {
 
   contingency: "If Margaret cannot continue before closing, Ben runs day-to-day operations for 90 days and the family decides next steps within 30 days, with Alex. Signed by Margaret, dated, kept by PNC.",
 
-  // Demo assistant answers. Both models return the same structured card; only the wording differs.
+
+  // The three split options the family votes on. w = share of Ben's buyer equity that counts (see the split formula).
+  options: [
+    { id: "equal", label: "Equal", w: 0, line: "The same cash for each child. Ben's $1.5M of buyer equity isn't counted." },
+    { id: "balanced", label: "Balanced", w: 0.5, line: "Half of Ben's buyer equity counts, so the gap between siblings narrows." },
+    { id: "equity", label: "Equity counted", w: 1, line: "All of Ben's buyer equity counts, so every child's total is $4.5M." },
+  ],
+  // Private votes already cast before the demo starts. In production each vote sits in the member's own vault;
+  // the app only ever reads the counts, and only once at least MIN_GROUP people have voted.
+  votes: { margaret: "balanced", ben: "equity" },
+
+  // Questions each member can send to Alex. The AI drafts a reply from the plan and the calculator; Alex edits and sends it.
   ask: {
     margaret: [
-      { q: "How much will Tom and I keep?", card: "proceeds", tools: [["Read the latest offer", "deal.terms(offer_v2)"], ["Ran the proceeds calculator", "calc.proceeds(offer=48.0)"]],
-        a: { claude: "About $27.0M lands at closing, after debt, fees and estimated taxes. The $8.0M earnout is paid later and only if targets are met, so it isn't included.", gpt: "$27.0M at closing after debt, fees and estimated tax. The $8.0M earnout is contingent and excluded." } },
-      { q: "How do I make the split feel fair to all three?", card: "split", tools: [["Read the anonymous family summary", "summary.gaps(min_group=3)"], ["Ran the gift calculator", "calc.gift_options()"]],
-        a: { claude: "Your family's widest gap is on fairness, so bring two options to the November 12 meeting: an equal split, and one that counts the $1.5M Ben keeps with the buyer. Let the facilitator lead that part, so it isn't you against one of your children.", gpt: "Fairness is the family's widest gap. Bring an equal split and an equity-counted split to Nov 12, and let the facilitator lead." } },
+      { q: "How much will Tom and I keep?", card: "proceeds", tools: ["Read the latest offer", "Ran the proceeds calculator", "Checked: no private answers used"],
+        draft: "About $27.0M lands at closing, after debt, fees and estimated tax. The $8.0M earnout is paid later and only if targets are met, so I've left it out of every number." },
+      { q: "How do I make the split feel fair to all three?", card: "split", tools: ["Read the anonymous family summary", "Ran the gift calculator", "Checked: no private answers used"],
+        draft: "Your family's widest gap is fairness, so let's bring all three options to November 12 and let the facilitator lead that part. That way it isn't you against one of your children." },
     ],
     tom: [
-      { q: "What happens to me if Margaret can't continue?", card: "contingency", tools: [["Checked the decision log", "ledger.lookup('contingency')"], ["Searched estate documents", "docs.search('spouse')"]],
-        a: { claude: "The business has a signed contingency plan. Your own position depends on Margaret's 2012 will, which was written before the sale. An estate attorney is updating it, and Alex has scheduled a review with you.", gpt: "The business is covered by a signed plan. Your position depends on Margaret's 2012 will, which is being updated; Alex has scheduled a review." } },
+      { q: "What happens to me if Margaret can't continue?", card: "contingency", tools: ["Checked the decision log", "Searched the estate documents", "Checked: not legal advice"],
+        draft: "The business has a signed contingency plan. Your own position depends on Margaret's 2012 will, which was written before the sale. An estate attorney is updating it, and I'd like to walk you through it." },
     ],
     ben: [
-      { q: "What's my role after the sale?", card: "role", tools: [["Read the latest offer", "deal.terms(offer_v2, section='management')"]],
-        a: { claude: "The offer proposes a two-year COO contract and $1.5M of equity in NorthPeak; the buyer decides operating roles. How that equity counts in the family split is on the agenda for Thursday, November 12.", gpt: "The offer proposes a 2-year COO contract plus $1.5M of buyer equity. How it counts in the family split is on the Nov 12 agenda." } },
-      { q: "Does my buyer equity reduce my share?", card: "mine", tools: [["Ran the gift calculator", "calc.gift_options(child='ben')"]],
-        a: { claude: "It depends on the split the family chooses. With an equal split you receive $4.0M and your equity isn't counted. If it's fully counted, you receive $3.0M in cash, and with your $1.5M of equity your total matches your siblings' $4.5M.", gpt: "Equal split: $4.0M, equity not counted. Fully counted: $3.0M cash plus $1.5M equity, matching your siblings' $4.5M." } },
+      { q: "Does my buyer equity reduce my share?", card: "mine", tools: ["Read the latest offer", "Ran the gift calculator", "Checked: no private answers used"],
+        draft: "It depends on the split the family chooses. With an equal split you receive $4.0M and your equity isn't counted. If it's fully counted, you receive $3.0M in cash, and with your $1.5M of equity your total matches your siblings' $4.5M." },
+      { q: "What's my role after the sale?", card: "role", tools: ["Read the latest offer, management section", "Checked: the buyer decides roles"],
+        draft: "The offer proposes a two-year COO contract and $1.5M of equity in NorthPeak. The buyer decides operating roles. How the equity counts in the family split is on the agenda for November 12." },
     ],
     claire: [
-      { q: "Who can see what I write?", card: "privacy", tools: [["Checked your sharing settings", "consent.status('claire')"]],
-        a: { claude: "Only you. Alex can read an answer only if you switch sharing on for it, and you can switch it off again. Your family never sees your words. If you stay in the family summary, your themes are counted without your name.", gpt: "Only you. Alex reads an answer only if you share it, and you can withdraw it. Your family never sees your words." } },
-      { q: "When is the family meeting?", card: "meeting", tools: [["Checked the family calendar", "calendar.next('family_meeting')"], ["Checked brief status", "brief.status()"]],
-        a: { claude: "Thursday, November 12, with a Hawthorn facilitator. The agenda opens with your mother's next chapter, then fairness. Your private answers stay private.", gpt: "Thursday, Nov 12, with a Hawthorn facilitator: Mom's next chapter, then fairness. Your answers remain private." } },
+      { q: "When is the family meeting?", card: "meeting", tools: ["Checked the family calendar", "Checked the brief status"],
+        draft: "Thursday, November 12, with a Hawthorn facilitator. We'll open with your mother's next chapter, then fairness. Your private answers stay private." },
+      { q: "Who can see what I write?", card: "privacy", tools: ["Checked your sharing settings"],
+        draft: "Only you. I can read an answer only if you switch sharing on for it, and you can switch it off again. Your family never sees your words." },
     ],
     sam: [
-      { q: "When will I receive my share?", card: "mine", tools: [["Read the deal timeline", "deal.timeline()"], ["Ran the gift calculator", "calc.gift_options(child='sam')"]],
-        a: { claude: "At closing, expected next fall. Your share is $4.0M with an equal split, and up to $4.5M if Ben's buyer equity is counted. The earnout isn't part of the family gift.", gpt: "Expected at closing next fall: $4.0M with an equal split, up to $4.5M if Ben's buyer equity is counted." } },
-      { q: "Do I have to move my money to PNC?", card: "account", tools: [["Checked payment instructions", "plan.payout('sam')"], ["Checked advice policy", "policy.check(product_push=false)"]],
-        a: { claude: "No. Your gift can be paid to any bank. If you'd like your account in the same place as the family's plan, PNC can open one for you in minutes.", gpt: "No. It can be paid to any bank. PNC can open an account if you want one next to the family plan." } },
+      { q: "When do I get my share, and does it have to go to PNC?", card: "mine", tools: ["Read the deal timeline", "Ran the gift calculator", "Checked: no product push"],
+        draft: "At closing, expected next fall. Your share is $4.0M with an equal split and up to $4.5M if Ben's buyer equity counts. It can go to any bank. If you'd like an account next to the family's plan, I can introduce you to a PNC wealth advisor, with no obligation." },
+      { q: "Is the earnout part of my share?", card: "proceeds", tools: ["Read the latest offer", "Ran the proceeds calculator"],
+        draft: "No. The $8.0M earnout is paid later and only if NorthPeak's targets are met, so it isn't in the family gift. Your share comes from the $27.0M at closing." },
     ],
-    alex: [
-      { q: "Prepare me for the family meeting", card: "prep", tools: [["Summarized gaps", "brief.gaps()"], ["Compared the owner's plan", "plan.compare(owner='margaret')"], ["Pulled high-risk findings", "docs.findings(risk='High')"]],
-        a: { claude: "Open with common ground: everyone, Margaret included, says her next chapter isn't planned. Then fairness, the widest gap. Margaret's plan assumes an equal split, so present the range, not the people, and let the facilitator lead. Close with the will update.", gpt: "Agenda: Margaret's next chapter (common ground), fairness (widest gap, present as a range), then the will update." } },
-      { q: "Which heirs bank elsewhere?", card: "heirs", tools: [["Queried the household graph", "graph.heirs(pnc=false)"]],
-        a: { claude: "Claire and Sam bank elsewhere. Together they could receive $8.0M to $9.0M at closing. Claire is the most engaged; start there, with Margaret's agreement.", gpt: "Claire and Sam have no PNC relationship and could receive $8.0M–$9.0M combined. Start with Claire." } },
+  },
+  // A question already waiting in Alex's inbox when the demo starts (member + index into ask[member]).
+  inbox: [{ id: "seed-claire", from: "claire", qi: 0, at: "Yesterday" }],
+  // Draft for a question the AI can't answer from the plan: it says so, and Alex writes the reply.
+  fallbackDraft: name => `Thanks, ${name}. Good question. I'll check with the right specialist and come back to you by Friday.`,
+  slots: ["Thu Nov 5, 10:00", "Fri Nov 6, 2:00 PM", "Mon Nov 9, 9:30"],
+
+  // One year on (fictional, derived from the figures above). The family chose Balanced (w = 0.5) at the Nov 12 meeting:
+  // Ben $3.5M, Claire $4.25M, Sam $4.25M, so $8.5M reached the two heirs who banked elsewhere.
+  yearOne: {
+    when: "November 2027",
+    chosen: "balanced",
+    pncBefore: 3, pncAfter: 5,
+    feeRate: 0.008, // illustrative blended fee from the economics sensitivity, not a forecast
+    events: [
+      { stage: "Signal", what: "Alex called Margaret 12 months before closing" },
+      { stage: "Join", what: "Five of five family members checked in" },
+      { stage: "Align", what: "Fairness was talked through on Nov 12, with a facilitator" },
+      { stage: "Allocate", what: "The family chose the Balanced split" },
+      { stage: "Activate", what: "The will was updated for an estate in cash" },
+      { stage: "Continue", what: "The first yearly check-in is open" },
     ],
   },
 };
