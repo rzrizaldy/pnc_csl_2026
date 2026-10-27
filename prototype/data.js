@@ -33,15 +33,17 @@ window.SEED = {
   ],
 
   signal: {
-    score: 81, band: "High", horizon: "12–18 months",
+    score: 81, band: "High", horizon: "12–18 months", change: 11,
+    // monthly sale-likelihood, oldest first (last value = today)
+    history: [18, 19, 22, 21, 26, 31, 35, 44, 52, 58, 70, 81],
     reasons: [
       { text: "Two payments to an M&A adviser and a valuation firm", weight: 0.34 },
       { text: "Credit team asked for three years of audited financials", weight: 0.26 },
       { text: "$2.5M credit line paid down 14 months early", weight: 0.21 },
     ],
     others: [
-      { client: "Okafor Precision", score: 44, band: "Watch", note: "Buy-sell agreement review" },
-      { client: "Reyes Dental Group", score: 21, band: "Low", note: "Key-person policy renewed" },
+      { client: "Okafor Precision", score: 44, band: "Watch", note: "Buy-sell agreement review", change: 6, history: [30, 31, 33, 32, 35, 36, 38, 37, 40, 41, 38, 44] },
+      { client: "Reyes Dental Group", score: 21, band: "Low", note: "Key-person policy renewed", change: -3, history: [25, 26, 24, 25, 23, 24, 22, 23, 24, 22, 24, 21] },
     ],
   },
 
@@ -123,45 +125,45 @@ window.SEED = {
     sloane: { cards: ["meeting", "mine", "options", "checkin"], why: "You raised who leads, so the family meeting comes first." },
   },
 
-  // Mock AI answers. Both models return the same structured card; only the voice differs.
+  // Demo assistant answers. Both models return the same structured card; only the wording differs.
   ask: {
     walt: [
-      { q: "How much do Marisa and I keep?", card: "proceeds", tools: ["calc.proceeds(offer=48.0)", "deal.terms(loi_v3)"],
-        a: { claude: "After debt, fees and estimated taxes, about $27.0M lands at closing. The $8.0M earnout comes later and only if targets are met, so I've kept it out.", gpt: "Roughly $27.0M at closing after debt, fees and tax. The $8.0M earnout isn't guaranteed, so it's shown separately." } },
-      { q: "What happens if I get sick before closing?", card: "contingency", tools: ["ledger.lookup('contingency')"],
-        a: { claude: "You've already signed a plan for that: Kyle runs day to day for 90 days and the family council decides within 30. Alex can walk you through changing it.", gpt: "There's a signed plan: Kyle leads day to day for 90 days and the family council decides within 30 days. You can update it with Alex." } },
-    ],
-    dale: [
-      { q: "When would I actually get money?", card: "mine", tools: ["deal.timeline()", "calc.gift_options(child='dale')"],
-        a: { claude: "If the sale closes in March, your share of the family gift could arrive then: $3.0M if split equally, up to $3.5M if the equity your brothers keep is counted. Nothing from the earnout goes to you.", gpt: "Expected at closing in March: $3.0M with an equal split, up to $3.5M if Kyle and Ross's buyer equity is counted. The earnout isn't part of your share." } },
-      { q: "Can Dad sell without us?", card: "clause", tools: ["docs.search('consent AND sale')", "policy.check(legal_advice=false)"],
-        a: { claude: "Possibly not. A 1998 agreement says a sale needs written consent from all four children. That's a legal question, so Alex has asked the family attorney to confirm before anyone relies on it.", gpt: "A 1998 agreement appears to require consent from all four children for a sale. This needs a lawyer's confirmation; Alex has asked the family attorney." } },
-    ],
-    kyle: [
-      { q: "Will I still run operations after the sale?", card: "role", tools: ["deal.terms(loi_v3, section='management')"],
-        a: { claude: "The buyer's letter offers you a two-year COO contract and $1.5M of equity in the combined company. Whether you lead the family side is on the agenda for November 12.", gpt: "The letter of intent proposes a 2-year COO role for you plus $1.5M rollover equity. Family leadership is on the Nov 12 agenda." } },
-      { q: "Can Dad sell without us?", card: "clause", tools: ["docs.search('consent AND sale')", "policy.check(legal_advice=false)"],
-        a: { claude: "Possibly not. A 1998 agreement says a sale needs written consent from all four children. Alex has asked the family attorney to confirm.", gpt: "A 1998 agreement may require all four children to consent. The family attorney is confirming." } },
-    ],
-    ross: [
-      { q: "What title would I have after the sale?", card: "role", tools: ["deal.terms(loi_v3, section='management')"],
-        a: { claude: "The letter doesn't name a role for you yet; it keeps the sales team for a year. That's worth raising with Alex before the family meeting.", gpt: "No role is named for you in the letter yet; the sales team is retained for 12 months. Raise it with Alex before Nov 12." } },
-    ],
-    sloane: [
-      { q: "Who decides who leads?", card: "meeting", tools: ["calendar.next('family_meeting')", "brief.status()"],
-        a: { claude: "No one decides alone. Three of you expect to lead, so a Hawthorn IFS facilitator is running a family meeting on November 12. Your private answers stay private there too.", gpt: "It's on the agenda for the facilitated family meeting on Nov 12. Several family members expect to lead; your answers stay private." } },
-      { q: "Can Dad sell without us?", card: "clause", tools: ["docs.search('consent AND sale')", "policy.check(legal_advice=false)"],
-        a: { claude: "Possibly not. A 1998 agreement says a sale needs written consent from all four children. Alex has asked the family attorney to confirm.", gpt: "A 1998 agreement may require consent from all four children. The family attorney is checking." } },
+      { q: "How much will Marisa and I keep?", card: "proceeds", tools: [["Read the latest letter of intent", "deal.terms(loi_v3)"], ["Ran the proceeds calculator", "calc.proceeds(offer=48.0)"]],
+        a: { claude: "About $27.0M lands at closing, after debt, fees and estimated taxes. The $8.0M earnout is paid later and only if targets are met, so it isn't included.", gpt: "$27.0M at closing after debt, fees and estimated tax. The $8.0M earnout is contingent and excluded." } },
+      { q: "What happens if I can't continue before closing?", card: "contingency", tools: [["Checked the decision log", "ledger.lookup('contingency')"]],
+        a: { claude: "Your signed contingency plan applies: Kyle leads day to day for 90 days, and the family council decides within 30. Alex can help you update it.", gpt: "The signed plan applies: Kyle leads day to day for 90 days; the family council decides within 30 days." } },
     ],
     marisa: [
-      { q: "What happens to me if Walt dies?", card: "contingency", tools: ["ledger.lookup('contingency')", "docs.search('spouse')"],
-        a: { claude: "There's a signed plan for the business. Your own position depends on Walt's estate plan, which is older than your marriage terms. Alex has flagged it for an estate review.", gpt: "The business has a signed contingency plan. Your personal position depends on Walt's estate plan, which needs a review; Alex has flagged it." } },
+      { q: "What happens to me if Walt dies?", card: "contingency", tools: [["Checked the decision log", "ledger.lookup('contingency')"], ["Searched estate documents", "docs.search('spouse')"]],
+        a: { claude: "The business has a signed contingency plan. Your personal position depends on Walt's estate plan, which predates your current agreements. Alex has scheduled an estate review.", gpt: "The business is covered by a signed plan. Your own position depends on Walt's estate plan, which needs review; Alex has scheduled one." } },
+    ],
+    dale: [
+      { q: "When will I receive my share?", card: "mine", tools: [["Read the deal timeline", "deal.timeline()"], ["Ran the gift calculator", "calc.gift_options(child='dale')"]],
+        a: { claude: "At closing, expected in March. Your share is $3.0M with an equal split, and up to $3.5M if your brothers' buyer equity is counted. The earnout isn't part of the family gift.", gpt: "Expected at closing in March: $3.0M with an equal split, up to $3.5M if Kyle and Ross's buyer equity is counted." } },
+      { q: "Can Dad sell without our consent?", card: "clause", tools: [["Searched family documents", "docs.search('consent AND sale')"], ["Checked advice policy", "policy.check(legal_advice=false)"]],
+        a: { claude: "Possibly not. A 1998 agreement requires written consent from all four children for a sale. The family attorney is confirming this before anyone relies on it.", gpt: "A 1998 agreement appears to require consent from all four children. The family attorney is confirming." } },
+    ],
+    kyle: [
+      { q: "What's my role after the sale?", card: "role", tools: [["Read the letter of intent", "deal.terms(loi_v3, section='management')"]],
+        a: { claude: "The letter of intent offers a two-year COO contract and $1.5M of equity in NorthPeak. Family leadership is on the agenda for November 12.", gpt: "The LOI proposes a 2-year COO contract plus $1.5M of rollover equity. Family leadership is on the Nov 12 agenda." } },
+      { q: "Can Dad sell without our consent?", card: "clause", tools: [["Searched family documents", "docs.search('consent AND sale')"], ["Checked advice policy", "policy.check(legal_advice=false)"]],
+        a: { claude: "Possibly not. A 1998 agreement requires written consent from all four children for a sale. The family attorney is confirming.", gpt: "A 1998 agreement may require consent from all four children. The family attorney is confirming." } },
+    ],
+    ross: [
+      { q: "Does the offer include a role for me?", card: "role", tools: [["Read the letter of intent", "deal.terms(loi_v3, section='management')"]],
+        a: { claude: "Not yet. The letter keeps the sales team for 12 months but doesn't name your role. Raise it with Alex before the letter is signed.", gpt: "No role is named for you yet; the sales team is retained for 12 months. Raise it with Alex before signing." } },
+    ],
+    sloane: [
+      { q: "Who decides who leads?", card: "meeting", tools: [["Checked the family calendar", "calendar.next('family_meeting')"], ["Checked brief status", "brief.status()"]],
+        a: { claude: "The family decides together, at the November 12 meeting with a Hawthorn facilitator. More than one person expects to lead. Your private answers stay private.", gpt: "It's on the agenda for the facilitated family meeting on Nov 12. Your answers remain private." } },
+      { q: "Can Dad sell without our consent?", card: "clause", tools: [["Searched family documents", "docs.search('consent AND sale')"], ["Checked advice policy", "policy.check(legal_advice=false)"]],
+        a: { claude: "Possibly not. A 1998 agreement requires written consent from all four children for a sale. The family attorney is confirming.", gpt: "A 1998 agreement may require consent from all four children. The family attorney is checking." } },
     ],
     alex: [
-      { q: "Prepare me for the family meeting", card: "prep", tools: ["brief.gaps()", "claims.count()", "docs.findings(risk='High')"],
-        a: { claude: "Three things to cover, in this order: the consent clause, then who leads, then fairness. Don't reveal who said what. Let the facilitator name the leadership collision as a pattern, not a person.", gpt: "Agenda: 1) consent clause, 2) leadership, 3) fairness. Keep individual answers private; frame the leadership collision as a pattern." } },
-      { q: "Which heirs could we lose?", card: "heirs", tools: ["graph.heirs(pnc=false)"],
-        a: { claude: "Dale, Ross and Sloane bank elsewhere today. Together they could receive $9.0M to $10.0M at closing. Sloane is the most engaged, so start with her.", gpt: "Three heirs (Dale, Ross, Sloane) have no PNC relationship and could receive $9.0M–$10.0M combined. Sloane is the most engaged." } },
+      { q: "Prepare me for the family meeting", card: "prep", tools: [["Summarized gaps", "brief.gaps()"], ["Counted leadership claims", "claims.count()"], ["Pulled high-risk findings", "docs.findings(risk='High')"]],
+        a: { claude: "Cover three items, in order: the consent clause, leadership, then fairness. Present the leadership overlap as a pattern, not a person, and keep individual answers private.", gpt: "Agenda: consent clause, leadership, fairness. Frame the leadership overlap as a pattern; keep individual answers private." } },
+      { q: "Which heirs are at risk?", card: "heirs", tools: [["Queried the household graph", "graph.heirs(pnc=false)"]],
+        a: { claude: "Dale, Ross and Sloane bank elsewhere. Together they could receive $9.0M to $10.0M at closing. Sloane is the most engaged; start there.", gpt: "Three heirs have no PNC relationship and could receive $9.0M–$10.0M combined. Start with Sloane." } },
     ],
   },
 };

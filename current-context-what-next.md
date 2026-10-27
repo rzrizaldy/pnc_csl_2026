@@ -14,7 +14,7 @@ Updated 2026-10-26, late ET (round 2 rework). This file is overwritten, not appe
   - `case.html`: six Succession patterns, the Hale personas, sources
   - `architecture.html`: 6-layer stack, privacy boundary, request flow, JSON contract, AI component table, pilot plan
   - `site.css`: shared styles for the three pages
-- **Prototype** (`prototype/`, hash routes):
+- **Prototype** (`prototype/`, hash routes). Round 3 redesign (Rizaldy asked for it): there is no plain/detailed toggle, the copy is professional product writing, and the look borrows Robinhood/Uber patterns (one big number, a trip progress track, a single "Ask about the sale" bar, list rows, bottom sheets) on PNC tokens. Personalization is explained once, via the "Sorted for you" sheet.
   - Picker: `#/`
   - Advisor: `#/advisor`, `/align`, `/docs`, `/plan`
   - Members: `#/me/<walt|marisa|dale|kyle|ross|sloane>[/checkin|/options|/plan]`
