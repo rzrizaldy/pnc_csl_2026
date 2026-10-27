@@ -13,6 +13,11 @@ const BLOBS = {
   "3bb084389be7f5aecbfa94e9515c5996": "me_claire_checkin_m.png",
   "c23687b87853216f7c4e53d773bcad8a": "slide_advisor_home.png",
   "10300e4c12ca713e3ec613b333dbd32b": "slide_advisor_align.png",
+  "d0c08c634393e7bbfcbb1d47eca4c869": "slide_preview_m.png",
+  "9083f795f8010eba4bf9bc897b49f1c7": "slide_setup_m.png",
+  "c0961d67e258497c5b7696f8a09d1357": "slide_decide_m.png",
+  "d6c548f7a8539ba27f1200964621a6ac": "slide_guide.png",
+  "16391ee3883e4cc10713eb44349addba": "slide_present.png",
 };
 const deck = JSON.parse(fs.readFileSync(path.join(root, "project/deck.json"), "utf8"));
 const CSS = `*,:before,:after{box-sizing:border-box;margin:0;padding:0;border:0 solid}

@@ -253,16 +253,21 @@ A gap of 0.75 or more recommends a facilitator.
 - https://rzrizaldy.github.io/pnc_csl_2026/ (GitHub Pages, legacy build from `main` /)
 - Repo: `rzrizaldy/pnc_csl_2026` (public)
 
-**Slides:** Claude Slides artifact https://claude.ai/artifact/B7bV9cQnWU4FCvbQWLHYf2. It's private until Rz shares it. Nine slides:
+**Slides:** Claude Slides artifact https://claude.ai/artifact/B7bV9cQnWU4FCvbQWLHYf2. It's private until Rz shares it. Twelve slides (drop what the final 10-slide team deck doesn't need):
 1. cover
-2. sides
-3. journey
-4. blueprint
-5. family
-6. advisor
-7. sauce
-8. architecture
-9. privacy
+2. sides (the two personas)
+3. journey (two lanes)
+4. blueprint (service blueprint)
+5. preview (before PNC, then onboarding goals)
+6. family (check-in, private vote, decision tree)
+7. advisor (signal, AI brief)
+8. guide (meeting guide and presenter mode)
+9. endstate (the $27.0M across six PNC services)
+10. sauce
+11. architecture
+12. privacy (backup)
+
+Slide images are artifact assets; `video/src/slide_shots_v2.js` and `slide_crops.js` regenerate them, and `slides_check.js` maps them for local render checks.
 
 ## 8. Design system and voice
 
