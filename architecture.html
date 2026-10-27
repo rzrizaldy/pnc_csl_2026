@@ -26,30 +26,30 @@
   <h2>The stack</h2>
   <p class="lead">Read top to bottom: a request starts on a screen and only reaches data it is allowed to see.</p>
   <div class="layers">
-    <div class="layer" style="--c:#1A2B5C"><div class="name">1 · Channels<small>Where people use it</small></div><div class="boxes">
+    <div class="layer" style="--c:#1A2B5C"><div class="name">Channels<small>Where people use it</small></div><div class="boxes">
       <div class="box"><b>Family app</b><span>Mobile-first web app; one login per family member.</span></div>
       <div class="box"><b>Advisor workbench</b><span>Inside the advisor's existing desktop; signals, gaps, documents, plan.</span></div>
       <div class="box"><b>Nudges</b><span>Email and SMS reminders; never contain private answers.</span></div></div></div>
-    <div class="layer" style="--c:#2F6DB5"><div class="name">2 · Experience<small>What each person sees</small></div><div class="boxes">
+    <div class="layer" style="--c:#2F6DB5"><div class="name">Experience<small>What each person sees</small></div><div class="boxes">
       <div class="box hl"><b>Adaptive UI engine</b><span>Screens are built from cards ordered per person by role, the themes they raised and the deal stage. Rules in the prototype; a learned ranking only if it tests better. Each screen explains its order.</span></div>
       <div class="box"><b>“Sorted for you” explainer</b><span>One tap shows which signals ordered a person's screen. Private answers rank only their own screen.</span></div>
       <div class="box"><b>Ask Family Table</b><span>Assistant that answers with a card, shows the tools it used, and states its limits.</span></div></div></div>
-    <div class="layer" style="--c:#6D4AA0"><div class="name">3 · AI orchestration<small>How models are used safely</small></div><div class="boxes">
+    <div class="layer" style="--c:#6D4AA0"><div class="name">AI orchestration<small>How models are used safely</small></div><div class="boxes">
       <div class="box hl"><b>Model gateway</b><span>One PNC endpoint in front of <strong>Claude</strong> (Anthropic) and <strong>GPT</strong> (OpenAI). PNC picks a model per task from evaluation scores and vendor policy; switching needs no app change.</span></div>
       <div class="box"><b>Agent runtime</b><span>Plans a request and calls tools: <span class="mono">calc</span>, <span class="mono">docs</span>, <span class="mono">graph</span>, <span class="mono">calendar</span>, <span class="mono">ledger</span>.</span></div>
       <div class="box"><b>Guardrails</b><span>Consent filter before the model; schema validation after; no legal or tax advice; personal data redacted from logs.</span></div>
       <div class="box"><b>Review queue</b><span>Briefs, document findings and anything sent to the family wait for advisor approval.</span></div></div></div>
-    <div class="layer" style="--c:#424B5A"><div class="name">4 · Deterministic services<small>Numbers PNC can audit</small></div><div class="boxes">
+    <div class="layer" style="--c:#424B5A"><div class="name">Deterministic services<small>Numbers PNC can audit</small></div><div class="boxes">
       <div class="box"><b>Sale-likelihood model</b><span>Gradient-boosted classifier on business-account events; nightly batch; reasons per score.</span></div>
       <div class="box"><b>Proceeds and split calculator</b><span>Offer → net waterfall; equal, equitable and trust options. Rules owned by tax and trust specialists.</span></div>
       <div class="box"><b>Gap score</b><span>(highest − lowest stance) ÷ 4 per theme. Transparent, no model.</span></div>
       <div class="box"><b>Document parsing</b><span>OCR and layout extraction before the language model reads a file.</span></div></div></div>
-    <div class="layer" style="--c:#6F9A4B"><div class="name">5 · Data and trust<small>What is stored, and who can see it</small></div><div class="boxes">
+    <div class="layer" style="--c:#6F9A4B"><div class="name">Data and trust<small>What is stored, and who can see it</small></div><div class="boxes">
       <div class="box hl"><b>Member vaults</b><span>Each person's raw answers, encrypted with their own key. Only they, and anyone they share an answer with, can read them.</span></div>
       <div class="box"><b>Household graph</b><span>Business ↔ owners ↔ spouse ↔ heirs ↔ trusts ↔ accounts.</span></div>
       <div class="box"><b>Consent ledger</b><span>Every share and withdrawal, timestamped.</span></div>
       <div class="box"><b>Decision log and audit</b><span>Signed decisions; every model call with version, inputs and approver.</span></div></div></div>
-    <div class="layer" style="--c:#B84F00"><div class="name">6 · PNC systems<small>What already exists</small></div><div class="boxes">
+    <div class="layer" style="--c:#B84F00"><div class="name">PNC systems<small>What already exists</small></div><div class="boxes">
       <div class="box"><b>Commercial banking and treasury</b><span>Payments, credit, financial-statement requests: the signal.</span></div>
       <div class="box"><b>Private Bank accounts</b><span>Where proceeds and heirs' accounts land.</span></div>
       <div class="box"><b>Advisor CRM</b><span>Relationship records, tasks and calendars.</span></div>
@@ -107,9 +107,9 @@
     <div class="card top-p"><h3>Pilot: 90 days</h3><p>10 families and 5 Private Business Strategists. Signal model trained on historical exits. Live models behind the gateway, advisor-only at first, then family-facing.</p></div>
     <div class="card top-g"><h3>Measures</h3><p>Check-in completion above 70%. First family meeting before the letter of intent. Next-gen accounts opened per family within 12 months. Share of proceeds retained.</p></div>
   </div>
-  <div class="card" style="margin-top:14px;border-left:5px solid var(--attn)"><h3>Open questions to validate</h3><p>Whether business-account signals may be used for Private Bank outreach under PNC's data-sharing and consent policies. Which model performs best per task on a PNC evaluation set. How advisors want the workbench embedded in their current desktop.</p></div>
+  <div class="card" style="margin-top:14px;background:var(--attn-bg);box-shadow:none"><h3>Open questions to validate</h3><p>Whether business-account signals may be used for Private Bank outreach under PNC's data-sharing and consent policies. Which model performs best per task on a PNC evaluation set. How advisors want the workbench embedded in their current desktop.</p></div>
 </div></section>
 
-<footer><div class="wrap">Alen Ilmi · Rizaldy Utomo · Nindy Aditya Dewi · Aditya Mulya Pratama, Carnegie Mellon University · CSL 2026. Student concept, not a PNC product. Claude is a product of Anthropic; GPT is a product of OpenAI; neither is integrated in this prototype. <a href="https://github.com/rzrizaldy/pnc_csl_2026">Source on GitHub</a></div></footer>
+<footer><div class="wrap">Alen Ilmi, Rizaldy Utomo, Nindy Aditya Dewi and Aditya Mulya Pratama, Carnegie Mellon University, for CSL 2026. Student concept, not a PNC product. Claude is a product of Anthropic; GPT is a product of OpenAI; neither is integrated in this prototype. <a href="https://github.com/rzrizaldy/pnc_csl_2026">Source on GitHub</a></div></footer>
 </body>
 </html>

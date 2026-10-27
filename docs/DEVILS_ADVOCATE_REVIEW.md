@@ -109,3 +109,24 @@ Every 10 families like the Hales is about $270M at closing. The national pool is
 2. Make the Canva deck use the Hale family and the 4-step journey.
 3. Record the video (`video/RECORDING_SCRIPT.md`).
 4. Ask Alen to sanity-check the 0.8% fee and the engagement-letter answer with a banker.
+
+## Round 2: design devil's advocate (template tells and ease)
+
+**What made it look AI-generated (Verified, all removed):**
+- **One-sided accent stripes, 20 instances:** colored top bars on cards, left bars on quotes, personas, tables and callouts, and top bars on slide cards. These are replaced with full tinted blocks, icons, avatars, or nothing at all.
+- **Tracked-out uppercase eyebrows** on every slide and site section. These are now sentence case. The PNC nav keeps its uppercase tabs, because that comes from the real design system.
+- **"A · B · C" strings, 76 instances.** These are rewritten as sentences.
+- **"1 ·" numbering on items that aren't a sequence** (slide callouts, secret-sauce pillars, architecture layers). Removed. The 4-step journey keeps its numbers because it is a sequence.
+- **Boxed stat cards and tag pills with stripes.** Stats are now big numbers with no box, and tags are plain tinted pills.
+- **The "CLAUDE · GPT" badge on the ask bar.** Removed. The model switch lives only inside the Ask sheet.
+
+**What made it hard to judge in two minutes (fixed):**
+- **No obvious path.** A judge landed on a list of seven people. Now there is one primary action, "Take the 2-minute tour", plus three suggested starting people and the rest of the family below.
+- **The guided tour.** It walks 5 steps:
+  1. Alex sees the signal.
+  2. Sloane shares in private.
+  3. Alex sees the gap.
+  4. The clause goes to counsel.
+  5. Dale sees his number.
+
+  Each step pulses the exact control to tap and ticks off when it's done. The site's main button deep-links into it (`prototype/?tour`).

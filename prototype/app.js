@@ -10,10 +10,11 @@
   // ---------- state ----------
   const KEY = "family-table-v5";
   const fresh = () => ({ model: "claude", shared: [], optOut: false, approved: false, started: false, routed: {}, notified: false,
-    weight: 50, trust: false, proposed: false, agreed: {}, answers: {}, intro: {} });
+    weight: 50, trust: false, proposed: false, agreed: {}, answers: {}, intro: {}, tour: -1 });
   let state = fresh();
   try {
     if (new URLSearchParams(location.search).has("reset")) localStorage.removeItem(KEY);
+    if (new URLSearchParams(location.search).has("tour")) { localStorage.removeItem(KEY); var startTour = true; }
     const saved = JSON.parse(localStorage.getItem(KEY) || "null");
     if (saved) state = Object.assign(fresh(), saved);
   } catch (e) { /* storage blocked: keep in-memory state */ }
@@ -106,7 +107,7 @@
   function trip() {
     const tl = S.deal.timeline, cur = tl.findIndex(s => s.now);
     return `<div class="trip" aria-label="Sale progress"><div class="bars">${tl.map((s, i) => `<i class="${i < cur ? "done" : i === cur ? "now" : ""}"></i>`).join("")}</div>
-      <div class="now-line"><b>Buyer is reviewing the books</b><span>Closing · Mar</span></div>
+      <div class="now-line"><b>Buyer is reviewing the books</b><span>Closing in March</span></div>
       <div class="steps">${["Offer", "Review", "Closing", "Earnout"].map((l, i) => `<span class="${i === cur ? "cur" : ""}">${l}</span>`).join("")}</div></div>`;
   }
   function waterfall() {
@@ -140,31 +141,63 @@
       <a class="me" href="#/" aria-label="Switch person">${who}</a></div></header>`;
   }
   const bnav = () => nav().length ? `<nav class="bnav" aria-label="Sections">${nav().map(([h, l, i]) => `<a href="#/${h}" class="${route === h ? "on" : ""}">${ic(i, 22)}${l}</a>`).join("")}</nav>` : "";
-  const askbar = (label = "Ask about the sale") => `<button class="askbar" data-act="ask-open">${ic("search", 20, 2)}${label}<span class="kbd">CLAUDE · GPT</span></button>`;
+  const askbar = (label = "Ask about the sale") => `<button class="askbar" data-act="ask-open">${ic("search", 20, 2)}${label}</button>`;
   const seg = () => `<div class="seg" role="group" aria-label="Split">${PRESETS.map(([l, w]) => `<button class="${state.weight === w ? "on" : ""}" data-act="preset" data-id="${w}" aria-pressed="${state.weight === w}">${l}</button>`).join("")}</div>`;
 
   // ---------- picker ----------
+  const START = [
+    ["advisor", "AL", "#EF6A00", "Alex Lee, PNC advisor", "Sees the sale coming a year early"],
+    ["me/sloane/checkin", "SH", "#6D4AA0", "Sloane Hale", "Says what she won't say at dinner"],
+    ["me/dale", "DH", "#6593C9", "Dale Hale", "Sees his own number first"],
+  ];
   function picker() {
-    return `<section class="splash"><div class="in"><h1>See one family sale through seven pairs of eyes.</h1>
-      <p>The Hales are selling Hale Freight for $48M. Each family member is modelled on a character from HBO's Succession. Choose a person; the app adapts to them.</p></div></section>
-      <div class="page"><div class="section"><div class="section-head"><h2>PNC</h2></div>
-        <div class="rows"><a class="row" href="#/advisor"><span class="av" style="background:#EF6A00">AL</span><div class="tx"><b>Alex Lee</b><span>Private Business Strategist</span><em>Sees signals, gaps and documents across the family</em></div>${chev}</a></div></div>
-      <div class="section"><div class="section-head"><h2>The Hale family</h2><span class="aside">Fictional</span></div>
-        <div class="rows people">${S.people.map(p => `<a class="row" href="#/me/${p.id}">${av(p)}<div class="tx"><b>${p.name}</b><span>${p.role}</span><em>The ${p.archetype.split(" ")[0]} · ${p.pattern}</em></div>${chev}</a>`).join("")}</div></div>
-      <p class="micro faint" style="margin-top:20px">All people, firms and figures are fictional. Succession references are commentary. <a href="?reset#/">Reset demo</a> · <a href="../">About this project</a></p></div>`;
+    const rest = S.people.filter(p => !["sloane", "dale"].includes(p.id));
+    return `<section class="splash"><div class="in"><h1>One sale. Six people. Everyone gets a say before the money moves.</h1>
+      <p>The Hales are selling Hale Freight for $48M. Each of them is modelled on a character from HBO's Succession.</p>
+      <button class="btn" style="margin-top:22px" data-act="tour-start">Take the 2-minute tour</button></div></section>
+      <div class="page"><section class="section"><div class="section-head"><h2>Or start with one person</h2></div>
+        <div class="starts">${START.map(([h, i, c, n, t]) => `<a class="start" href="#/${h}"><span class="av" style="background:${c}">${i}</span><b>${n}</b><span>${t}</span></a>`).join("")}</div></section>
+      <section class="section"><div class="section-head"><h2>The rest of the family</h2></div>
+        <div class="rows people">${rest.map(p => `<a class="row" href="#/me/${p.id}">${av(p)}<div class="tx"><b>${p.name}</b><span>${p.role}</span><em>Inspired by ${p.archetype}. ${p.pattern}</em></div>${chev}</a>`).join("")}</div></section>
+      <p class="micro faint" style="margin-top:20px">All people, firms and figures are fictional; Succession references are commentary. <a href="?reset#/">Reset the demo</a> or <a href="../">read about the project</a>.</p></div>`;
+  }
+
+  // ---------- guided tour ----------
+  const TOUR = [
+    { route: "advisor", title: "A sale is coming", hint: "Hale Freight's sale likelihood jumped to 81 this month. Tap Call Walt.", target: '[data-act="start"]', done: () => state.started },
+    { route: "me/sloane/checkin", title: "Sloane speaks in private", hint: "Nothing she writes leaves this screen unless she says so. Share answer 1 with Alex.", target: '[data-act="toggle-share"][data-id="q1"]', done: () => state.shared.includes("q1") },
+    { route: "advisor/align", title: "Alex sees the gap, not the words", hint: "Three of five expect to lead. Only Sloane's shared answer carries a name. Approve the brief.", target: '[data-act="approve"]', done: () => state.approved },
+    { route: "advisor/docs", title: "The clause nobody remembered", hint: "A 1998 agreement may let any child block the sale. Send it to the family attorney.", target: '[data-act="route"][data-id="divorce"]', done: () => !!state.routed.divorce },
+    { route: "me/dale/options", title: "Dale sees his number", hint: "Switch to Equity counted and watch every share move.", target: '[data-act="preset"][data-id="100"]', done: () => state.weight === 100 },
+  ];
+  function tourBar() {
+    if (state.tour < 0 || route.startsWith("story/")) return "";
+    const t = TOUR[state.tour], last = state.tour === TOUR.length - 1, here = route === t.route, ok = t.done();
+    return `<div class="tour" role="region" aria-label="Guided tour">
+      <div class="tour-top"><span>Step ${state.tour + 1} of ${TOUR.length}</span><div class="tour-dots">${TOUR.map((_, i) => `<i class="${i < state.tour ? "past" : i === state.tour ? "cur" : ""}"></i>`).join("")}</div><button class="tour-x" data-act="tour-end" aria-label="End tour">${ic("x", 16)}</button></div>
+      <b>${t.title}</b><p>${here ? (ok ? "Done. On to the next step." : t.hint) : "Open this step to continue."}</p>
+      <div class="tour-actions">${state.tour > 0 ? `<button class="btn ghost sm" data-act="tour-back">Back</button>` : ""}
+        ${here ? `<button class="btn sm ${ok ? "" : "quiet"}" data-act="tour-next">${last ? "Finish" : ok ? "Next" : "Skip"}</button>` : `<button class="btn sm" data-act="tour-go">Go to step ${state.tour + 1}</button>`}</div></div>`;
+  }
+  function tourTarget(scroll) {
+    if (state.tour < 0) return;
+    const t = TOUR[state.tour]; if (route !== t.route || t.done()) return;
+    const el = app.querySelector(t.target); if (!el) return;
+    el.classList.add("tour-target");
+    if (scroll) setTimeout(() => el.scrollIntoView({ block: "center", behavior: motionOK ? "smooth" : "auto" }), 450);
   }
 
   // ---------- family: home ----------
   function rowFor(id, pid) {
     const p = P[pid], done = p.status === "checked";
     const R = {
-      meeting: ["cal", "", "Family meeting", "Thu, Nov 12 · Hawthorn facilitator", `<span class="badge g">Booked</span>`, `me/${pid}/plan`],
-      checkin: ["lock", done ? "g" : "o", "Your check-in", done ? (pid === "sloane" ? `Complete · ${state.shared.length} of 3 answers shared` : "Complete") : "Not started · about 10 minutes", done ? "" : `<span class="badge o">To do</span>`, `me/${pid}/checkin`],
+      meeting: ["cal", "", "Family meeting", "Thursday, Nov 12, with a Hawthorn facilitator", `<span class="badge g">Booked</span>`, `me/${pid}/plan`],
+      checkin: ["lock", done ? "g" : "o", "Your check-in", done ? (pid === "sloane" ? `Done. ${state.shared.length} of 3 answers shared` : "Complete") : "Takes about 10 minutes", done ? "" : `<span class="badge o">To do</span>`, `me/${pid}/checkin`],
       options: ["scale", "", "Compare gift options", `${money(12)} split across four children`, "", `me/${pid}/options`],
-      role: ["brief", pid === "ross" ? "o" : "", "Your role after the sale", pid === "kyle" ? "COO for 2 years · $1.5M equity in NorthPeak" : "No role named in the offer yet", pid === "ross" ? `<span class="badge o">Raise it</span>` : "", `me/${pid}/plan`],
-      account: ["bank", "", "Set up an account for your gift", "Any bank · PNC can open one in minutes", "", `me/${pid}/plan`],
+      role: ["brief", pid === "ross" ? "o" : "", "Your role after the sale", pid === "kyle" ? "Two-year COO offer and $1.5M in NorthPeak equity" : "No role named in the offer yet", pid === "ross" ? `<span class="badge o">Raise it</span>` : "", `me/${pid}/plan`],
+      account: ["bank", "", "Set up an account for your gift", "Any bank works. PNC can open one in minutes", "", `me/${pid}/plan`],
       nextchapter: ["compass", "p", "Plan your next chapter", "Owners who plan life after a sale regret it less", "", `me/${pid}/plan`],
-      contingency: ["shield", "", "If Walt can't continue", "Signed plan on file · Oct 20", "", `me/${pid}/plan`],
+      contingency: ["shield", "", "If Walt can't continue", "Signed on Oct 20 and kept on file", "", `me/${pid}/plan`],
     }[id];
     if (!R) return "";
     return `<a class="row" href="#/${R[5]}"><span class="ic ${R[1]}">${ic(R[0])}</span><div class="tx"><b>${R[2]}</b><span>${R[3]}</span></div>${R[4]}${chev}</a>`;
@@ -180,7 +213,7 @@
   function heroFor(pid) {
     if (pid === "walt") return `<div class="label">What you keep at closing</div><div class="value" data-count="${net()}" data-fmt="m">${money(net())}</div><div class="caption">After debt, fees and estimated tax. The $8.0M earnout is paid later, if targets are met.</div>`;
     if (pid === "marisa") return `<div class="label">Set aside for you and Walt</div><div class="value" data-count="9" data-fmt="m">${money(9)}</div><div class="caption">Part of the ${money(net())} Walt keeps at closing.</div>`;
-    return `<div class="label">Your share of the family gift</div><div class="value" data-mine data-count="${gifts(state.weight / 100)[pid]}" data-fmt="m">${money(gifts(state.weight / 100)[pid])}</div><div class="caption">At closing, expected in March · <span data-preset>${presetName()}</span> split</div>${seg()}`;
+    return `<div class="label">Your share of the family gift</div><div class="value" data-mine data-count="${gifts(state.weight / 100)[pid]}" data-fmt="m">${money(gifts(state.weight / 100)[pid])}</div><div class="caption">Paid at closing in March, with the <span data-preset>${presetName()}</span> split</div>${seg()}`;
   }
   function memberHome(pid) {
     const p = P[pid], kid = KIDS.includes(pid);
@@ -236,7 +269,7 @@
         <button class="switch" role="switch" aria-checked="${!state.optOut}" aria-label="Include my themes in the family summary" data-act="toggle-summary"></button></div>`;
     return `<div class="page"><div class="cols"><div class="col-main">${head}${summary}<section class="section">${qs}</section></div>
       <aside class="col-side"><div class="panel"><div class="section-head"><h2>Preview: what Alex sees</h2></div>
-        ${S.checkin.sloane.map((q, i) => state.shared.includes(q.id) ? `<div class="quote"><small>Answer ${i + 1} · shared</small>“${esc(state.answers[q.id] ?? q.a)}”</div>` : `<div class="sealed">${ic("lock", 16)}<span>Answer ${i + 1} · private</span></div>`).join("")}
+        ${S.checkin.sloane.map((q, i) => state.shared.includes(q.id) ? `<div class="quote"><small>${ic("chat", 14)} Answer ${i + 1}, shared with Alex</small>“${esc(state.answers[q.id] ?? q.a)}”</div>` : `<div class="sealed">${ic("lock", 16)}<span>Answer ${i + 1} is private</span></div>`).join("")}
         <p class="micro faint" style="margin-top:10px">${state.optOut ? "Your themes are not in the family summary." : "Your themes count toward the family summary, without your name."}</p>
       </div></aside></div></div>`;
   }
@@ -251,7 +284,7 @@
     const kid = KIDS.includes(pid);
     return `<div class="page"><div class="cols"><div class="col-main">
       <section class="hero"><div class="label">${kid ? "Your share" : "Family gift"}</div><div class="value" ${kid ? "data-mine" : ""} data-count="${kid ? gifts(state.weight / 100)[pid] : 12}" data-fmt="m">${kid ? money(gifts(state.weight / 100)[pid]) : money(12)}</div>
-        <div class="caption">${kid ? `${state.trust ? "Released over 10 years" : "At closing"} · <span data-preset>${presetName()}</span> split` : "Split across Dale, Kyle, Ross and Sloane"}</div>${seg()}</section>
+        <div class="caption">${kid ? `${state.trust ? "Paid over 10 years" : "Paid at closing"}, with the <span data-preset>${presetName()}</span> split` : "Split across Dale, Kyle, Ross and Sloane"}</div>${seg()}</section>
       <section class="section"><div class="section-head"><h2>Fine-tune</h2><span class="aside" data-wlabel>${state.weight}% of buyer equity counted</span></div>
         <input type="range" min="0" max="100" step="5" value="${state.weight}" data-act="weight" aria-label="Share of buyer equity counted"><div class="range-ends"><span>Equal</span><span>Fully counted</span></div>
         <div data-sibs style="margin-top:6px">${siblings()}</div>
@@ -275,23 +308,23 @@
 
   // ---------- advisor ----------
   function advHome() {
-    const s = S.signal, list = [{ client: "Hale Freight", note: "Walt Hale · 6 family members", score: s.score, change: s.change, history: s.history }, ...s.others];
+    const s = S.signal, list = [{ client: "Hale Freight", note: "Walt Hale and five family members", score: s.score, change: s.change, history: s.history }, ...s.others];
     const watch = list.map(c => `<a class="row" href="#/advisor"><div class="tx"><b>${c.client}</b><span>${c.note}</span></div>${spark(c.history, c.change > 0 ? "#EF6A00" : "#2E7D32")}<div class="rt">${c.score}<small style="color:${c.change > 0 ? "var(--orange-700)" : "var(--pos)"}">${c.change > 0 ? "▲" : "▼"} ${Math.abs(c.change)}</small></div></a>`).join("");
     const attention = [
-      ["r", "doc", "A 1998 agreement may let any child block the sale", "Document AI · 93% confidence", "advisor/docs"],
-      ["o", "users", `${numWord(claimants().length)} family members expect to lead`, `Anonymous family summary · ${contributors()} contributors`, "advisor/align"],
+      ["r", "doc", "A 1998 agreement may let any child block the sale", "Found by Document AI, 93% confidence", "advisor/docs"],
+      ["o", "users", `${numWord(claimants().length)} family members expect to lead`, `From an anonymous summary of ${contributors()} people`, "advisor/align"],
       ["", "chat", "Marisa hasn't checked in", "Invited Oct 20", "advisor/align"],
-      ["g", "cal", "Family meeting booked", "Thu, Nov 12 · Hawthorn facilitator", "advisor/plan"],
+      ["g", "cal", "Family meeting booked", "Thursday, Nov 12, with a Hawthorn facilitator", "advisor/plan"],
     ].map(([c, i, t, s2, h]) => `<a class="row" href="#/${h}"><span class="ic ${c}">${ic(i)}</span><div class="tx"><b>${t}</b><span>${s2}</span></div>${chev}</a>`).join("");
     return `<div class="page"><div class="cols wide-side">
       <aside class="col-side"><div class="section-head"><h2>Watchlist</h2><span class="aside">Sale likelihood</span></div><div class="rows">${watch}</div></aside>
       <div class="col-main">
-        <section class="hero"><div class="label">Hale Freight · sale likelihood</div><div class="value"><span data-count="${s.score}" data-fmt="i">${s.score}</span><span class="unit">/ 100</span></div>
+        <section class="hero"><div class="label">Hale Freight sale likelihood</div><div class="value"><span data-count="${s.score}" data-fmt="i">${s.score}</span><span class="unit">/ 100</span></div>
           <div class="delta up">▲ ${s.change} this month</div><div class="caption">Likely sale in ${s.horizon}, based on activity in the company's PNC accounts.</div>
           <div class="chart">${lineChart(s.history)}<div class="chart-x"><span>Nov</span><span>Feb</span><span>May</span><span>Aug</span><span>Oct</span></div></div></section>
         <section class="section"><div class="section-head"><h2>What's driving it</h2><span class="aside">Share of score</span></div>
           <div class="rows">${s.reasons.map(r => `<div class="row"><div class="tx"><b style="font-weight:500">${r.text}</b></div><div class="bar weight"><i style="width:${r.weight / 0.36 * 100}%;background:var(--orange)"></i></div><div class="rt" style="width:40px">${Math.round(r.weight * 100)}%</div></div>`).join("")}</div>
-          <div style="margin-top:14px">${state.started ? `<button class="btn done" disabled>${ic("check", 18, 2.4)} Called Walt · Oct 15</button>` : `<button class="btn" data-act="start">${ic("phone", 18)} Call Walt</button>`}</div></section>
+          <div style="margin-top:14px">${state.started ? `<button class="btn done" disabled>${ic("check", 18, 2.4)} Called Walt on Oct 15</button>` : `<button class="btn" data-act="start">${ic("phone", 18)} Call Walt</button>`}</div></section>
         <div class="cols" style="margin-top:8px;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px">
           <section class="section"><div class="section-head"><h2>Needs your attention</h2></div><div class="rows">${attention}</div></section>
           <section class="section"><div class="section-head"><h2>The Hale family</h2><span class="aside">${heirs().length} of 4 children bank elsewhere</span></div><div class="table-viz">${familyTable(260)}</div>${tableLegend()}</section>
@@ -302,10 +335,10 @@
 
   function advAlign() {
     const named = state.shared.includes("q1"), n = contributors(), cl = claimants();
-    if (n < MIN_GROUP) return `<div class="page"><section class="hero"><div class="label">Hale family · alignment</div><div class="value">Not enough answers</div><div class="caption">The family summary appears when at least ${MIN_GROUP} members contribute.</div></section></div>`;
+    if (n < MIN_GROUP) return `<div class="page"><section class="hero"><div class="label">Hale family alignment</div><div class="value">Not enough answers</div><div class="caption">The family summary appears when at least ${MIN_GROUP} members contribute.</div></section></div>`;
     const rows = summaryThemes().map(th => ({ th, g: gap(th) })).sort((a, b) => b.g - a.g).map(({ th, g }) => `<div class="gap-row ${g >= 0.75 ? "high" : ""}"><span>${th.label}</span>${spread(th)}<b>${g.toFixed(2)}</b></div>`).join("");
     return `<div class="page"><div class="cols"><div class="col-main">
-      <section class="hero"><div class="label">Hale family · leadership after the sale</div><div class="value">${cl.length} of ${n}<span class="unit">expect to lead</span></div>
+      <section class="hero"><div class="label">Who leads after the sale</div><div class="value">${cl.length} of ${n}<span class="unit">expect to lead</span></div>
         <div class="caption">${named ? `Sloane shared that Walt promised her the role in private. The others remain anonymous.` : `From the anonymous summary of ${n} members who agreed to contribute. No names unless someone shares.`}</div>
         <div class="claim"><div class="seat">Leads<br>after sale</div><div class="claimants">${cl.map(id => named && id === "sloane" ? `<span class="claimant" style="background:${P.sloane.color}">S</span>` : `<span class="claimant" aria-label="Anonymous">?</span>`).join("")}</div></div></section>
       <section class="section"><div class="section-head"><h2>Where the family differs</h2><span class="aside">Gap, 0 to 1</span></div>${rows}
@@ -320,7 +353,7 @@
           <p class="micro faint">Drafted by a language model from themes and shared answers only.</p>
           <div style="margin-top:12px">${state.approved ? `<button class="btn ghost block" data-act="unapprove">Reopen draft</button>` : `<button class="btn navy block" data-act="approve">Approve brief</button>`}</div></div>
         <div class="panel"><div class="section-head"><h2>Sloane's answers</h2><span class="aside">${state.shared.length} of 3 shared</span></div>
-          ${S.checkin.sloane.map((q, i) => state.shared.includes(q.id) ? `<div class="quote"><small>${q.q}</small>“${esc(state.answers[q.id] ?? q.a)}”</div>` : `<div class="sealed">${ic("lock", 16)}<span>Answer ${i + 1} · private</span></div>`).join("")}</div>
+          ${S.checkin.sloane.map((q, i) => state.shared.includes(q.id) ? `<div class="quote"><small>${q.q}</small>“${esc(state.answers[q.id] ?? q.a)}”</div>` : `<div class="sealed">${ic("lock", 16)}<span>Answer ${i + 1} is private</span></div>`).join("")}</div>
       </aside></div></div>`;
   }
 
@@ -330,20 +363,20 @@
       return `<div class="panel"><div class="row" style="padding:0;border:0"><span class="file ${d.type === "Scan" ? "scan" : ""}">${d.type === "Scan" ? "IMG" : "PDF"}</span><div class="tx"><b>${d.name}</b><span>${d.pages} page${d.pages > 1 ? "s" : ""}</span></div><span class="badge ${d.risk === "High" ? "r" : "o"}">${d.risk} risk</span></div>
         <p style="margin-top:14px;font-weight:600">${d.finding}</p><p class="small muted" style="margin-top:4px">${d.impact}</p>
         <div class="conf"><div class="bar"><i style="width:${d.conf * 100}%"></i></div>${Math.round(d.conf * 100)}% extraction confidence</div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">${routed ? `<button class="btn done sm" disabled>${ic("check", 16, 2.4)} Sent · ${d.action}</button>` : `<button class="btn navy sm" data-act="route" data-id="${d.id}">${d.action}</button>`}
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">${routed ? `<button class="btn done sm" disabled>${ic("check", 16, 2.4)} ${d.done}</button>` : `<button class="btn navy sm" data-act="route" data-id="${d.id}">${d.action}</button>`}
           ${d.id === "divorce" && routed ? (state.notified ? `<button class="btn done sm" disabled>${ic("check", 16, 2.4)} Counsel's summary shared</button>` : `<button class="btn sm" data-act="notify">Share counsel's summary with the children</button>`) : ""}</div></div>`;
     }).join("");
     return `<div class="page"><div class="cols"><div class="col-main">
-      <section class="hero"><div class="label">Hale family · documents reviewed</div><div class="value">2<span class="unit">high-risk findings</span></div><div class="caption">Document AI read 3 files, 61 pages. Nothing reaches the family until you approve it.</div></section>
+      <section class="hero"><div class="label">Documents reviewed</div><div class="value">2<span class="unit">high-risk findings</span></div><div class="caption">Document AI read 3 files, 61 pages. Nothing reaches the family until you approve it.</div></section>
       <section class="section">${docs}</section></div>
       <aside class="col-side"><div class="panel"><div class="section-head"><h2>Why it matters</h2></div><p class="small muted">In Succession, a clause in an old divorce agreement decided who could block the sale, and the children learned too late. Here it surfaces months before closing.</p></div></aside></div></div>`;
   }
 
   function advPlan() {
     return `<div class="page"><div class="cols"><div class="col-main">
-      <section class="hero"><div class="label">Next generation · not yet PNC clients</div><div class="value">$9.0–10.0M</div><div class="caption">Dale, Ross and Sloane could receive this at closing. None bank with PNC today.</div></section>
-      <section class="section"><div class="section-head"><h2>Introduce PNC</h2></div><div class="rows">${heirs().map(h => `<div class="row">${av(h)}<div class="tx"><b>${h.name}</b><span>${money(gifts(state.weight / 100)[h.id])} at closing · ${h.role}</span></div>${state.intro[h.id] ? `<span class="badge g">Intro requested</span>` : `<button class="btn ghost sm" data-act="intro" data-id="${h.id}">Introduce</button>`}</div>`).join("")}</div></section>
-      <section class="section"><div class="section-head"><h2>Specialist tasks</h2></div><div class="rows">${S.tasks.map(t => `<div class="row"><div class="tx"><b>${t.what}</b><span>${t.who} · due ${t.due}</span></div><span class="badge ${t.status === "Booked" ? "g" : t.status.startsWith("Waiting") ? "p" : "n"}">${t.status}</span></div>`).join("")}</div></section>
+      <section class="hero"><div class="label">Heirs who bank elsewhere today</div><div class="value">$9.0–10.0M</div><div class="caption">Dale, Ross and Sloane could receive this at closing. None bank with PNC today.</div></section>
+      <section class="section"><div class="section-head"><h2>Introduce PNC</h2></div><div class="rows">${heirs().map(h => `<div class="row">${av(h)}<div class="tx"><b>${h.name}</b><span>${money(gifts(state.weight / 100)[h.id])} at closing</span></div>${state.intro[h.id] ? `<span class="badge g">Intro requested</span>` : `<button class="btn ghost sm" data-act="intro" data-id="${h.id}">Introduce</button>`}</div>`).join("")}</div></section>
+      <section class="section"><div class="section-head"><h2>Specialist tasks</h2></div><div class="rows">${S.tasks.map(t => `<div class="row"><div class="tx"><b>${t.what}</b><span>${t.who}, due ${t.due}</span></div><span class="badge ${t.status === "Booked" ? "g" : t.status.startsWith("Waiting") ? "p" : "n"}">${t.status}</span></div>`).join("")}</div></section>
       </div><aside class="col-side">
         <div class="panel"><div class="section-head"><h2>If Walt can't continue</h2><span class="badge g">Signed</span></div><p class="small muted" style="margin-top:6px">${S.contingency}</p></div>
         <div class="panel"><div class="section-head"><h2>Decision log</h2></div><div class="rows">${[...S.ledger, ...Object.keys(state.agreed).map(id => ({ t: "Today", who: P[id].name, what: "Agreed to the plan in principle." }))].map(l => `<div class="row"><div class="tx"><b>${l.who}</b><span>${l.what}</span></div><div class="rt micro faint" style="font-weight:500">${l.t}</div></div>`).join("")}</div></div>
@@ -352,19 +385,20 @@
 
   // ---------- story cards (video only) ----------
   function story(id) {
-    const eyebrow = `<div class="eyebrow">Family Table · a PNC Private Bank concept</div>`;
+    const eyebrow = `<div class="eyebrow">${mark} Family Table, a PNC Private Bank concept</div>`;
+    const cast = S.people.filter(p => p.id !== "marisa").map(p => `<div><span class="av" style="background:${p.color === "#10214D" ? "#EF6A00" : p.color}">${ini(p)}</span><span><b>${p.name}</b><small>Inspired by ${p.archetype}</small></span></div>`).join("");
     const cards = {
-      hook: `${eyebrow}<h1>In Succession, Logan Roy sells the company and loses the family.</h1><p class="sub">Promises made in private. A clause no one remembered. A note in a safe. Real family businesses face the same moments.</p><div class="rule"></div>`,
-      cast: `${eyebrow}<h1>Meet the Hales: a $48M freight company with the same problems.</h1><div class="cast">${S.people.filter(p => p.id !== "marisa").map(p => `<div style="--c:${p.color === "#10214D" ? "#EF6A00" : p.color}"><b>${p.name}</b><span>The ${p.archetype.split(" ")[0]} · ${p.pattern}</span></div>`).join("")}<div style="--c:#fff"><b>Alex Lee, PNC</b><span>The advisor who usually hears about it last.</span></div></div>`,
+      hook: `${eyebrow}<h1>In Succession, Logan Roy sells the company and loses the family.</h1><p class="sub">Promises made in private. A clause no one remembered. A note in a safe. Real family businesses face the same moments.</p>`,
+      cast: `${eyebrow}<h1>Meet the Hales: a $48M freight company with the same problems.</h1><div class="cast">${cast}<div><span class="av" style="background:#fff;color:#10214D">AL</span><span><b>Alex Lee, PNC</b><small>The advisor who usually hears last</small></span></div></div>`,
       problem: `${eyebrow}<h1>The sale is when families split and money leaves the bank.</h1><div class="stats">
         <div class="stat"><b>13%</b><p>of adult children use their parents' financial advisor.</p><small>Cerulli Associates, 2019</small></div>
         <div class="stat"><b>75%</b><p>of owners “profoundly regretted” selling a year later.</p><small>PNC, Begin at the end</small></div>
-        <div class="stat"><b>50%</b><p>of business exits are involuntary: death, illness, divorce, dispute.</p><small>PNC Business Succession Planning series</small></div></div>`,
-      sauce: `${eyebrow}<h1>Why only PNC can build this</h1><div class="stats">
-        <div class="stat"><b style="font-size:34px">A signal PNC already holds</b><p>Business-account activity flags a sale a year before closing.</p></div>
-        <div class="stat" style="border-color:#9A7FC6"><b style="font-size:34px">Private by default</b><p>Each person answers alone. The advisor sees the gaps, not the words.</p></div>
-        <div class="stat" style="border-color:#93B86F"><b style="font-size:34px">One household graph</b><p>Heirs become PNC clients before the money moves.</p></div></div>`,
-      close: `${eyebrow}<h1>Keep the proceeds. Meet the next generation. Help a family stay a family.</h1><div class="rule"></div><p class="sub" style="font-size:20px">Alen Ilmi · Rizaldy Utomo · Nindy Aditya Dewi · Aditya Mulya Pratama · Carnegie Mellon University</p>`,
+        <div class="stat"><b>1 in 2</b><p>business exits are involuntary: death, illness, divorce or dispute.</p><small>PNC Business Succession Planning series</small></div></div>`,
+      sauce: `${eyebrow}<h1>Why only PNC can build this</h1><div class="stats pillars">
+        <div class="stat"><span class="pi">${ic("flag", 26)}</span><b>A signal PNC already holds</b><p>Business-account activity can flag a sale a year before closing.</p></div>
+        <div class="stat"><span class="pi">${ic("lock", 26)}</span><b>Private by default</b><p>Each person answers alone. The advisor sees the gaps, not the words.</p></div>
+        <div class="stat"><span class="pi">${ic("users", 26)}</span><b>One household graph</b><p>Heirs meet PNC before the money moves.</p></div></div>`,
+      close: `${eyebrow}<h1>Keep the proceeds. Meet the next generation. Help a family stay a family.</h1><p class="sub" style="font-size:20px">Alen Ilmi, Rizaldy Utomo, Nindy Aditya Dewi and Aditya Mulya Pratama, Carnegie Mellon University</p>`,
     };
     return `<section class="storycard"><div class="inner">${cards[id] || cards.hook}</div></section>`;
   }
@@ -375,10 +409,10 @@
     switch (kind) {
       case "proceeds": return `<div class="mini">${waterfall()}</div>`;
       case "mine": return `<div class="mini"><div class="small muted">Your share at closing</div><div style="font-size:32px;font-weight:600;color:var(--navy)">${money(gifts(0)[v])}–${money(gifts(1)[v]).slice(1)}</div><div class="micro faint">Equal split to equity counted</div></div>`;
-      case "clause": return `<div class="mini"><div class="row" style="padding:0;border:0"><span class="file">PDF</span><div class="tx"><b>Divorce agreement, 1998</b><span>Clause 7.2 · consent of all four children</span></div></div><div class="conf"><div class="bar"><i style="width:93%"></i></div>93% confidence · attorney confirming</div></div>`;
-      case "role": return v === "ross" ? flat(`<span class="ic o">${ic("brief")}</span><div class="tx"><b>Sales team retained 12 months</b><span>No role named for Ross</span></div>`) : flat(`<span class="ic">${ic("brief")}</span><div class="tx"><b>COO · 2-year contract</b><span>$1.5M equity in NorthPeak</span></div>`);
-      case "meeting": return flat(`<span class="ic">${ic("cal")}</span><div class="tx"><b>Family meeting · Thu, Nov 12</b><span>Consent clause · Leadership · Fairness</span></div>`);
-      case "contingency": return flat(`<span class="ic g">${ic("shield")}</span><div class="tx"><b>Contingency plan · signed Oct 20</b><span>Kyle leads 90 days; family council decides within 30</span></div>`);
+      case "clause": return `<div class="mini"><div class="row" style="padding:0;border:0"><span class="file">PDF</span><div class="tx"><b>Divorce agreement, 1998</b><span>Clause 7.2: consent of all four children</span></div></div><div class="conf"><div class="bar"><i style="width:93%"></i></div>93% confidence, attorney confirming</div></div>`;
+      case "role": return v === "ross" ? flat(`<span class="ic o">${ic("brief")}</span><div class="tx"><b>Sales team retained 12 months</b><span>No role named for Ross</span></div>`) : flat(`<span class="ic">${ic("brief")}</span><div class="tx"><b>Two-year COO contract</b><span>$1.5M equity in NorthPeak</span></div>`);
+      case "meeting": return flat(`<span class="ic">${ic("cal")}</span><div class="tx"><b>Family meeting, Thursday Nov 12</b><span>Consent clause, then leadership, then fairness</span></div>`);
+      case "contingency": return flat(`<span class="ic g">${ic("shield")}</span><div class="tx"><b>Contingency plan, signed Oct 20</b><span>Kyle leads 90 days; family council decides within 30</span></div>`);
       case "prep": return `<div class="mini"><div class="rows"><div class="row"><span class="ic">1</span><div class="tx"><b>Consent clause</b></div></div><div class="row"><span class="ic">2</span><div class="tx"><b>Leadership overlap</b></div></div><div class="row"><span class="ic">3</span><div class="tx"><b>Fairness</b></div></div></div></div>`;
       case "heirs": return `<div class="mini"><div class="rows">${heirs().map(h => `<div class="row">${av(h, 32)}<div class="tx"><b>${h.short}</b><span>${h.pnc}</span></div><div class="rt">${money(gifts(0)[h.id])}+</div></div>`).join("")}</div></div>`;
     }
@@ -404,7 +438,7 @@
     const qRows = () => `<div class="rows">${qs.map((q, i) => `<button class="row" data-act="ask" data-id="${i}"><span class="ic">${ic("chat", 18)}</span><div class="tx"><b style="font-weight:500">${q.q}</b></div>${chev}</button>`).join("")}</div>`;
     const convo = sheet.convo.map(m => m.role === "user" ? `<div class="msg-user"><p>${m.text}</p></div>`
       : `<div class="steps-list">${m.tools.slice(0, m.shownTools).map(([label, call]) => `<div>${ic("check", 16, 2.4)}${label}<code>${call}</code></div>`).join("")}</div>
-         ${m.shown ? `<div class="answer"><span class="src">${m.model === "claude" ? "Claude" : "GPT"} · via PNC AI gateway</span>${m.shown}</div>` : ""}
+         ${m.shown ? `<div class="answer"><span class="src">${m.model === "claude" ? "Claude" : "GPT"} via PNC's AI gateway</span>${m.shown}</div>` : ""}
          ${m.done ? miniCard(m.card, v) + `<div class="checks"><span>${ic("check", 14, 2.4)}Figures from PNC's calculator</span><span>${ic("check", 14, 2.4)}No private answers used</span><span>${ic("check", 14, 2.4)}Not legal or tax advice</span></div>` : ""}`).join("");
     sheetRoot.innerHTML = `<div class="scrim" data-act="close"></div>
       <div class="sheet" role="dialog" aria-label="Ask"><div class="grab"></div>
@@ -453,10 +487,17 @@
     else if (v && P[v]) { const sub = route.split("/")[2]; html = sub === "checkin" ? checkin(v) : sub === "options" ? options(v) : sub === "plan" ? famPlan(v) : memberHome(v); }
     else html = picker();
     document.body.classList.toggle("story", route.startsWith("story/"));
-    app.innerHTML = route.startsWith("story/") ? html : appbar() + html + bnav();
+    app.innerHTML = route.startsWith("story/") ? html : appbar() + html + tourBar() + bnav();
+    document.body.classList.toggle("touring", state.tour >= 0 && !route.startsWith("story/"));
+    tourTarget(arrive);
     app.classList.remove("anim");
     if (arrive && motionOK) enter();
     renderSheet();
+  }
+  function refreshTour() {
+    const old = app.querySelector(".tour"); if (!old) return;
+    const tmp = document.createElement("div"); tmp.innerHTML = tourBar(); old.replaceWith(tmp.firstElementChild);
+    app.querySelectorAll(".tour-target").forEach(el => el.classList.remove("tour-target")); tourTarget(false);
   }
   function refreshSplit() {
     const q = s => document.querySelectorAll(s), v = viewer();
@@ -483,9 +524,14 @@
     else if (a === "propose") set({ proposed: true });
     else if (a === "trust") set({ trust: !state.trust });
     else if (a === "toggle-summary") set({ optOut: !state.optOut });
+    else if (a === "tour-start") { state.tour = 0; save(); location.hash = "#/" + TOUR[0].route; }
+    else if (a === "tour-go") location.hash = "#/" + TOUR[state.tour].route;
+    else if (a === "tour-next") { if (state.tour >= TOUR.length - 1) { state.tour = -1; save(); location.hash = "#/"; } else { state.tour++; save(); location.hash = "#/" + TOUR[state.tour].route; } }
+    else if (a === "tour-back") { state.tour = Math.max(0, state.tour - 1); save(); location.hash = "#/" + TOUR[state.tour].route; }
+    else if (a === "tour-end") set({ tour: -1 });
     else if (a === "intro") set({ intro: Object.assign({}, state.intro, { [id]: true }) });
     else if (a === "agree") set({ agreed: Object.assign({}, state.agreed, { [id]: true }) });
-    else if (a === "preset") { state.weight = +id; save(); refreshSplit(); }
+    else if (a === "preset") { state.weight = +id; save(); refreshSplit(); refreshTour(); }
     else if (a === "ask-open") { sheet = { kind: "ask", convo: [], busy: false }; renderSheet(); }
     else if (a === "why") { sheet = { kind: "why", convo: [], busy: false }; renderSheet(); }
     else if (a === "close") { sheet.kind = null; renderSheet(); }
@@ -494,7 +540,7 @@
   });
   document.addEventListener("input", e => {
     const el = e.target;
-    if (el.dataset.act === "weight") { state.weight = +el.value; save(); refreshSplit(); }
+    if (el.dataset.act === "weight") { state.weight = +el.value; save(); refreshSplit(); refreshTour(); }
     if (el.dataset.live) {
       const box = document.querySelector(`[data-tags="${el.dataset.live}"]`);
       if (el.dataset.live !== "intro") state.answers[el.dataset.live] = el.value;
@@ -510,5 +556,6 @@
   });
   window.FT = { reset() { state = fresh(); save(); render(); }, state: () => state,
     ask: i => { sheet = { kind: "ask", convo: [], busy: false }; runAsk(i); }, why: () => { sheet = { kind: "why", convo: [], busy: false }; renderSheet(); } };
+  if (typeof startTour !== "undefined" && startTour) { state.tour = 0; save(); history.replaceState(null, "", location.pathname + "#/" + TOUR[0].route); }
   render(true);
 })();
