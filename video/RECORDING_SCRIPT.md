@@ -1,4 +1,4 @@
-# Family Table: narration to record (for Nindy)
+# Family Table: narration to record (for Nindy) · v2, Succession case
 
 **Read all 11 lines in one take. Leave a 2-second pause between lines** (count "one, two" in your head). The video re-times itself to your pace, so don't rush.
 
@@ -7,53 +7,53 @@ Target: **about 1:50 of speaking**, 2:00 at most.
 
 ---
 
-### 1 · Hook · about 9 s
-Margaret built Wilson Transport over **thirty years**. / Next year, she'll **sell** it. / Her three kids don't know what that means for them. / **Neither does her bank.**
+### 1 · Hook · about 10 s
+In *Succession*, Logan Roy sells his company / and **loses his family**. / Secret promises. / A forgotten clause. / A note in a safe. / Real families **do the same**.
 
 *(pause 2 s)*
 
 ### 2 · Problem · about 8 s
-That sale is when families **split** / and money walks out the door. / **Seventy-five percent** of owners profoundly regret selling, / a year later.
+When a family business sells, / the money usually **leaves the bank** with the kids. / Only **thirteen percent** of heirs keep their parents' advisor.
 
 *(pause 2 s)*
 
-### 3 · Intro · about 7 s
-This is **Family Table**: / one platform for PNC Private Bank, / with a portal for the **family** / and a workbench for the **advisor**.
+### 3 · Meet the Hales · about 6 s
+Meet the Hales: / a forty-eight-million-dollar freight company, / with **the same family**.
 
 *(pause 2 s)*
 
-### 4 · The signal · about 12 s
-It starts with a signal **PNC already holds**. / Activity on Wilson's business account flags a likely sale, / **a year ahead**. / Alex, the advisor, sees why, / and calls Margaret **before** the deal is signed.
+### 4 · Spot · about 10 s
+PNC already **banks the business**. / Payments to deal advisers flag a likely sale / **a year ahead**, / so Alex, the advisor, calls / **before** anything is signed.
 
 *(pause 2 s)*
 
-### 5 · What the sale means · about 7 s
-Margaret sees what she'll **really keep**, / after debt, fees and taxes, / with the earnout set aside / because it isn't guaranteed.
+### 5 · Listen · about 9 s
+Each family member has their say, / **privately**. / As Sloane types, AI picks out the themes. / **She** decides what Alex can read.
 
 *(pause 2 s)*
 
-### 6 · Private check-in · about 7 s
-Then each family member checks in, / **privately**. / Emma chooses which answers Alex can read. / Her family **never** sees them.
+### 6 · Align · about 9 s
+Alex sees the **gaps**, not the words. / **Three** people expect to lead. / AI drafts the brief; / **Alex approves it**.
 
 *(pause 2 s)*
 
-### 7 · Alignment brief · about 10 s
-Alex sees **where** the family disagrees, / not **what** they wrote. / A fixed formula scores the gaps, / a language model drafts the brief, / and **Alex approves it**.
+### 7 · The clause · about 6 s
+Document AI finds the clause nobody remembered: / **any one child** can block the sale.
 
 *(pause 2 s)*
 
-### 8 · Options · about 6 s
-The family compares three ways to share the gift: / numbers from a calculator, / trade-offs in plain English.
+### 8 · Adaptive · about 12 s
+And every screen **adapts**. / Dale just wants to know when he gets paid, / so that comes **first**. / He asks in plain words, / and Claude or GPT answers, / inside PNC's guardrails.
 
 *(pause 2 s)*
 
-### 9 · Plan · about 6 s
-They agree on a plan, / and everyone gets a next step, / including the kids who **don't bank with PNC yet**.
+### 9 · Act · about 7 s
+The family compares fair splits, / agrees a plan, / and **signs it**. / No more notes in the safe.
 
 *(pause 2 s)*
 
 ### 10 · Why only PNC · about 11 s
-Why only PNC? / It **sees** the sale coming. / It **hears** what families won't say out loud. / And it **maps** the whole household, / so heirs become clients / before the money moves.
+Why only PNC? / It **sees** the sale coming. / It **hears** what families won't say out loud. / And it **meets the heirs** / before the money moves.
 
 *(pause 2 s)*
 
@@ -63,27 +63,19 @@ Why only PNC? / It **sees** the sale coming. / It **hears** what families won't 
 ---
 
 ## Tone
-- **Warm and calm, like talking to one person**, not a crowd. Lines 1–2 are a story; from line 3, a little more energy.
-- **Slow down** on "seventy-five percent", "a year ahead" and "never".
+- **Warm and a little wry** on line 1, which is the TV hook. Then calm and confident, like talking to one person.
+- **Slow down** on "thirteen percent", "a year ahead" and "any one child".
 - **Land the ending:** a short beat after "Family Table.", then three even phrases.
 
+**Pronunciation:** Logan **LOH-gun** · Hale **HAYL** · Sloane **SLOHN**
+
 ## How to record (5 minutes)
-1. **Room:** quiet, with soft furnishings and no fan. Face a window or lamp so your face is lit from the front.
-2. **Camera:** laptop webcam at eye level. Frame head and shoulders, centred, with a plain background. The video crops you to a circle, so keep your face in the middle.
-3. **App:** QuickTime Player → File → **New Movie Recording**. Choose the best camera and mic, and set quality to Maximum. Loom works too: record "camera only" and download the MP4.
+1. **Room:** quiet, with soft furnishings and no fan. Light your face from the front with a window or lamp.
+2. **Camera:** laptop webcam at eye level. Frame head and shoulders, centred, with a plain background. You'll be cropped to a circle.
+3. **App:** QuickTime Player → File → **New Movie Recording**, quality Maximum. Loom "camera only" works too.
 4. **Take:**
    1. Press record and wait 2 seconds.
    2. Read lines 1 to 11 with 2-second pauses.
    3. Wait 2 seconds, then stop.
-   4. If you stumble, pause 2 seconds and re-read **that whole line**. Tell Rz which line you redid.
+   4. If you stumble, pause 2 seconds and re-read **that whole line**.
 5. **Send:** drop the .mov or .mp4 in the team folder and tell Rz.
-
-## What happens next
-Rz's script:
-1. Cleans the audio.
-2. Splits it into the 11 lines on your pauses.
-3. Syncs each line to its prototype screen.
-4. Puts your face in a round bubble during the demo.
-5. Adds captions and quiet music.
-
-You'll get a draft to review the same evening.

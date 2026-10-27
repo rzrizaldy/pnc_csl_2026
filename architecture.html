@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Solution architecture — Family Table</title>
+  <meta name="description" content="Family Table solution architecture: channels, adaptive UI, AI orchestration with a model gateway for Claude and GPT, deterministic services, consented data and PNC systems.">
+  <meta name="theme-color" content="#1A2B5C">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="site.css">
+</head>
+<body>
+<nav class="nav"><div class="wrap">
+  <a class="brand" href="./"><svg viewBox="0 0 32 32" width="22" height="22" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="16" cy="16" r="5" fill="#EF6A00"/><circle cx="16" cy="5" r="2.4" fill="#fff"/><circle cx="26" cy="20" r="2.4" fill="#fff"/><circle cx="6" cy="20" r="2.4" fill="#fff"/></svg>Family Table</a>
+  <a class="link" href="./">Overview</a><a class="link" href="case.html">The case</a><a class="link on" href="architecture.html">Architecture</a><a class="link" href="prototype/?reset#/">Prototype</a>
+</div></nav>
+
+<header class="hero"><div class="wrap">
+  <div class="eyebrow">Solution architecture</div>
+  <h1>AI reads and explains. Formulas do the money. People decide.</h1>
+  <p class="sub">Six layers, from the screens families use down to the PNC systems that already hold the signal. Every AI output passes a consent check, a schema check and, where it matters, an advisor.</p>
+</div></header>
+
+<section class="block"><div class="wrap">
+  <h2>The stack</h2>
+  <p class="lead">Read top to bottom: a request starts on a screen and only reaches data it is allowed to see.</p>
+  <div class="layers">
+    <div class="layer" style="--c:#1A2B5C"><div class="name">1 · Channels<small>Where people use it</small></div><div class="boxes">
+      <div class="box"><b>Family app</b><span>Mobile-first web app; one login per family member.</span></div>
+      <div class="box"><b>Advisor workbench</b><span>Inside the advisor's existing desktop; signals, gaps, documents, plan.</span></div>
+      <div class="box"><b>Nudges</b><span>Email and SMS reminders; never contain private answers.</span></div></div></div>
+    <div class="layer" style="--c:#2F6DB5"><div class="name">2 · Experience<small>What each person sees</small></div><div class="boxes">
+      <div class="box hl"><b>Adaptive UI engine</b><span>Screens are built from cards. A ranking model orders cards per person by role and the themes they raised; each card says why it is there.</span></div>
+      <div class="box"><b>Plain-words layer</b><span>Every label has a plain and a detailed version; people pick.</span></div>
+      <div class="box"><b>Ask Family Table</b><span>Assistant that answers with a card, shows the tools it used, and states its limits.</span></div></div></div>
+    <div class="layer" style="--c:#6D4AA0"><div class="name">3 · AI orchestration<small>How models are used safely</small></div><div class="boxes">
+      <div class="box hl"><b>Model gateway</b><span>One PNC endpoint in front of <strong>Claude</strong> (Anthropic) and <strong>GPT</strong> (OpenAI). PNC picks a model per task from evaluation scores and vendor policy; switching needs no app change.</span></div>
+      <div class="box"><b>Agent runtime</b><span>Plans a request and calls tools: <span class="mono">calc</span>, <span class="mono">docs</span>, <span class="mono">graph</span>, <span class="mono">calendar</span>, <span class="mono">ledger</span>.</span></div>
+      <div class="box"><b>Guardrails</b><span>Consent filter before the model; schema validation after; no legal or tax advice; personal data redacted from logs.</span></div>
+      <div class="box"><b>Review queue</b><span>Briefs, document findings and anything sent to the family wait for advisor approval.</span></div></div></div>
+    <div class="layer" style="--c:#424B5A"><div class="name">4 · Deterministic services<small>Numbers PNC can audit</small></div><div class="boxes">
+      <div class="box"><b>Sale-likelihood model</b><span>Gradient-boosted classifier on business-account events; nightly batch; reasons per score.</span></div>
+      <div class="box"><b>Proceeds and split calculator</b><span>Offer → net waterfall; equal, equitable and trust options. Rules owned by tax and trust specialists.</span></div>
+      <div class="box"><b>Gap score</b><span>(highest − lowest stance) ÷ 4 per theme. Transparent, no model.</span></div>
+      <div class="box"><b>Document parsing</b><span>OCR and layout extraction before the language model reads a file.</span></div></div></div>
+    <div class="layer" style="--c:#6F9A4B"><div class="name">5 · Data and trust<small>What is stored, and who can see it</small></div><div class="boxes">
+      <div class="box hl"><b>Member vaults</b><span>Each person's raw answers, encrypted with their own key. Only they, and anyone they share an answer with, can read them.</span></div>
+      <div class="box"><b>Household graph</b><span>Business ↔ owners ↔ spouse ↔ heirs ↔ trusts ↔ accounts.</span></div>
+      <div class="box"><b>Consent ledger</b><span>Every share and withdrawal, timestamped.</span></div>
+      <div class="box"><b>Decision log and audit</b><span>Signed decisions; every model call with version, inputs and approver.</span></div></div></div>
+    <div class="layer" style="--c:#B84F00"><div class="name">6 · PNC systems<small>What already exists</small></div><div class="boxes">
+      <div class="box"><b>Commercial banking and treasury</b><span>Payments, credit, financial-statement requests: the signal.</span></div>
+      <div class="box"><b>Private Bank accounts</b><span>Where proceeds and heirs' accounts land.</span></div>
+      <div class="box"><b>Advisor CRM</b><span>Relationship records, tasks and calendars.</span></div>
+      <div class="box"><b>Hawthorn IFS</b><span>Facilitators for family meetings.</span></div></div></div>
+  </div>
+  <div class="boundary"><b>Privacy boundary.</b> Raw check-in text never leaves a member's vault. Only themes, gap scores and answers the member chose to share cross into the advisor view. The model reading a check-in runs inside that boundary and returns themes only.</div>
+</div></section>
+
+<section class="block"><div class="wrap">
+  <h2>One request, end to end</h2>
+  <p class="lead">Dale opens the app on his phone and asks: <b>“Can Dad sell without us?”</b></p>
+  <ol class="flow">
+    <li><b>Sign-in and scope.</b> The gateway knows it's Dale, a child of the owner. His scope: his own vault, family-shared documents and the deal timeline.</li>
+    <li class="gate"><b>Consent filter.</b> Other members' answers are removed before anything reaches a model. Only documents Alex has released to the children are in scope.</li>
+    <li><b>Plan.</b> The agent picks tools: <code>docs.search("consent AND sale")</code> and <code>policy.check(legal_advice=false)</code>.</li>
+    <li><b>Retrieve.</b> Clause 7.2 of the 1998 agreement comes back with its page and a 93% extraction confidence.</li>
+    <li><b>Draft.</b> Claude or GPT writes a short answer in the required schema (below), citing the clause.</li>
+    <li class="gate"><b>Check.</b> The schema is validated; the policy layer adds “this is a legal question” and points to the attorney's review.</li>
+    <li><b>Render.</b> The adaptive UI shows the answer with a document card and the list of tools used.</li>
+    <li><b>Log.</b> Model, version, tools, inputs and output go to the audit log. Alex can see that Dale asked, not the conversation.</li>
+  </ol>
+  <h3 style="margin-top:22px;color:var(--navy);font-size:20px">The contract every model must meet</h3>
+  <p class="lead" style="font-size:16px">Because both models must return this structure, PNC can swap or compare them without touching the app.</p>
+<pre class="json">{
+  <span class="k">"answer"</span>: <span class="s">"Possibly not. A 1998 agreement says a sale needs written consent from all four children…"</span>,
+  <span class="k">"card"</span>: { <span class="k">"type"</span>: <span class="s">"document_finding"</span>, <span class="k">"doc_id"</span>: <span class="s">"divorce-1998"</span>, <span class="k">"clause"</span>: <span class="s">"7.2"</span>, <span class="k">"confidence"</span>: 0.93 },
+  <span class="k">"citations"</span>: [ { <span class="k">"doc_id"</span>: <span class="s">"divorce-1998"</span>, <span class="k">"page"</span>: 31 } ],
+  <span class="k">"numbers_from"</span>: <span class="s">"none"</span>,
+  <span class="k">"advice_flags"</span>: [ <span class="s">"legal"</span> ],
+  <span class="k">"needs_human"</span>: <span class="s">"family_attorney"</span>
+}</pre>
+</div></section>
+
+<section class="block"><div class="wrap">
+  <h2>Every AI component</h2>
+  <p class="lead">What it reads, what it produces, and who checks it.</p>
+  <div class="table-scroll"><table class="t">
+    <thead><tr><th>Component</th><th>Reads</th><th>Produces</th><th>Human check</th></tr></thead>
+    <tbody>
+      <tr style="--c:var(--blue)"><td style="--c:var(--blue)">Sale-likelihood model<small>Machine learning</small></td><td>Business-account events: adviser payments, statement requests, early paydowns.</td><td>0–100 score, timing, top reasons.</td><td>Advisor decides whether to call. Never shown to clients.</td></tr>
+      <tr><td style="--c:var(--purple)">Document AI<small>OCR + language model</small></td><td>Divorce agreements, buy-sell agreements, wills, handwritten notes.</td><td>Findings with clause, page, risk and confidence.</td><td>Advisor approves; attorney or specialist confirms; then the family is told.</td></tr>
+      <tr><td style="--c:var(--purple)">Theme extraction<small>Language model, inside the vault</small></td><td>One person's free-text answers.</td><td>Stances on six themes; flags like “private promise”.</td><td>The member sees and can fix their own themes.</td></tr>
+      <tr><td style="--c:var(--slate)">Gap score<small>Fixed formula</small></td><td>Everyone's stances.</td><td>Gap per theme, 0 to 1; leadership collisions.</td><td>Transparent; no model.</td></tr>
+      <tr><td style="--c:var(--slate)">Proceeds and split calculator<small>Fixed formula</small></td><td>Verified deal terms, tax rules, the family's choices.</td><td>Waterfall; each person's share under each option.</td><td>Tax and trust specialists own the rules.</td></tr>
+      <tr><td style="--c:var(--green)">Card ranking<small>Ranking model + rules</small></td><td>Role, themes the person raised, deal stage.</td><td>Order of cards on each home screen, with a reason.</td><td>Always shows why; never hides required notices.</td></tr>
+      <tr><td style="--c:var(--purple)">Assistant<small>Claude or GPT via gateway</small></td><td>Only what the asker may see.</td><td>Plain answer + card + tools used, in the schema above.</td><td>No legal or tax advice; decisions go to Alex.</td></tr>
+      <tr><td style="--c:var(--purple)">Brief writer<small>Language model</small></td><td>Gap scores, shared answers, findings.</td><td>Draft family-meeting brief for the advisor.</td><td>Advisor edits and approves; logged.</td></tr>
+    </tbody></table></div>
+</div></section>
+
+<section class="block"><div class="wrap">
+  <h2>From prototype to pilot</h2>
+  <div class="grid c3">
+    <div class="card top-b"><h3>Today: prototype</h3><p>Static web app on GitHub Pages. AI responses are simulated with the same schema and tool trace a live system would return. No real client data.</p></div>
+    <div class="card top-p"><h3>Pilot: 90 days</h3><p>10 families and 5 Private Business Strategists. Signal model trained on historical exits. Live models behind the gateway, advisor-only at first, then family-facing.</p></div>
+    <div class="card top-g"><h3>Measures</h3><p>Check-in completion above 70%. First family meeting before the letter of intent. Next-gen accounts opened per family within 12 months. Share of proceeds retained.</p></div>
+  </div>
+  <div class="card" style="margin-top:14px;border-left:5px solid var(--attn)"><h3>Open questions to validate</h3><p>Whether business-account signals may be used for Private Bank outreach under PNC's data-sharing and consent policies. Which model performs best per task on a PNC evaluation set. How advisors want the workbench embedded in their current desktop.</p></div>
+</div></section>
+
+<footer><div class="wrap">Alen Ilmi · Rizaldy Utomo · Nindy Aditya Dewi · Aditya Mulya Pratama, Carnegie Mellon University · CSL 2026. Student concept, not a PNC product. Claude is a product of Anthropic; GPT is a product of OpenAI; neither is integrated in this prototype. <a href="https://github.com/rzrizaldy/pnc_csl_2026">Source on GitHub</a></div></footer>
+</body>
+</html>

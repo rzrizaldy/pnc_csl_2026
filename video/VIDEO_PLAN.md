@@ -20,34 +20,34 @@ From the prompt: a 2:00 elevator pitch to the committee. It should *hook, give t
 - **Captions** at the bottom centre, in the prototype's Barlow font. Many judges watch on mute.
 - **Music:** a quiet, original background bed, generated in code so there are no licence issues. It ducks under the voice.
 
-## 3. Storyboard and script (≈250 words ≈ 1:50)
+## 3. Storyboard and script v2: the Succession case (226 words, about 1:50)
 
-| # | Time | Screen (prototype route) | On-screen action | Narration (Nindy) |
-|---|---|---|---|---|
-| 1 | 0:00 | `story/hook` | — | Margaret built Wilson Transport over thirty years. Next year, she'll sell it. Her three kids don't know what that means for them. Neither does her bank. |
-| 2 | 0:11 | `story/problem` | stats build in | That sale is when families split and money walks out the door. Seventy-five percent of owners profoundly regret selling, a year later. |
-| 3 | 0:21 | `advisor/signals` | face bubble appears | This is Family Table: one platform for PNC Private Bank, with a portal for the family and a workbench for the advisor. |
-| 4 | 0:30 | `advisor/signals` | cursor → **Start conversation** | It starts with a signal PNC already holds. Activity on Wilson's business account flags a likely sale, a year ahead. Alex, the advisor, sees why, and calls Margaret before the deal is signed. |
-| 5 | 0:44 | `family/overview` | slow scroll waterfall → donut | Margaret sees what she'll really keep, after debt, fees and taxes, with the earnout set aside because it isn't guaranteed. |
-| 6 | 0:53 | `family/checkin` | cursor → **Share with Alex** on answer 2 | Then each family member checks in, privately. Emma chooses which answers Alex can read. Her family never sees them. |
-| 7 | 1:02 | `advisor/brief` | the shared answer unlocks; cursor → **Approve brief** | Alex sees where the family disagrees, not what they wrote. A fixed formula scores the gaps, a language model drafts the brief, and Alex approves it. |
-| 8 | 1:14 | `family/options` | cursor hovers the three options | The family compares three ways to share the gift: numbers from a calculator, trade-offs in plain English. |
-| 9 | 1:22 | `family/plan` | cursor → **Approve plan** | They agree on a plan, and everyone gets a next step, including the kids who don't bank with PNC yet. |
-| 10 | 1:31 | `story/sauce` | three layers build in | Why only PNC? It sees the sale coming. It hears what families won't say out loud. And it maps the whole household, so heirs become clients before the money moves. |
-| 11 | 1:44 | `story/close` | end card, team names | Family Table. Keep the proceeds. Meet the next generation. Help a family stay a family. |
+| # | Screen (prototype route) | On-screen action | Narration (Nindy) |
+|---|---|---|---|
+| 1 | `story/hook` | — | In Succession, Logan Roy sells his company and loses his family. Secret promises. A forgotten clause. A note in a safe. Real families do the same. |
+| 2 | `story/problem` | stats build in | When a family business sells, the money usually leaves the bank with the kids. Only thirteen percent of heirs keep their parents' advisor. |
+| 3 | `story/cast` | Hale ↔ Roy cast | Meet the Hales: a forty-eight-million-dollar freight company, with the same family. |
+| 4 | `advisor` | gauge, then cursor → **Call Walt** | PNC already banks the business. Payments to deal advisers flag a likely sale a year ahead, so Alex, the advisor, calls before anything is signed. |
+| 5 | `me/sloane/checkin` | tags pop as text appears; cursor → **Share with Alex** on answer 1 | Each family member has their say, privately. As Sloane types, AI picks out the themes. She decides what Alex can read. |
+| 6 | `advisor/align` | collision shows one named seat; cursor → **Approve brief** | Alex sees the gaps, not the words. Three people expect to lead. AI drafts the brief; Alex approves it. |
+| 7 | `advisor/docs` | cursor → **Family attorney to confirm**, then **Tell the four children** | Document AI finds the clause nobody remembered: any one child can block the sale. |
+| 8 | `me/dale` → Ask sheet | switch between people; Ask "When would I actually get money?" (tool trace, answer, card) | And every screen adapts. Dale just wants to know when he gets paid, so that comes first. He asks in plain words, and Claude or GPT answers, inside PNC's guardrails. |
+| 9 | `me/dale/options` → `me/walt/plan` | drag slider 0 → 100; cursor → **I agree in principle** | The family compares fair splits, agrees a plan, and signs it. No more notes in the safe. |
+| 10 | `story/sauce` | three layers | Why only PNC? It sees the sale coming. It hears what families won't say out loud. And it meets the heirs before the money moves. |
+| 11 | `story/close` | end card, team names | Family Table. Keep the proceeds. Meet the next generation. Help a family stay a family. |
 
-The times are estimates at about 145 words a minute with short gaps. Nindy's real pace re-times every scene automatically (§5), so nothing needs to be timed by hand.
+**Hard cap is 2:00.** If the take runs long, cut line 3 first, then line 7. Lines 4–6 and 8 stay.
 
-**Hard cap is 2:00.** If the take runs long, cut line 8 first, then line 3. The demo lines (4–7) stay.
+**Mobile moment:** scene 8 is rendered at phone size (390×844), centred on the navy pattern, so judges see that the family side works on a phone.
 
-**Facts used, all with sources on screen:**
-- "Seventy-five percent profoundly regret" is from PNC Paper 2. The story card cites it.
-- "A year ahead" matches the prototype's 12–18-month signal, which is a concept.
+**Facts spoken, all cited on screen:**
+- "Thirteen percent" is from Cerulli 2019, via InvestmentNews.
+- The plot points are paraphrased from the episodes listed on `case.html`.
 - No other statistics are spoken.
 
 ## 4. What Nindy records
 
-One take with webcam and mic, reading `RECORDING_SCRIPT.md` with **two-second pauses** between the 11 lines. It takes about 5 minutes including a retake.
+One take with webcam and mic, reading `RECORDING_SCRIPT.md` (v2) with **two-second pauses** between the 11 lines. It takes about 5 minutes including a retake.
 
 ## 5. Build plan (after script sign-off; adapted from Vitamin Bob, `~/CodeFolder/hack4nation_health_worldbank/video/src`)
 
@@ -91,5 +91,6 @@ One take with webcam and mic, reading `RECORDING_SCRIPT.md` with **two-second pa
 ## 7. Decisions still open
 
 - [ ] Product name on the end card ("Family Table" is a working name)
+- [ ] Team OK with leading on Succession (the deck persona slide still shows the Wilson family; switch to the Hales?)
 - [ ] Do we show team faces at the end, or just names?
 - [ ] English accent and pace: Nindy's natural pace is fine; the pipeline adapts

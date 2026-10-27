@@ -9,6 +9,38 @@ Canva deck: https://www.canva.com/design/DAHY7Vfs02I (currently 24 pages; pages 
 
 ---
 
+## 0. What changed in round 2 (Rz, Oct 26 night)
+
+The concept now runs on a **Succession case study**. Read https://rzrizaldy.github.io/pnc_csl_2026/case.html (5 minutes).
+
+- **New case family: the Hales.** Hale Freight, a $48M offer, a mid-market version of the Roy family. Personas: Walt (Logan), Marisa (Marcia), Dale (Connor), Kyle (Kendall), Ross (Roman), Sloane (Shiv). The advisor is still Alex Lee. This replaces the Wilson family in the prototype.
+- **Simpler journey:** 4 steps (Spot → Listen → Align → Act) instead of 6. Each step says what the family sees, what the advisor sees, what AI does, and who decides.
+- **Six Succession failure patterns,** each checked against the PNC papers and mapped to a feature:
+  - the private promise
+  - the founder who won't step back
+  - the forgotten clause
+  - the heir who needs cash
+  - death mid-deal
+  - the note in the safe
+- **Prototype rebuilt:**
+  - mobile-first
+  - plain-words / detailed toggle
+  - adaptive home screens per person, with "why you see this"
+  - live AI theme tagging in the check-in
+  - Document AI findings
+  - a split slider
+  - an Ask assistant with a Claude/GPT switch (simulated)
+- **Solution architecture page:** https://rzrizaldy.github.io/pnc_csl_2026/architecture.html. It shows the 6 layers, the privacy boundary, one request end to end, and the model output contract.
+- **New stats** (cited):
+  - only 13% of heirs keep their parents' advisor (Cerulli 2019)
+  - 37% of wealth-transfer talks are informal (Julius Baer 2024)
+- **Video script v2** is in `video/RECORDING_SCRIPT.md` (226 words).
+
+**Needs the team:**
+1. Agree to lead with Succession.
+2. Nindy: update the persona slide (p5) from Margaret Wilson to Walt and Sloane Hale, or keep Margaret and drop the Hales. Say which.
+3. Adit: the journey slides (p6–8) can collapse to the 4 steps.
+
 ## 1. Decisions we need today (Mon night)
 
 | # | Decision | Proposal (Rz) | Who decides |
