@@ -32,13 +32,13 @@ The demo follows the guided tour, which alternates the family side and the advis
 | 4 | `advisor` | Advisor | chart draws; cursor → **Call Margaret** | PNC already banks the business. Payments to deal advisers flag a likely sale a year ahead, so Alex calls Margaret before anything is signed. |
 | 5 | `me/margaret` | Family | cursor → **Invite the family**; voices appear | Margaret invites her family. Each of them answers in private. She sees who has answered, never what they said. |
 | 6 | `me/claire/checkin` | Family | tags pop as text appears; cursor → **Share** on answer 1 | Claire writes what she's never told her mother: equal is the only fair split. She decides whether Alex can read it. |
-| 7 | `advisor/align` | Advisor | 4 of 5 voices; founder's view against the family's; cursor → **Approve brief** | Alex now hears four voices, not one. Margaret's plan assumes the kids agree. The family's widest gap is fairness. AI drafts the brief, a facilitator is booked, and Alex approves it. |
-| 8 | `me/sam` → `me/sam/options` → Ask | Family | **Equity counted**; shares move; Ask "When will I receive my share?" | Sam just wants his number. So that comes first, and every share moves together as the family compares splits. Claude or GPT explains, inside PNC's guardrails. |
-| 9 | `advisor/docs` → `advisor/plan` | Advisor | **Send to estate attorney**, then **Introduce** Claire | Old documents go to the right specialist, and Alex meets Claire and Sam before eight million dollars reaches them. |
-| 10 | `story/sauce` | — | three layers | Why only PNC? It sees the sale coming. It hears what families won't say out loud. And it meets the heirs before the money moves. |
-| 11 | `story/close` | — | end card, team names | Family Table. A plan the family trusts. An advisor who hears everyone. Proceeds that stay. |
+| 7 | `advisor/align` | Advisor | the AI trace plays: check-ins → gap formula → Margaret's plan → the will → draft brief; cursor → **Approve** | Alex now hears four voices, not one. AI reads the check-ins, scores the gaps, and finds the old will. Margaret thought the kids agreed. The widest gap is fairness, and Alex approves the brief. |
+| 8 | `me/sam/options` | Family | three split cards; cursor → vote **Balanced**; tally appears as counts | Sam sees his number under every split, and votes in private. The family sees a count, never a name. |
+| 9 | `me/sam/ask` → `advisor/inbox` | Both | Sam asks; Alex's inbox shows the AI draft; cursor → **Approve and send** | When Sam has a question, it goes to Alex. AI drafts the reply; Alex checks it, and sends. |
+| 10 | `year-one` | Both | big numbers: $27.0M placed, 5 of 5 with PNC, $8.5M reached Claire and Sam | One year on, the sale has closed, the plan is everyday banking, and all five Wilsons work with PNC. |
+| 11 | `story/sauce` → `story/close` | — | three layers, then end card | Why only PNC? It sees the sale coming, hears what families won't say out loud, and meets the heirs before the money moves. Family Table. A plan the family trusts. |
 
-**Hard cap is 2:00.** If the take runs long, cut line 3 first, then the second sentence of line 8. Lines 4 to 7 stay.
+**Hard cap is 2:00.** If the take runs long, cut line 3 first, then the last sentence of line 8. Lines 4 to 7 and 10 stay.
 
 **Facts spoken, all cited on screen:**
 - "Thirteen percent" is from Cerulli 2019, via InvestmentNews.

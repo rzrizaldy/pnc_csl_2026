@@ -5,7 +5,7 @@
 Target: **about 1:50 of speaking**, 2:00 at most.
 **Bold** = stress this word. ` / ` = a small breath.
 
-The screen follows the guided tour (`prototype/?tour`): it alternates the family side and the advisor side.
+The screen follows the 8-step demo from the splash (`prototype/?tour`), alternating the family and advisor sides and ending on One year on.
 
 ---
 
@@ -40,27 +40,27 @@ Claire writes what she's never told her mother: / equal is the only fair split. 
 *(pause 2 s)*
 
 ### 7 · Align: advisor side · about 12 s
-Alex now hears **four voices**, not one. / Margaret's plan assumes the kids agree. / The family's widest gap / is **fairness**. / AI drafts the brief, / a facilitator is booked, / and **Alex approves it**.
+Alex now hears **four voices**, not one. / AI reads the check-ins, / scores the gaps, / and finds the old will. / Margaret thought the kids agreed. / The widest gap is **fairness**, / and **Alex approves** the brief.
 
 *(pause 2 s)*
 
-### 8 · Allocate: family side · about 10 s
-Sam just wants his number. / So that comes **first**, / and every share moves together / as the family compares splits. / Claude or GPT explains, / **inside PNC's guardrails**.
+### 8 · Allocate: family side · about 9 s
+Sam sees **his number** under every split, / and votes **in private**. / The family sees a count, / never a name.
 
 *(pause 2 s)*
 
-### 9 · Activate: advisor side · about 9 s
-Old documents go to the right specialist, / and Alex meets Claire and Sam / **before** eight million dollars reaches them.
+### 9 · Activate: both sides · about 8 s
+When Sam has a question, / it goes to **Alex**. / AI drafts the reply; / Alex checks it, / and sends.
 
 *(pause 2 s)*
 
-### 10 · Why only PNC · about 11 s
-Why only PNC? / It **sees** the sale coming. / It **hears** what families won't say out loud. / And it **meets the heirs** / before the money moves.
+### 10 · One year on · about 9 s
+One year on, / the sale has closed, / the plan is everyday banking, / and **all five** Wilsons work with PNC.
 
 *(pause 2 s)*
 
-### 11 · Close · about 7 s
-**Family Table.** / A plan the family trusts. / An advisor who hears everyone. / Proceeds that **stay**.
+### 11 · Why only PNC, and close · about 12 s
+Why only PNC? / It **sees** the sale coming, / **hears** what families won't say out loud, / and **meets the heirs** before the money moves. / **Family Table.** / A plan the family trusts.
 
 ---
 

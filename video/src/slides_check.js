@@ -9,10 +9,10 @@ const BIN = path.join(process.env.HOME, "Library/Caches/ms-playwright/chromium_h
 const [root, out] = process.argv.slice(2);
 const SHOTS = path.join(__dirname, "../../prototype/shots");
 const BLOBS = {
-  "c93fcfd1acf26b364c9f02d2373626f8": "me_sam_m.png",
-  "a9b684304a5d8436995f94b1d5f32088": "me_claire_checkin_m.png",
-  "f26b65ba2af286a34e471c7ed0f39039": "slide_advisor_home.png",
-  "27941fa91986918f88d1a61bb34ee249": "slide_advisor_align.png",
+  "bb6ce9bce7e651bd16badfc4b975f215": "me_sam_voted_m.png",
+  "3bb084389be7f5aecbfa94e9515c5996": "me_claire_checkin_m.png",
+  "c23687b87853216f7c4e53d773bcad8a": "slide_advisor_home.png",
+  "10300e4c12ca713e3ec613b333dbd32b": "slide_advisor_align.png",
 };
 const deck = JSON.parse(fs.readFileSync(path.join(root, "project/deck.json"), "utf8"));
 const CSS = `*,:before,:after{box-sizing:border-box;margin:0;padding:0;border:0 solid}

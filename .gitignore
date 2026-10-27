@@ -8,3 +8,4 @@ video/build/
 *.mov
 *.m4a
 video/src/node_modules/
+.claude/worktrees/
