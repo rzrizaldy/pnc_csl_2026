@@ -1,7 +1,5 @@
 # CSL 2026 · Team coordination notes
 
-> **October 26 revision:** The historical coordination notes below are preserved. Current product uses explicit sharing and owner-authorized referrals, with no private theme aggregates or predictive sale score. Use README.md, docs/DEVILS_ADVOCATE_REVIEW.md, slides/index.html and video/RECORDING_SCRIPT.md v3. The ten-slide local deck is a review draft. Canva and the prior Claude artifact have NOT been updated. Primary interviews and final video remain outstanding. Historical Wilson personas and v2 instructions below are superseded.
-
 Team: Alen · Rizaldy (Rz) · Nindy · Adit — CMU
 Deadline: **Wed Oct 28, 11:59 PM ET**. Submit (1) deck PDF, 8–10 slides; (2) 2-min video (MP4 or a link anyone can open).
 Internal target: **everything final by Wed 6 PM**. That leaves 6 hours of buffer for the PDF export and uploads.

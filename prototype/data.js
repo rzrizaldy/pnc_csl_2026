@@ -32,12 +32,27 @@ window.SEED = {
       status: "checked", pnc: "None · banks elsewhere", color: "#6D4AA0" },
   ],
 
+  signal: {
+    score: 81, band: "High", horizon: "12–18 months", change: 11,
+    // monthly sale-likelihood, oldest first (last value = today)
+    history: [18, 19, 22, 21, 26, 31, 35, 44, 52, 58, 70, 81],
+    reasons: [
+      { text: "Two payments to an M&A adviser and a valuation firm", weight: 0.34 },
+      { text: "Credit team asked for three years of audited financials", weight: 0.26 },
+      { text: "$2.5M credit line paid down 14 months early", weight: 0.21 },
+    ],
+    others: [
+      { client: "Okafor Precision", score: 44, band: "Watch", note: "Buy-sell agreement review", change: 6, history: [30, 31, 33, 32, 35, 36, 38, 37, 40, 41, 38, 44] },
+      { client: "Reyes Dental Group", score: 21, band: "Low", note: "Key-person policy renewed", change: -3, history: [25, 26, 24, 25, 23, 24, 22, 23, 24, 22, 24, 21] },
+    ],
+  },
+
   // Deterministic proceeds (illustrative; a PNC tax specialist confirms real figures).
   deal: { offer: 48.0, earnout: 8.0, debt: 3.5, fees: 1.5, tax: 8.0,
     buckets: [
-      { id: "spend", label: "Live on", detail: "Illustrative reserve; adequacy not assessed", value: 9.0, color: "#6F9A4B" },
+      { id: "spend", label: "Live on", detail: "Walt and Marisa, 30 years, with a cushion", value: 9.0, color: "#6F9A4B" },
       { id: "gift", label: "Give to the kids", detail: "Split four ways; see Options", value: 12.0, color: "#6D4AA0" },
-      { id: "invest", label: "Invest and give back", detail: "Illustrative long-term allocation; structure not decided", value: 6.0, color: "#6593C9" },
+      { id: "invest", label: "Invest and give back", detail: "Long-term portfolio and a family foundation", value: 6.0, color: "#6593C9" },
     ],
     // equity the active children keep with the buyer, used by the options slider
     rollover: { kyle: 1.5, ross: 0.5 },
@@ -74,10 +89,10 @@ window.SEED = {
   docs: [
     { id: "divorce", name: "Walt & Carol divorce agreement, 1998", type: "PDF", pages: 42,
       finding: "Clause 7.2: a sale of Hale Holdings needs written consent from all four children.",
-      impact: "Possible consent requirement; only counsel can determine legal effect.", risk: "High", action: "Family attorney to confirm", conf: 0.93 },
+      impact: "If confirmed, any one child may be able to block the sale.", risk: "High", action: "Send to family attorney", conf: 0.93 },
     { id: "note", name: "Handwritten note found in Walt's desk", type: "Scan", pages: 1,
       finding: "Names Kyle as successor. Undated and unsigned; one line may underline or cross out the name.",
-      impact: "Authenticity and legal effect are unresolved; send to counsel.", risk: "High", action: "Ask counsel to review the note", conf: 0.71 },
+      impact: "Probably not enforceable on its own, but family members may treat it as one. Counsel to advise.", risk: "High", action: "Ask counsel to review", conf: 0.71 },
     { id: "buysell", name: "Shareholder buy-sell agreement, 2011", type: "PDF", pages: 18,
       finding: "Valuation formula last updated in 2011, at 4× earnings.",
       impact: "The buyer's offer implies about 7×. Expect questions on price.", risk: "Medium", action: "Valuation specialist review", conf: 0.88 },
@@ -91,11 +106,11 @@ window.SEED = {
   ],
 
   ledger: [
-    { t: "Oct 14", who: "Relationship manager", what: "Owner-authorized referral recorded for Hale Freight." },
-    { t: "Oct 15", who: "Alex Lee", what: "Confirmed referral permission. Called Walt." },
+    { t: "Oct 14", who: "Signal model", what: "Sale likelihood 81 for Hale Freight. Sent to Alex for review." },
+    { t: "Oct 15", who: "Alex Lee", what: "Reviewed the signal. Called Walt." },
     { t: "Oct 20", who: "Walt Hale", what: "Invited his family. Chose private check-ins." },
     { t: "Oct 24", who: "Document AI", what: "Found clause 7.2 and the undated note. Sent to Alex." },
-    { t: "Oct 25", who: "Alex Lee", what: "Booked a proposed family meeting; brief approval pending." },
+    { t: "Oct 25", who: "Alex Lee", what: "Approved the alignment brief. Booked Hawthorn IFS." },
   ],
 
   contingency: "If Walt cannot continue before closing, Kyle leads day to day for 90 days and the family council decides within 30 days. Signed by Walt, dated, kept by PNC.",
@@ -126,29 +141,29 @@ window.SEED = {
       { q: "When will I receive my share?", card: "mine", tools: [["Read the deal timeline", "deal.timeline()"], ["Ran the gift calculator", "calc.gift_options(child='dale')"]],
         a: { claude: "At closing, expected in March. Your share is $3.0M with an equal split, and up to $3.5M if your brothers' buyer equity is counted. The earnout isn't part of the family gift.", gpt: "Expected at closing in March: $3.0M with an equal split, up to $3.5M if Kyle and Ross's buyer equity is counted." } },
       { q: "Can Dad sell without our consent?", card: "clause", tools: [["Searched family documents", "docs.search('consent AND sale')"], ["Checked advice policy", "policy.check(legal_advice=false)"]],
-        a: { claude: "The sample agreement contains a consent clause. Only counsel can determine whether it prevents a sale. The family attorney is confirming this before anyone relies on it.", gpt: "A 1998 agreement appears to require consent from all four children. The family attorney is confirming." } },
+        a: { claude: "Possibly not. A 1998 agreement appears to require written consent from all four children for a sale. The family attorney is confirming this before anyone relies on it.", gpt: "A 1998 agreement appears to require consent from all four children. The family attorney is confirming." } },
     ],
     kyle: [
       { q: "What's my role after the sale?", card: "role", tools: [["Read the letter of intent", "deal.terms(loi_v3, section='management')"]],
-        a: { claude: "The letter of intent offers a two-year COO contract and $1.5M of equity in NorthPeak. Family leadership is on the agenda for November 12.", gpt: "The LOI proposes a 2-year COO contract plus $1.5M of rollover equity. Family leadership is on the Nov 12 agenda." } },
+        a: { claude: "The letter of intent proposes a two-year COO contract and $1.5M of equity in NorthPeak; the buyer decides operating roles. Family leadership is on the agenda for Thursday, November 12.", gpt: "The LOI proposes a 2-year COO contract plus $1.5M of rollover equity. Family leadership is on the Nov 12 agenda." } },
       { q: "Can Dad sell without our consent?", card: "clause", tools: [["Searched family documents", "docs.search('consent AND sale')"], ["Checked advice policy", "policy.check(legal_advice=false)"]],
-        a: { claude: "The sample agreement contains a consent clause. Only counsel can determine whether it prevents a sale. The family attorney is confirming.", gpt: "A 1998 agreement may require consent from all four children. The family attorney is confirming." } },
+        a: { claude: "Possibly not. A 1998 agreement appears to require written consent from all four children for a sale. The family attorney is confirming.", gpt: "A 1998 agreement may require consent from all four children. The family attorney is confirming." } },
     ],
     ross: [
       { q: "Does the offer include a role for me?", card: "role", tools: [["Read the letter of intent", "deal.terms(loi_v3, section='management')"]],
-        a: { claude: "Not yet. The letter keeps the sales team for 12 months but doesn't name your role. Raise it with Alex before closing.", gpt: "No role is named for you yet; the sales team is retained for 12 months. Raise it with Alex before closing." } },
+        a: { claude: "Not yet. The letter keeps the sales team for 12 months but doesn't name your role. Raise it with Alex before the letter is signed.", gpt: "No role is named for you yet; the sales team is retained for 12 months. Raise it with Alex before signing." } },
     ],
     sloane: [
       { q: "Who decides who leads?", card: "meeting", tools: [["Checked the family calendar", "calendar.next('family_meeting')"], ["Checked brief status", "brief.status()"]],
-        a: { claude: "Family governance is on the November 12 agenda. NorthPeak controls operating appointments under the final deal; the family cannot promise a buyer role. Only shared concerns enter Alex’s preparation.", gpt: "Discuss family governance on Nov 12. Operating roles depend on NorthPeak and the final agreements. Your unshared answers stay out of Alex’s view." } },
+        a: { claude: "The family discusses it together at the Thursday, November 12 meeting with a Hawthorn facilitator; the buyer decides roles inside NorthPeak. Your private answers stay private.", gpt: "It's on the agenda for the facilitated family meeting on Nov 12. Your answers remain private." } },
       { q: "Can Dad sell without our consent?", card: "clause", tools: [["Searched family documents", "docs.search('consent AND sale')"], ["Checked advice policy", "policy.check(legal_advice=false)"]],
-        a: { claude: "The sample agreement contains a consent clause. Only counsel can determine whether it prevents a sale. The family attorney is confirming.", gpt: "A 1998 agreement may require consent from all four children. The family attorney is checking." } },
+        a: { claude: "Possibly not. A 1998 agreement appears to require written consent from all four children for a sale. The family attorney is confirming.", gpt: "A 1998 agreement may require consent from all four children. The family attorney is checking." } },
     ],
     alex: [
-      { q: "Prepare me for the family meeting", card: "prep", tools: [["Checked sharing permissions", "consent.check()"], ["Listed review tasks", "tasks.list()"]],
-        a: { claude: "Review only explicitly shared concerns. Ask permission before raising them with the family. Counsel must confirm document findings.", gpt: "Prepare from shared concerns only. Confirm onward-sharing permission and counsel review." } },
-      { q: "Who could opt in to an introduction?", card: "heirs", tools: [["Queried the household graph", "graph.heirs(pnc=false)"]],
-        a: { claude: "Dale, Ross and Sloane bank elsewhere. Together they could receive $9.0M to $10.0M at closing. Offer an introduction only after each person opts in.", gpt: "Three heirs have no PNC relationship and could receive $9.0M–$10.0M combined. Each person must opt in before an introduction." } },
+      { q: "Prepare me for the family meeting", card: "prep", tools: [["Summarized gaps", "brief.gaps()"], ["Counted leadership claims", "claims.count()"], ["Pulled high-risk findings", "docs.findings(risk='High')"]],
+        a: { claude: "Cover three items, in order: counsel's view on the consent clause, leadership, then fairness. Present the leadership overlap as a pattern, not a person, and keep individual answers private.", gpt: "Agenda: consent clause, leadership, fairness. Frame the leadership overlap as a pattern; keep individual answers private." } },
+      { q: "Which heirs are at risk?", card: "heirs", tools: [["Queried the household graph", "graph.heirs(pnc=false)"]],
+        a: { claude: "Dale, Ross and Sloane bank elsewhere. Together they could receive $9.0M to $10.0M at closing. Sloane is the most engaged; start there.", gpt: "Three heirs have no PNC relationship and could receive $9.0M–$10.0M combined. Start with Sloane." } },
     ],
   },
 };

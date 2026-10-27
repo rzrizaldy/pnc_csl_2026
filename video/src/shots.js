@@ -1,9 +1,9 @@
 // node shots.js [baseUrl]  -> desktop (1920x1080) and mobile (390x844) PNGs in ../../prototype/shots, plus console errors
-const { chromium } = require("../../node_modules/@playwright/test");
+const { chromium } = require("playwright-core");
 const fs = require("fs");
 const path = require("path");
 
-const BIN = process.env.CHROMIUM_PATH;
+const BIN = path.join(process.env.HOME, "Library/Caches/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-mac-arm64/chrome-headless-shell");
 const BASE = process.argv[2] || "http://localhost:4311/prototype/";
 const OUT = path.join(__dirname, "../../prototype/shots");
 const DESKTOP = [
@@ -17,6 +17,7 @@ const ASKS = [{ route: "me/dale", q: 1, name: "ask_dale_clause" }, { route: "adv
 
 async function shoot(browser, viewport, routes, suffix, errors) {
   const page = await browser.newPage({ viewport, deviceScaleFactor: suffix === "m" ? 2 : 1 });
+  await page.emulateMedia({ reducedMotion: "reduce" }); // stills show final state, not mid-animation
   page.on("console", m => m.type() === "error" && errors.push(m.text()));
   page.on("pageerror", e => errors.push(e.message));
   await page.goto(BASE + "?reset#/", { waitUntil: "networkidle" });
@@ -41,7 +42,7 @@ async function shoot(browser, viewport, routes, suffix, errors) {
 
 (async () => {
   fs.mkdirSync(OUT, { recursive: true });
-  const browser = await chromium.launch({ ...(BIN ? { executablePath: BIN } : {}), args: ["--hide-scrollbars"] });
+  const browser = await chromium.launch({ executablePath: BIN, args: ["--hide-scrollbars"] });
   const errors = [];
   await shoot(browser, { width: 1920, height: 1080 }, DESKTOP, "", errors);
   await shoot(browser, { width: 390, height: 844 }, MOBILE, "m", errors);

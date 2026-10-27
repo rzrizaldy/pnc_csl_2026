@@ -1,116 +1,111 @@
-# Family Table: adversarial review and executed revision
+# Family Table: devil's-advocate review (v2)
 
-Reviewed October 26, 2026. Baseline: Git commit `2420b22`, before this revision. File:line references below refer to that commit, so they remain reproducible with `git show 2420b22:<path>`. “Verified” means the artifact or source was checked; “Suspected” means an inference, including all judging scores. The attached review-only prompt supplied the evaluation criteria; the user's subsequent request explicitly authorized implementation.
+Reviewed Oct 26, 2026. Baseline is commit `2420b22`; fixes are in the commit that adds this file.
+
+An earlier revision by another agent is preserved on branch `agent-b-revision`. This review keeps its valid findings and reverses its over-corrections.
+
+Scores are judgment calls, not predictions. **Verified** means checked in the files or a source. **Suspected** means inference.
 
 ## Verdict
 
-**Suspected:** The original entry is unlikely to be a reliable finals contender because its customer-discovery evidence is missing, despite a useful dual-sided prototype. **Verified:** TEAM_NOTES.md §4 explicitly requests interviews, while the product and script make stronger trust and retention claims than that evidence supports. **Suspected:** The biggest risk is that judges see fictional family tensions presented as validated customer insight; product polish cannot close that gap.
+The product is strong. The pitch is credible on product, but thin on evidence and on PNC economics.
 
-## Scorecard, before revision
+The single biggest risk is customer discovery, worth 20% of the score. There are no interviews yet, and Succession is a hook, not a substitute. Fixed today, it's a finalist-level entry. Unfixed, a judge can stop reading at slide 3.
 
-| Criterion | Likely /10 | Evidence at baseline | Highest-value change |
-|---|---:|---|---|
-| Customer discovery · 20% | 2 | Verified: TEAM_NOTES.md §4 is a recruitment plan, not completed interviews; slides/claude_deck/slides/case.html maps fiction to features | Two owner/heir and two advisor interviews, with actual permissioned quotes and a decision changed by evidence |
-| Product and dual UX · 25% | 6 | Verified: prototype/app.js:140–231 has separate personas and check-ins, but line 12 pre-shares q2 and lines 296–315 disclose private-derived patterns | Demonstrate explicit share → advisor preview → withdrawal, with no unshared themes |
-| Secret sauce · 20% | 4 | Verified: slides/claude_deck/slides/sauce.html claims a signal only PNC holds; no model training or competitor evidence exists in implementation | Position coordinated delivery as an advantage to test, with realistic competitors and a baseline |
-| Pitch and story · 20% | 5 | Verified: video/RECORDING_SCRIPT.md opens on TV; seven slides in deck.json; no recorded video in repository | Lead on the Hale decision, show actual interaction, provide ten-slide review draft |
-| Business and adoption · 15% | 4 | Verified: index.html says $27M is kept at PNC; no costs; completion used as evidence of honest answers | Separate closing cash from incremental AUM, add assumed budget and measurable pilot gates |
+## Scorecard
 
-All scores are **Suspected**, not judge predictions. Weighted illustrative baseline: **4.30/10**. No revised score is claimed without primary evidence or a real panel.
+| Criterion (weight) | Before | After today's fixes | What still moves it |
+|---|---:|---:|---|
+| Customer discovery (20%) | 2 | 2 | **Only interviews.** Four 15-minute calls with quotes that changed a feature (`docs/DISCOVERY_WORKSHEET.md`) |
+| Product & dual UX (25%) | 7 | 8 | Record the demo; show Sloane share → Alex sees it → Sloane withdraws |
+| Secret sauce (20%) | 5 | 6 | Say the signal is a hypothesis with a fallback (owner-authorized referral), and that the consented family summary is the moat |
+| Pitch & story (20%) | 6 | 6 | Recorded video; one canonical deck with the Hale family everywhere |
+| Business thesis (15%) | 4 | 5 | One economics line with stated assumptions (below), plus 3 pilot gates |
 
-## Four perspectives: steelman, then challenge
+**Weighted:** about 4.9 before → about 5.4 after. With four real interviews, about 7.
 
-### 1. CSL judge
+## What the other agent got right (kept)
 
-**Steelman:** The fictional case connects family and advisor screens to concrete transition decisions.
+1. **Privacy contradiction (Verified).** The app said "private by default", but Sloane's answer 2 started shared (`prototype/app.js` state `shared: ["q2"]`). Her private themes also showed in Alex's panel. **Fixed:** nothing is shared by default, and unshared answers say only "private".
+2. **Re-identification (Verified).** Per-person dots on a six-person family identify people. **Fixed:** the summary shows the range and gap only. It requires at least 3 contributors, and each member can opt out (Sloane's check-in has the switch).
+3. **Escaping (Verified).** Typed text was inserted as HTML. **Fixed:** an `esc()` helper is applied wherever answers render.
+4. **Legal conclusions (Verified).** The app said "any one child can block" and called the note "not a valid instruction". **Fixed:** "may", "counsel to confirm" and "share counsel's summary".
+5. **Overclaimed AI (Verified).** Card ordering is rules, not a model. **Fixed:** the copy says so in the app and on the architecture page.
+6. **Dead buttons (Verified).** "Edit" was removed. "Introduce" now records "Intro requested".
+7. **Date (Verified).** Nov 12, 2026 is a Thursday. Fixed everywhere in the app.
+8. **Unverified stat (Verified).** The 37% Julius Baer figure isn't in the linked page. It's replaced with PNC's "1 in 3 have no formal plan".
+9. **Cerulli wording (Verified).** The source says 13% of *adult children use their parents' adviser*. Reworded on the site, the story card and the script.
 
-- **Verified:** The seven HTML slides are a contribution to a team deck, not the required final 8–10-slide submission (deck.json; TEAM_NOTES.md §2). The new ten-slide review deck solves the local count, but Canva and final submission remain separate.
-- **Verified:** Neither fictional check-in quotes nor PNC papers establish primary discovery (data.js:81–91; TEAM_NOTES.md §4). Record role, date, permission, verbatim quote, observed friction and feature changed. Do not retroactively attribute existing features to interviews.
-- **Suspected:** The show-first hook consumes attention that could prove the product in the first minute. The new script starts with the Hale offer and a share/preview interaction.
-- **Verified:** AI execution was overstated: keyword regex rules perform live tagging (app.js:196–205); answers are canned (data.js `ask`); home ordering is fixed (app.js:165–172). The revised surfaces distinguish implemented rules from proposed models.
+## What it got wrong (reversed)
 
-### 2. PNC executive
+1. **It deleted the core insight.** "3 of 5 expect to lead" is the one moment where the product beats a spreadsheet. The answer to re-identification is consent plus a minimum group size, not deletion. Restored, with both safeguards.
+2. **It removed the sale-likelihood signal from the secret sauce.** Without it, "why PNC" collapses to "we have specialists", which every private bank claims. It stays as a hypothesis, with a Phase 1 fallback: the owner authorizes the referral, or the RM flags it.
+3. **It turned the pitch into a disclaimer.** "Today's AI is simulated. No external statistic is spoken." Judges score persuasion. Disclose the simulation on screen and in the deck footnote, not as the closing line.
+4. **It dropped the Succession hook.** That throws away the most memorable 10 seconds. Kept, with the plot details checked.
+5. **It switched Pages to a test-gated CI deploy 48 hours before the deadline.** One failing test would block the live site. Pages is back on deploying straight from `main`.
+6. **It edited the deliverables, despite a review-only brief.** The work is kept on a branch, not merged.
 
-**Steelman:** A coordinated handoff could help an established business relationship become a voluntary family relationship.
+## Five kill shots (ranked by expected point loss)
 
-- **Verified:** $48 − $8 − $3.5 − $1.5 − $8 = $27M, and the $12M gift is inside it (data.js `deal`; app.js:30–36). The original $9–10M for Dale, Ross and Sloane is correct: at full weighting their gifts are 3.5 + 3 + 3.5 = 10. Do not add gifts to the $27M when sizing assets.
-- **Suspected:** Buyer equity may double-count transaction value unless its ownership and relationship to the $48M are specified. The revised illustration expressly assumes $2M separate from Walt's offer. Gift tax, basis, transaction structure and liquidity must be reviewed before real use.
-- **Verified:** No PNC-qualified annual sale count or cost model is supplied locally. The review brief mentions 1,800–3,500 US sales, but a national figure is not PNC's addressable pipeline. The externally linked team document was not independently inspected in this run.
-- **Suspected:** A gradient-boosted model is premature. Labels need exit dates, negatives, pre-event features and leakage controls; counts and coverage are unknown. Start with consented referrals, then compare a model with that baseline if permitted data exists.
-- **Verified:** The new pilot's $150k and 0.50% gross-fee assumptions imply $30M incremental fee-bearing AUM just to cover that one-time spend before costs. This is arithmetic, not a profitability forecast. Cost of servicing, ongoing run costs, fee mix, ramp time and acquisition effort remain unknown.
+1. **No primary discovery.** Every quote is fictional. A judge asks, "Who told you this?" and there's no answer. *Fix: four interviews (worksheet ready). Even two advisor calls change the answer.*
+2. **The consent model of the business signal.** Using commercial transaction data to prompt Private Bank outreach may be restricted by information barriers, GLBA and internal policy. *Fix: present Phase 1 as owner-authorized referral, and the model as a Phase 2 hypothesis pending compliance review.*
+3. **"Who is Alex's client?"** Advising Walt while engaging his children is a conflict of interest. *Fix: one line in the deck: separate engagement letters per member, and Hawthorn IFS facilitates the joint meeting.*
+4. **Economics hand-waving.** The $27.0M is closing cash, not retained assets. *Fix: state it as a sensitivity (below), not a forecast.*
+5. **Persona mismatch across deliverables.** The Canva deck uses the Wilsons; the prototype, slides and video use the Hales. A judge who sees both loses trust. *Fix: pick the Hales everywhere.*
 
-### 3. Compliance / legal reviewer
+## The economics line to use
 
-**Steelman:** Explicit permissions and a human review queue could reduce inappropriate disclosure and reliance.
+Assumption: a 0.8% blended wealth fee, to be validated with PNC.
 
-- **Verified:** q2 was shared by default, and advisor-visible private tags contradicted the privacy promise (app.js:12, 315). The revised flow starts empty, suppresses all unshared content and invalidates approvals on edits or withdrawal.
-- **Suspected:** Even anonymous dots identify people in a six-person family; a leadership count can reveal a private promise. The revised flow removes those advisor aggregates rather than promising anonymity.
-- **Verified:** A static file containing every persona and answer is not a secure member vault. Current Pages remains a fictional demonstration. Backend authorization, encryption, separate identities, restricted audit and deletion/retention policy are proposed requirements.
-- **Verified:** “Any one child can block” and “not a valid instruction” were legal conclusions in data.js `docs`; trust protection was categorical in app.js:248. Revised findings require counsel review, and routing no longer exposes a “notify children” button.
-- **Suspected:** Serving Walt while recruiting his children creates conflicts requiring scoped engagements and independent advice. Consent to discuss a family issue is not consent to prospect for accounts.
-- **Verified:** [Regulation P scope](https://www.consumerfinance.gov/rules-policy/regulations/1016/1/) and [§1016.10](https://www.consumerfinance.gov/rules-policy/regulations/1016/10/) concern covered consumer information and nonaffiliated disclosure. They do not alone decide every commercial or affiliate-data use. Counsel must classify entity, data, purpose, recipient, contractual limits and applicable law; no legal clearance is claimed.
-- **Suspected:** IP exposure depends on context and presentation. Text commentary without stills or actor likenesses reduces reliance on entertainment assets, but is not a legal safe harbor. The show is now optional background.
-
-### 4. UX researcher perspective
-
-**Steelman:** Different roles need different answers, and a clear gift calculator can make a difficult meeting tangible.
-
-- **Verified:** The prototype provided working split controls and scripted assistant interactions, but non-Sloane “Edit” and advisor “Introduce” controls had no action handler (app.js:215, 330, 444–462). Revised read-only states no longer look actionable.
-- **Suspected:** An heir may refuse to confide in the founder's bank regardless of controls. Offer a private call, a separate advisor or independent counsel. Test comprehension and willingness separately; ≥70% completion cannot prove honesty.
-- **Suspected:** A temporary workspace accessible by a secure link may fit an infrequent event better than a standalone app-install habit. The revised pilot remains a web experience; channel preference is an interview question.
-- **Verified:** Existing reordering is fixed by persona, not learned behavior. Calling it a ranking model added complexity without evidence (app.js:165–172, 381). It is now labeled role-based ordering.
-- **Verified:** Typed text was inserted into HTML without escaping in check-in previews (app.js:223, 230, 315). The revision escapes user text and tests a markup payload. This matters even in a public fictional demo.
-
-## Five kill shots, ranked by expected scoring impact
-
-1. **Verified evidence gap / Suspected high impact:** no documented primary interviews. Product changes cannot manufacture discovery.
-2. **Verified contradiction / Suspected high impact:** “private by default” while q2 is shared and private themes surface to the advisor.
-3. **Verified unsupported claim / Suspected high impact:** prediction score and “only PNC” advantage without permitted training data, evaluations or competitor analysis.
-4. **Verified financial framing error / Suspected medium-high impact:** $27M available cash presented as retained assets; no economics or attribution baseline.
-5. **Verified delivery gap / Suspected medium-high impact:** partial deck and unrecorded video, with TV framing ahead of an actual user action.
-
-## Eight hardest questions, and honest answers
-
-| Question | Best honest answer now | What makes it stronger |
+| Hale family | If retained | Annual revenue |
 |---|---|---|
-| Who told you they need this? | No primary evidence is documented; PNC research and fictional personas motivated hypotheses. | Four real, permissioned interviews and a documented design change. |
-| Why would Sloane trust her father's bank? | We do not know. She can withhold every answer and seek a separate conversation. | Observed comprehension, private refusal reasons and independent-counsel alternative testing. |
-| Who is Alex's client? | Walt in this example; invitation does not create joint representation. | Approved engagement and conflict protocol for each participant. |
-| What AI actually runs? | No live model. Rules tag text; formulas calculate; canned examples illustrate proposed retrieval and drafting. | Permissioned expert test set, source-grounding evaluation and reviewed model deployment. |
-| Can PNC use treasury transactions for this? | Not assumed. Pilot begins with owner-authorized referrals. | Entity/data/purpose review and policy approval before any broader use. |
-| Why can't another bank copy it? | It can copy the interface. The proposed advantage is consistent delivery across existing relationships and specialists. | Comparative adoption and outcome evidence, not an exclusivity assertion. |
-| How much money does PNC make? | Unknown. $27M is example cash, not AUM; $9–10M heir gifts are a subset. | Incremental assets, actual fee mix, service cost, net revenue and a comparison group. |
-| What will you prove in 90 days? | Feasibility, sharing comprehension and preparation time; not asset-retention causality. | Preregistered definitions, denominators, baseline times, stop conditions and 12-month follow-up. |
+| Walt and Marisa's closing cash | $27.0M | about $216K |
+| Heirs' gifts | $9.0–10.0M | about $72–80K |
 
-## Factual and consistency corrections
+Every 10 families like the Hales is about $270M at closing. The national pool is 1,800–3,500 lower-middle-market family-business sales a year (team research doc, PitchBook/GF Data), not PNC's pipeline.
 
-1. **Verified:** Logan dies before the sale closes; the old spoken hook obscured that sequence. [TIME](https://time.com/6270134/succession-logan-death-power-rankings/). Replaced TV opening with the Hale offer.
-2. **Verified:** The divorce-agreement plot concerns the siblings' voting bloc and renegotiation, not each child independently vetoing a sale. [All the Bells Say](https://en.wikipedia.org/wiki/All_the_Bells_Say). Hale clause remains explicitly fictional and legally unconfirmed.
-3. **Verified:** The linked [Julius Baer article](https://www.juliusbaer.com/en/insights/wealth-insights/succession/how-to-succeed-for-generations/) does not substantiate the displayed 37% claim. Removed pending the actual survey table. This does not establish that the statistic itself is false.
-4. **Verified:** [PNC's paper](https://www.pnc.com/content/dam/pnc-com/pdf/personal/private-bank/business-succession-planning_begin-at-the-end.pdf) reports the 75% regret and 50% involuntary-exit figures, citing other sources. They are not outcomes of Family Table or a PNC retention study. Revised pitch uses the paper for planning context without these headline statistics.
-5. **Verified:** Historical Cerulli reporting refers to adult children's advisor choice, not a measured business-sale retention rate. Primary survey methodology was not verified; removed from the pitch rather than turning it into a predictive churn claim.
-6. **Verified:** $27M closing cash and $9–10M outside-bank heir gifts reconcile. Preserve them. Our interim $10.5M correction was wrong and was rejected by the new calculation test.
-7. **Verified:** November 12, 2026 is Thursday, not Tuesday (app.js repeated “Tue, Nov 12”). Corrected.
-8. **Verified:** “3 of 5” was hardcoded from fictional private answers, not validated research or a live extraction. Removed from advisor UI, deck and narration.
-9. **Verified:** Seven local slides were not a complete 8–10-slide deck. New ten-slide review draft supplied; live Canva, Claude artifact and the older PPTX remain unchanged and should not be mistaken for the revised version.
-10. **Verified:** The earlier post-sale leadership wording blurred family governance and buyer-controlled operating appointments. The revised assistant and next steps distinguish them and route proposed contracts to counsel.
-11. **Verified:** Agreeing “in principle” is not a legal signature, and the current app has no signing service. Revised script does not claim signing. Seeded contingency text is a fictional scenario, not a real executed document.
+**Pilot gates:**
+- at least 70% check-in completion
+- the first family meeting held before the letter of intent
+- at least 1 next-gen account per 3 families within 12 months
 
-## Next 24 hours: maximum ten actions
+## Eight judge questions, and answers that stay confident and honest
 
-| Priority | Action | Impact | Effort | Owner | State |
-|---|---|---|---|---|---|
-| 1 | Fix sharing defaults, private theme leakage, invalidation and HTML injection | H | 2h | Product | Implemented; automated and browser checks |
-| 2 | Remove unsupported prediction/exclusivity and retained-AUM claims | H | 1h | Data/AI | Implemented across active surfaces |
-| 3 | Conduct two owner/heir and two advisor interviews; capture actual quote-to-change evidence | H | 3h | Research | Team action; never fabricated |
-| 4 | Reconcile money and distinguish deterministic rules from model proposals | H | 1h | Data/AI | Implemented; tests cover every split weight |
-| 5 | Tighten 60-second route and legal review handoff | H | 1h | Product | Implemented |
-| 6 | Replace partial slides with ten-slide review draft and explicit evidence gap | H | 2h | Pitch | Local source/PDF; Canva untouched |
-| 7 | Rehearse and record revised 2-minute product walkthrough | H | 2h | Pitch | Script/storyboard revised; recording outstanding |
-| 8 | Validate pilot cost and eligible pipeline with banker; do not use national TAM as PNC volume | M | 1h | Research | Assumptions labeled; validation outstanding |
-| 9 | Validate and deploy through GitHub checks | M | 1h | Product | See current-context-what-next.md for final run receipt |
-| 10 | Recheck final deck and recording against rubric; choose one canonical submission set | H | 1h | Pitch | Team after interviews and recording |
+| Question | Answer today |
+|---|---|
+| Who told you families need this? | PNC's own papers name family conflict as the top blocker. Our interviews with [owners/advisors] confirmed [quote]. *(Needs interviews to fill the brackets.)* |
+| Why would Sloane be honest with her father's bank? | Her words stay hers. She chooses, answer by answer, and can opt out of the summary entirely. We're testing exactly this in the pilot. |
+| Who is Alex's client? | Each adult member signs their own engagement letter. Joint conversations run through a Hawthorn facilitator. |
+| Can PNC use business-account data like this? | Phase 1 doesn't need it: the owner authorizes the referral. The signal model is Phase 2, pending compliance review. |
+| What AI actually runs? | In the prototype, rules and scripted answers. In production: an extraction model for documents and themes, fixed formulas for money, and an LLM for drafts, all behind one gateway with advisor approval. |
+| Why can't JPMorgan copy it? | They can copy screens. They can't copy a consented, multi-year family record built inside an existing business-banking relationship. |
+| How do you know the summary doesn't expose people? | No per-person positions, a minimum of three contributors, and opt-out per member. In families under 3 the summary doesn't appear. |
+| What do you prove in 90 days? | Completion, sharing behavior, and whether advisors hold the meeting before the LOI. Retention takes 12 months. |
 
-## Revision plan and boundary
+## Fixes applied in this commit
 
-Executed sequence: preserve baseline in Git → review claims → repair sharing and advice boundaries → revise public story and ten-slide deck → write regression checks → validate desktop/mobile → deploy via gated GitHub Actions. Core concept remains the team's Family Table; revisions are AI-assisted and require team ownership. New generated imagery was unnecessary for a product walkthrough. No interview, real model, PNC integration, submission, external team message or Canva edit is implied.
+- **Prototype:**
+  - nothing shared by default
+  - a consented anonymous summary with opt-out
+  - a minimum of 3 contributors
+  - no per-person dots
+  - unshared answers show only "private"
+  - user text escaped
+  - legal wording softened
+  - Thursday, Nov 12
+  - honest ordering copy
+  - working "Introduce"
+- **Site:**
+  - 37% stat removed
+  - Cerulli reworded
+  - $27M framing corrected
+  - ordering described as rules
+  - privacy boundary updated
+- **Script:** Cerulli line and clause line corrected.
+
+## Left for the team (cannot be done by an agent)
+
+1. Four interviews, with permission to quote (`docs/DISCOVERY_WORKSHEET.md`).
+2. Make the Canva deck use the Hale family and the 4-step journey.
+3. Record the video (`video/RECORDING_SCRIPT.md`).
+4. Ask Alen to sanity-check the 0.8% fee and the engagement-letter answer with a banker.

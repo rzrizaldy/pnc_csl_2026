@@ -1,36 +1,41 @@
 # Family Table · CSL 2026
 
-A student concept for PNC Private Bank: a family workspace and advisor workbench for the sale of a business. The fictional Hale family illustrates explicit sharing, advisor preparation, reviewed document questions and deterministic gift options.
+A student concept for PNC Private Bank, built for the 2026 CSL case competition, *Bridging Generational Trust: AI for Asset & Family Transitions*. The track is the sale or transition of a family-owned business.
 
-**[Live overview](https://rzrizaldy.github.io/pnc_csl_2026/)** · **[60-second demo](https://rzrizaldy.github.io/pnc_csl_2026/prototype/?reset#/me/sloane/checkin)** · **[10-slide review deck](https://rzrizaldy.github.io/pnc_csl_2026/slides/)**
+Built around a case study of HBO's *Succession*: six ways the Roy family's succession failed, each checked against PNC's own research and turned into a feature. The fictional Hale family (one member per Roy archetype) runs through a mobile-first prototype with adaptive screens and simulated Claude/GPT features.
 
-## Walkthrough
+**Live:** [overview](https://rzrizaldy.github.io/pnc_csl_2026/) · [the Succession case](https://rzrizaldy.github.io/pnc_csl_2026/case.html) · [architecture](https://rzrizaldy.github.io/pnc_csl_2026/architecture.html) · [prototype](https://rzrizaldy.github.io/pnc_csl_2026/prototype/?reset)
 
-1. Open Sloane's check-in. Every answer starts unshared.
-2. Share answer 2; use “Switch to Alex’s view.” Only that answer appears.
-3. Approve the preparation brief. Return to Sloane and withdraw sharing; approval clears.
-4. Switch to Dale's Options. Compare Equal and Equity counted; the gift remains $12M.
+Team: Alen Ilmi · Rizaldy Utomo · Nindy Aditya Dewi · Aditya Mulya Pratama, Carnegie Mellon University.
 
-Run `python3 -m http.server 4311`, then open `http://localhost:4311`. No app build required. `?reset` intentionally clears demo state on load; omit it when navigating between people.
+## What's here
 
-## Verification and deployment
+| Path | What |
+|---|---|
+| `index.html` | Overview: problem, 4-step journey, AI, why only PNC, value and hypotheses |
+| `case.html` | Succession case study: six failure patterns and the Hale family personas, with sources |
+| `architecture.html` | Solution architecture: 6-layer stack, privacy boundary, request flow, model output contract, AI components, pilot |
+| `prototype/` | Mobile-first prototype. Static HTML/CSS/JS, no build step. Pick a person at `#/`; advisor at `#/advisor/...`, family members at `#/me/<id>/...` |
+| `prototype/shots/` | Desktop (1920×1080) and mobile (`*_m.png`) screenshots |
+| `slides/claude_deck/` | Source of the consulting-style slides (Claude Slides format) |
+| `slides/build_secret_sauce.py` | Secret Sauce slide as editable PPTX shapes, for Canva import |
+| `video/` | Video plan and narration script |
+| `TEAM_NOTES.md` | Team coordination: owners, deadlines, open decisions |
 
-`npm ci`, `npx playwright install chromium`, `npm run check`, `npm test`.
-Tests cover every persona route at desktop and 390px, sharing/withdrawal, editing/re-sharing, HTML escaping, all split weights and document review gating. GitHub Actions runs checks on PRs and main, then deploys an allowlisted static site on main. A failed validation job blocks deployment. This workflow does not enforce branch protection.
+## Run locally
 
-## Deliverables and sources
+```bash
+python3 -m http.server 4311
+```
 
-- `docs/DEVILS_ADVOCATE_REVIEW.md`: baseline scorecard, four perspectives, kill shots, Q&A, errors and 24-hour priorities.
-- `slides/index.html`, `slides/deck.css`, `slides/claude_deck/`: editable ten-slide review draft; `slides/family-table-review.pdf` is its export.
-- `video/RECORDING_SCRIPT.md`, `video/VIDEO_PLAN.md`: revised narration and storyboard. Final video is not recorded.
-- `architecture.html`: proposed production boundary and pilot controls.
-- `case.html`: optional Succession inspiration, with limits and corrected plot framing.
-- `current-context-what-next.md`: authoritative handoff.
+Then open http://localhost:4311 for the showcase, or http://localhost:4311/prototype/?reset for the prototype. `?reset` clears the demo state.
 
-The team Canva deck and prior Claude artifact are unchanged. `slides/secret_sauce.pptx` and its old Python builder are legacy alternatives, not the current pitch.
+Regenerate the screenshots (needs `npm i` in `video/src` and a Playwright headless shell):
 
-## Evidence and data boundary
+```bash
+cd video/src && node shots.js http://localhost:4311/prototype/
+```
 
-No documented primary interviews yet. All people, firms and figures are fictional. No authentication, bank connection, secure vault or live AI. All seed data is publicly downloadable; local storage is not private across demo personas. Use fictional text only. Keyword tags, fixed ordering and calculators are implemented; AI answers/document findings are scripted examples. Proposed controls are not a claim of production readiness or compliance approval.
+## Disclaimers
 
-Team: Alen Ilmi · Rizaldy Utomo · Nindy Aditya Dewi · Aditya Mulya Pratama, Carnegie Mellon University. Core concept belongs to the team; this revision is AI-assisted. Student concept, not a PNC product.
+This is a student concept, not a PNC product. The Hale family, Alex Lee and all figures are fictional. Succession is an HBO series, referenced for commentary. AI responses in the prototype are simulated.
