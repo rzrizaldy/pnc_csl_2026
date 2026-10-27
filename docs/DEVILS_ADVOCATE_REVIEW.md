@@ -93,7 +93,8 @@ All scores are **Suspected**, not judge predictions. Weighted illustrative basel
 7. **Verified:** November 12, 2026 is Thursday, not Tuesday (app.js repeated “Tue, Nov 12”). Corrected.
 8. **Verified:** “3 of 5” was hardcoded from fictional private answers, not validated research or a live extraction. Removed from advisor UI, deck and narration.
 9. **Verified:** Seven local slides were not a complete 8–10-slide deck. New ten-slide review draft supplied; live Canva, Claude artifact and the older PPTX remain unchanged and should not be mistaken for the revised version.
-10. **Verified:** Agreeing “in principle” is not a legal signature, and the current app has no signing service. Revised script does not claim signing. Seeded contingency text is a fictional scenario, not a real executed document.
+10. **Verified:** The earlier post-sale leadership wording blurred family governance and buyer-controlled operating appointments. The revised assistant and next steps distinguish them and route proposed contracts to counsel.
+11. **Verified:** Agreeing “in principle” is not a legal signature, and the current app has no signing service. Revised script does not claim signing. Seeded contingency text is a fictional scenario, not a real executed document.
 
 ## Next 24 hours: maximum ten actions
 

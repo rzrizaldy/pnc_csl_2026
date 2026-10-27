@@ -21,13 +21,13 @@ CSL 2026 family-business sale concept. Due October 28, 11:59 PM ET: 8–10-slide
 - Native browser verified answer 2 sharing and Alex receiving exactly that answer; mobile check-in inspected at 390×844.
 - PDF has exactly ten pages with extractable text; every slide screenshot reviewed as a contact sheet and export found no container overflow.
 - Initial parallel local test run hit socket failures on the reused Python server. Single-worker run passed; configuration uses one worker for stability.
-- Remote GitHub run and live verification: pending push at this checkpoint; final receipt will replace this line.
+- GitHub validate + deploy succeeded on revision f8515d3: https://github.com/rzrizaldy/pnc_csl_2026/actions/runs/40433987174. Initial run failed on ubuntu-latest (26.04); pinning ubuntu-24.04 resolved browser support. Final copy-only follow-up also runs the full workflow. Live acceptance is checked in the closing response.
 
 ## Constraints and remaining gaps
 Fictional, public, static demonstration; no authentication, secure storage, PNC integration, real models or legal clearance. No primary interview evidence has been fabricated. Budget/fee assumptions and pilot thresholds are proposals. Preserve the team's core concept and disclose AI-assisted revision. Do not edit Canva without specific authorization. Do not use old screenshots, v2 script or older artifact as the latest deck.
 
 ## Exact next actions
-1. Verify GitHub Actions deploy succeeds and live Pages matches the revised overview; record run URL here.
+1. Use the live overview and 60-second walkthrough in README. Latest GitHub validate/deploy must be green before taking submission screenshots.
 2. Team conducts two owner/heir and two advisor interviews, fills discovery worksheet with actual permissioned evidence, and revises slide 3 accordingly.
 3. Team validates assumed pilot costs, engagement/conflict approach and eligible referral pipeline.
 4. Narrative owner approves v3; Nindy records; Rz assembles/captions and verifies ≤120s actual video.

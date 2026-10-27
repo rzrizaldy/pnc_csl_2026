@@ -252,7 +252,7 @@
   }
 
   // ---------- family: plan ----------
-  const STEPS = { walt: "Sign a dated successor decision to replace the desk note", marisa: "Complete your check-in, then an estate review with Alex", dale: "Choose where your gift should be paid", kyle: "Review your COO contract with business banking", ross: "Ask for a named role before the offer is signed", sloane: "Choose your next step for the Nov 12 meeting" };
+  const STEPS = { walt: "Review leadership and contingency decisions with counsel", marisa: "Complete your check-in, then an estate review with Alex", dale: "Choose where your gift should be paid", kyle: "Review your proposed COO contract with your counsel", ross: "Ask for a named role before closing", sloane: "Choose your next step for the Nov 12 meeting" };
   function famPlan(pid) {
     const agreed = state.agreed[pid];
     return `<div class="page"><div class="cols"><div class="col-main">
@@ -326,7 +326,7 @@
       case "role": return v === "ross" ? flat(`<span class="ic o">${ic("brief")}</span><div class="tx"><b>Sales team retained 12 months</b><span>No role named for Ross</span></div>`) : flat(`<span class="ic">${ic("brief")}</span><div class="tx"><b>COO · 2-year contract</b><span>$1.5M equity in NorthPeak</span></div>`);
       case "meeting": return flat(`<span class="ic">${ic("cal")}</span><div class="tx"><b>Family meeting · Thu, Nov 12</b><span>Consent clause · Leadership · Fairness</span></div>`);
       case "contingency": return flat(`<span class="ic g">${ic("shield")}</span><div class="tx"><b>Contingency plan · signed Oct 20</b><span>Kyle leads 90 days; family council decides within 30</span></div>`);
-      case "prep": return `<div class="mini"><div class="rows"><div class="row"><span class="ic">1</span><div class="tx"><b>Consent clause</b></div></div><div class="row"><span class="ic">2</span><div class="tx"><b>Leadership overlap</b></div></div><div class="row"><span class="ic">3</span><div class="tx"><b>Fairness</b></div></div></div></div>`;
+      case "prep": return `<div class="mini"><div class="rows"><div class="row"><span class="ic">1</span><div class="tx"><b>Consent clause</b></div></div><div class="row"><span class="ic">2</span><div class="tx"><b>Sharing permissions</b></div></div><div class="row"><span class="ic">3</span><div class="tx"><b>Permission for the family meeting</b></div></div></div></div>`;
       case "heirs": return `<div class="mini"><div class="rows">${heirs().map(h => `<div class="row">${av(h, 32)}<div class="tx"><b>${h.short}</b><span>${h.pnc}</span></div><div class="rt">${money(gifts(0)[h.id])}+</div></div>`).join("")}</div></div>`;
     }
     return "";

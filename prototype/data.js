@@ -136,18 +136,18 @@ window.SEED = {
     ],
     ross: [
       { q: "Does the offer include a role for me?", card: "role", tools: [["Read the letter of intent", "deal.terms(loi_v3, section='management')"]],
-        a: { claude: "Not yet. The letter keeps the sales team for 12 months but doesn't name your role. Raise it with Alex before the letter is signed.", gpt: "No role is named for you yet; the sales team is retained for 12 months. Raise it with Alex before signing." } },
+        a: { claude: "Not yet. The letter keeps the sales team for 12 months but doesn't name your role. Raise it with Alex before closing.", gpt: "No role is named for you yet; the sales team is retained for 12 months. Raise it with Alex before closing." } },
     ],
     sloane: [
       { q: "Who decides who leads?", card: "meeting", tools: [["Checked the family calendar", "calendar.next('family_meeting')"], ["Checked brief status", "brief.status()"]],
-        a: { claude: "The family decides together, at the November 12 meeting with a Hawthorn facilitator. Only concerns explicitly shared with Alex enter his preparation.", gpt: "It's on the agenda for the facilitated family meeting on Nov 12. Your answers remain private." } },
+        a: { claude: "Family governance is on the November 12 agenda. NorthPeak controls operating appointments under the final deal; the family cannot promise a buyer role. Only shared concerns enter Alex’s preparation.", gpt: "Discuss family governance on Nov 12. Operating roles depend on NorthPeak and the final agreements. Your unshared answers stay out of Alex’s view." } },
       { q: "Can Dad sell without our consent?", card: "clause", tools: [["Searched family documents", "docs.search('consent AND sale')"], ["Checked advice policy", "policy.check(legal_advice=false)"]],
         a: { claude: "The sample agreement contains a consent clause. Only counsel can determine whether it prevents a sale. The family attorney is confirming.", gpt: "A 1998 agreement may require consent from all four children. The family attorney is checking." } },
     ],
     alex: [
       { q: "Prepare me for the family meeting", card: "prep", tools: [["Checked sharing permissions", "consent.check()"], ["Listed review tasks", "tasks.list()"]],
         a: { claude: "Review only explicitly shared concerns. Ask permission before raising them with the family. Counsel must confirm document findings.", gpt: "Prepare from shared concerns only. Confirm onward-sharing permission and counsel review." } },
-      { q: "Which heirs are at risk?", card: "heirs", tools: [["Queried the household graph", "graph.heirs(pnc=false)"]],
+      { q: "Who could opt in to an introduction?", card: "heirs", tools: [["Queried the household graph", "graph.heirs(pnc=false)"]],
         a: { claude: "Dale, Ross and Sloane bank elsewhere. Together they could receive $9.0M to $10.0M at closing. Offer an introduction only after each person opts in.", gpt: "Three heirs have no PNC relationship and could receive $9.0M–$10.0M combined. Each person must opt in before an introduction." } },
     ],
   },
