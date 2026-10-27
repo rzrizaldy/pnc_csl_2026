@@ -13,7 +13,8 @@ const VOTED = { ...MID, votes: { sam: "balanced" } };
 const ASKED = { ...VOTED, msgs: [{ id: "sam-demo", from: "sam", qi: 0, at: "Just now" }] };
 const REPLIED = { ...ASKED, replies: { "sam-demo": "At closing, expected next fall. Your share is $4.0M with an equal split and up to $4.5M if Ben's buyer equity counts. It can go to any bank. If you'd like an account next to the family's plan, I can introduce you to a PNC wealth advisor, with no obligation." } };
 const DESKTOP = [
-  ["", "splash"], ["advisor", "advisor"], ["advisor/align", "advisor_align"], ["advisor/align", "advisor_align_approved", MID],
+  ["", "splash"], ["preview", "preview"], ["me/margaret/setup", "me_margaret_setup", { fairMeans: "balanced" }], ["advisor/guide", "advisor_guide", MID],
+  ["me/sam/decide", "me_sam_decide", { tree: { sam: { count: "balanced", pay: "trust", earn: "half" } } }], ["advisor", "advisor"], ["advisor/align", "advisor_align"], ["advisor/align", "advisor_align_approved", MID],
   ["advisor/inbox", "advisor_inbox", ASKED], ["advisor/plan", "advisor_plan", VOTED],
   ["me/margaret", "me_margaret"], ["me/margaret/plan", "me_margaret_plan"], ["me/tom", "me_tom"], ["me/ben", "me_ben"], ["me/claire", "me_claire"],
   ["me/claire/checkin", "me_claire_checkin", { shared: ["q1"] }], ["me/sam", "me_sam"], ["me/sam/options", "me_sam_options"], ["me/sam/options", "me_sam_voted", VOTED],
@@ -21,7 +22,8 @@ const DESKTOP = [
   ["story/hook", "story_hook"], ["story/cast", "story_cast"], ["story/problem", "story_problem"], ["story/sauce", "story_sauce"], ["story/close", "story_close"],
 ];
 const MOBILE = [
-  ["", "splash_m"], ["advisor", "advisor_m"], ["advisor/align", "advisor_align_m"], ["advisor/inbox", "advisor_inbox_m", ASKED],
+  ["", "splash_m"], ["preview", "preview_m"], ["me/margaret/setup", "me_margaret_setup_m"], ["advisor/guide", "advisor_guide_m", MID],
+  ["me/sam/decide", "me_sam_decide_m", { tree: { sam: { count: "balanced", pay: "trust", earn: "half" } } }], ["year-one", "year_one_full_m"], ["advisor", "advisor_m"], ["advisor/align", "advisor_align_m"], ["advisor/inbox", "advisor_inbox_m", ASKED],
   ["me/margaret", "me_margaret_m"], ["me/sam", "me_sam_m"], ["me/claire/checkin", "me_claire_checkin_m", { shared: ["q1"] }],
   ["me/sam/options", "me_sam_options_m"], ["me/sam/options", "me_sam_voted_m", VOTED], ["me/sam/ask", "me_sam_ask_m", REPLIED], ["year-one", "year_one_m"],
 ];

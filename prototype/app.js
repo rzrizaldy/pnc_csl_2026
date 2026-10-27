@@ -12,10 +12,11 @@
   if (embedded) document.documentElement.classList.add("embedded");
 
   // ---------- state ----------
-  const KEY = "family-table-v7";
+  const KEY = "family-table-v8";
   const fresh = () => ({ shared: [], optOut: false, approved: false, started: false, routed: {}, pick: "balanced", votes: {},
     answers: {}, intro: {}, invited: false, chapter: [], agreed: {}, msgs: [], replies: {}, drafts: {}, calls: {}, confirmed: {},
-    shareReply: {}, tour: -1 });
+    shareReply: {}, tour: -1, pv: { preset: "wilson", value: 48, kids: 3, inBiz: 1 }, previewed: false, goals: ["fair", "live", "chapter"],
+    fairMeans: null, spend: 300, foundation: 2, keepName: false, tree: {}, pathSent: {}, presented: false });
   let state = fresh();
   try {
     const qp = new URLSearchParams(location.search);
@@ -26,7 +27,7 @@
   } catch (e) { /* storage blocked: keep in-memory state */ }
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} };
   const set = patch => { Object.assign(state, patch); save(); render(); };
-  const ui = { callOpen: false };
+  const ui = { callOpen: false, slide: 0 };
   let sheet = { kind: null };
 
   // ---------- helpers ----------
@@ -84,6 +85,9 @@
     repeat: 'M17 3l3 3-3 3M4 11V9a3 3 0 0 1 3-3h13M7 21l-3-3 3-3M20 13v2a3 3 0 0 1-3 3H4',
     send: 'M4 12 20 4l-5 16-3-7z',
     person: 'M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0',
+    branch: 'M6 3v18M6 8c0 4 4 5 8 5h4M15 10l3 3-3 3',
+    play: 'M7 4.5v15l12-7.5z',
+    guide: 'M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3zM5 17a3 3 0 0 1 3-3h11M9 8h6',
   };
   const ic = (k, s = 20, w = 1.8) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${I[k]}"/></svg>`;
   const chev = `<span class="chev">${ic("chev", 18)}</span>`;
@@ -164,10 +168,10 @@
   function nav() {
     const v = viewer(), n = waiting().length + callReqs().length;
     return v === "alex"
-      ? [["advisor", "Signal", "pulse"], ["advisor/align", "AI brief", "brief"], ["advisor/inbox", "Inbox", "chat", n], ["advisor/plan", "Plan", "flag"]]
-      : v ? [[`me/${v}`, "Home", "home"], [`me/${v}/checkin`, "Check-in", "lock"], [`me/${v}/options`, "Vote", "scale"], [`me/${v}/ask`, "Ask Alex", "chat"]] : [];
+      ? [["advisor", "Signal", "pulse"], ["advisor/align", "AI brief", "brief"], ["advisor/guide", "Guide", "guide"], ["advisor/inbox", "Inbox", "chat", n], ["advisor/plan", "Plan", "flag"]]
+      : v ? [[`me/${v}`, "Home", "home"], [`me/${v}/checkin`, "Check-in", "lock"], [`me/${v}/options`, "Vote", "scale"], [`me/${v}/decide`, "Decide", "branch"], [`me/${v}/ask`, "Ask Alex", "chat"]] : [];
   }
-  const tabOf = r => r === "advisor/docs" ? "advisor/align" : r.replace(/\/vote$/, "/options").replace(/^(me\/\w+)\/plan$/, "$1");
+  const tabOf = r => r === "advisor/docs" ? "advisor/align" : r.replace(/\/vote$/, "/options").replace(/^(me\/\w+)\/(plan|setup)$/, "$1");
   function appbar() {
     const v = viewer(), who = v === "alex" ? `Alex Lee${avAlex(28)}` : v ? `${P[v].short}${av(P[v], 28)}` : `View as${ic("person", 18)}`;
     const cur = tabOf(route);
@@ -189,8 +193,8 @@
           <div class="onb-copy">
             <h1>Plan the sale of a family business, together.</h1>
             <p>Every family member gets a private voice. Their PNC advisor gets the whole picture a year before closing, and nobody's words are shared unless they choose.</p>
-            <button class="btn xl" data-act="tour-start">Start the 2-minute demo</button>
-            <p class="onb-note">Eight taps, both sides of one sale.</p>
+            <div class="onb-ctas"><button class="btn xl" data-act="tour-start">Start the 2-minute demo</button><a class="btn xl ghost-w" href="#/preview">Preview it for your family</a></div>
+            <p class="onb-note">Ten steps, both sides of one sale. The preview works before anyone talks to PNC.</p>
           </div>
           <div class="onb-how"><h2>How it works</h2>
             <ol class="stages">${STAGES.map((s, i) => `<li style="--i:${i}"><span class="st-ic">${ic(s.icon, 18)}</span><span class="st-tx"><b>${s.label}</b><span>${s.line}</span></span></li>`).join("")}</ol></div>
@@ -215,22 +219,26 @@
   const TOUR = [
     { side: "Advisor", stage: "Signal", route: "advisor", title: "Alex sees the sale coming",
       hint: "PNC's own account data puts Wilson Transport at 81 out of 100, a year before closing. Tap Call Margaret.", target: '[data-act="start"]', done: () => state.started },
-    { side: "Family", stage: "Join", route: "me/margaret", title: "Margaret brings her family in",
-      hint: "$27.0M lands at closing. Before anyone splits it, she invites the family to private check-ins.", target: '[data-act="invite"]', done: () => state.invited },
+    { side: "Family", stage: "Preview", route: "preview", title: "Margaret previews what's possible",
+      hint: "Before she commits to anything, she sees what a sale could mean for her family. Try another family: tap Four children, two in it.", target: '[data-act="pv-preset"][data-id="mixed"]', done: () => state.previewed },
+    { side: "Family", stage: "Join", route: "me/margaret/setup", title: "Margaret sets her goals",
+      hint: "PNC already filled in the facts. She sharpens what fair means to her, then invites the family.", target: '[data-act="invite"]', done: () => state.invited },
     { side: "Family", stage: "Align", route: "me/claire/checkin", title: "Claire says what she's never said",
       hint: "Her words stay on this screen unless she shares them. Share answer 1 with Alex.", target: '[data-act="toggle-share"][data-id="q1"]', done: () => state.shared.includes("q1") },
     { side: "Advisor", stage: "Align", route: "advisor/align", title: "The AI reads. Alex decides.", noScroll: true,
       hint: "Four private check-ins become one finding: the widest gap is fairness. Approve the brief.", target: '[data-act="approve"]', done: () => state.approved },
+    { side: "Advisor", stage: "Align", route: "advisor/guide", title: "Alex walks in with a guide",
+      hint: "AI turns the brief into a 90-minute run of show, with what to say, show and ask. Tap Present to the family.", target: '[data-act="present-open"]', done: () => state.presented },
     { side: "Family", stage: "Allocate", route: "me/sam/options", title: "Sam sees his number, then votes",
       hint: "Each option shows every child's share. Votes are private, and counts appear only after 3 votes. Cast Sam's vote.", target: '[data-act="vote"]', done: () => !!state.votes.sam },
-    { side: "Family", stage: "Activate", route: "me/sam/ask", title: "Sam asks Alex directly",
-      hint: "Tap the first question. It goes to Alex, not straight to an AI.", target: '[data-act="send-q"]', done: () => state.msgs.some(m => m.from === "sam") },
-    { side: "Advisor", stage: "Activate", route: "advisor/inbox", title: "AI drafts. Alex sends.",
+    { side: "Family", stage: "Allocate", route: "me/sam/decide", title: "Sam firms up the decision",
+      hint: "Three choices narrow 12 possible plans to one. Choose how the gift is paid.", target: '[data-act="tree"][data-k="pay"]', done: () => !!(state.tree.sam && state.tree.sam.pay) },
+    { side: "Advisor", stage: "Activate", route: "advisor/inbox", title: "Sam asks. AI drafts. Alex sends.",
       prep: () => { if (!state.msgs.some(m => m.from === "sam")) state.msgs.push({ id: "sam-demo", from: "sam", qi: 0, at: "Just now" }); },
-      hint: "The draft uses calculator numbers and passes the checks. Alex can edit it. Approve and send.", target: '[data-act="send"][data-from="sam"]',
+      hint: "Sam's question went to Alex. The draft uses calculator numbers and passes the checks. Approve and send.", target: '[data-act="send"][data-from="sam"]',
       done: () => state.msgs.some(m => m.from === "sam" && state.replies[m.id] != null) },
     { side: "Both sides", stage: "Continue", route: "year-one", title: "One year on",
-      hint: "The sale has closed and the plan runs as everyday banking. That's Family Table.", target: null, done: () => true },
+      hint: "The sale has closed. Every dollar is working in a PNC service, and all five Wilsons bank with PNC.", target: null, done: () => true },
   ];
   function tourBar() {
     if (embedded || state.tour < 0 || route.startsWith("story/") || route === "") return "";
@@ -281,8 +289,8 @@
       <div class="caption">${pid === "ben" ? "In cash, plus your $1.5M of NorthPeak equity. " : ""}It depends on the split the family chooses. Closing is expected next fall.</div>`;
   }
   function invitePanel() {
-    if (!state.invited) return `<section class="panel invite"><span class="ic p">${ic("users")}</span><div><b>Bring your family in</b><p>Tom, Ben, Claire and Sam each get a private check-in. You'll see who has answered, never what they said.</p>
-      <button class="btn" data-act="invite">Invite the family</button></div></section>`;
+    if (!state.invited) return `<section class="panel invite"><span class="ic p">${ic("users")}</span><div><b>Set your goals, then bring your family in</b><p>Tom, Ben, Claire and Sam each get a private check-in. You'll see who has answered, never what they said.</p>
+      <a class="btn" href="#/me/margaret/setup">Set up your plan</a></div></section>`;
     return `<section class="panel invite on"><div><b>Your family is taking part</b><p>${checkedIn()} of ${S.people.length} have checked in. Their answers stay private, even from you.</p>${voices()}</div></section>`;
   }
   function memberHome(pid) {
@@ -354,7 +362,8 @@
     return `<div class="page"><div class="cols"><div class="col-main">
       <section class="hero">${hero}</section>
       <section class="section"><div class="section-head"><h2>Three ways to split $12.0M</h2></div><div class="opts">${cards}</div>
-        <div class="vote-cta">${cta}<p class="privacy">${ic("lock", 15)} Your vote is private. Nobody sees how you voted, Alex included.</p></div></section>
+        <div class="vote-cta">${cta}<p class="privacy">${ic("lock", 15)} Your vote is private. Nobody sees how you voted, Alex included.</p></div>
+        ${nextLink(`me/${pid}/decide`, "Firm it up in the decision tree")}</section>
       </div><aside class="col-side">${tallyPanel(false)}</aside></div></div>`;
   }
 
@@ -445,7 +454,7 @@
       step(0, `Read ${n} private check-ins`, `<p>Turned each person's words into a stance on ${S.themes.length} themes. The words stay in each person's own vault.</p>
         <div class="chips static">${S.themes.map(t => `<span class="chip">${t.short}</span>`).join("")}</div>`),
       step(1, "Scored the gaps with a fixed formula", `<p class="formula">gap = (highest − lowest) ÷ 4</p>${gapBars(ths)}`),
-      step(2, "Compared it with Margaret's plan", `<p>Margaret plans an equal split. Her family is furthest apart on exactly that question.</p>`),
+      step(2, "Compared it with Margaret's goals", `<p>Margaret's goal: ${state.fairMeans ? `fair means ${OPT[state.fairMeans].label.toLowerCase()}` : "an equal split"}. Her family is furthest apart on exactly that question.</p>`),
       step(3, `Read ${S.docs.length} family documents`, `<div class="docrow"><span class="file">PDF</span><span class="tx"><b>${will.name}</b><span>${will.finding} It doesn't say whether Ben's buyer equity counts.</span></span><span class="badge r">High risk</span></div>
         <div class="docbtn">${routed ? `<button class="btn done sm" disabled>${ic("check", 16, 2.4)} ${will.done}</button>` : `<button class="btn ghost sm" data-act="route" data-id="will">${will.action}</button>`}</div>
         <p class="micro faint">Also flagged: the key-person policy ends at closing; the buy-sell agreement values the company at 4×.</p>`),
@@ -453,7 +462,7 @@
         <li><b>Then fairness (gap ${top.g.toFixed(2)}).</b> Show all three options as a range, not as people.</li><li><b>Close with the will.</b> Share counsel's summary, not a conclusion.</li></ol>
         <p class="note">${ic("users", 16)} A gap of 0.75 or more calls for a facilitator. Hawthorn IFS is booked.</p>`),
       step(5, state.approved ? "Approved by Alex" : "Alex reviews and approves", state.approved
-        ? `<p>The brief goes to the facilitator. The family sees the agenda, never the inputs.</p><button class="linkbtn" data-act="unapprove">Reopen the draft</button>`
+        ? `<p>The brief goes to the facilitator. The family sees the agenda, never the inputs.</p><div class="cta-row"><a class="btn sm" href="#/advisor/guide">${ic("guide", 16)} Open the meeting guide</a><button class="linkbtn" data-act="unapprove">Reopen the draft</button></div>`
         : `<p>Nothing reaches the family or the facilitator until Alex approves.</p><button class="btn navy" data-act="approve">${ic("check", 18, 2.4)} Approve the brief</button>`, "human", state.approved ? "check" : "person"),
     ].join("");
     return `<div class="page"><div class="cols ai"><div class="col-side sticky">
@@ -545,6 +554,7 @@
       <div class="page"><div class="cols"><div class="col-main">
         <section class="section"><div class="section-head"><h2>Where the ${money(net())} went</h2></div>${allocBar()}
           <div class="split-out"><div class="small muted">The ${money(12)} gift, ${ch.label} split</div>${optBars(ch, null)}</div></section>
+        ${productsHtml()}
         <section class="section"><div class="section-head"><h2>For the family</h2></div><div class="rows">${fam.map(([p, t, s]) => `<div class="row">${av(p, 36)}<span class="tx"><b>${t}</b><span>${s}</span></span></div>`).join("")}</div></section>
       </div><aside class="col-side">
         <section class="panel"><div class="section-head"><h2>For PNC</h2></div><div class="rows">${pnc.map(([i, t, s]) => `<div class="row"><span class="ic o">${ic(i)}</span><span class="tx"><b>${t}</b><span>${s}</span></span></div>`).join("")}</div></section>
@@ -552,6 +562,150 @@
       </aside></div>
       <div class="y1-actions">${state.tour >= 0 ? "" : `<button class="btn" data-act="tour-start">Replay the demo</button>`}<a class="btn ghost" href="#/">Back to the start</a></div>
       <p class="micro faint center" style="margin-top:14px">A fictional outcome, derived from the demo's figures.</p></div>`;
+  }
+
+  // ---------- before PNC: scenario preview ----------
+  const m1 = v => "$" + v.toFixed(1) + "M";
+  const kOrM = v => v < 1 ? "$" + Math.round(v * 1000) + "K" : money(v);
+  function previewPage() {
+    const X = S.preview, pv = state.pv, netV = pv.value * X.netRatio, pot = netV * X.giftShare, R = pv.value * X.equityRatio;
+    const eqEach = pot / pv.kids, target = (pot + R * pv.inBiz) / pv.kids, inCash = target - R, out = pv.kids - pv.inBiz;
+    const mixed = pv.inBiz > 0 && out > 0;
+    const seg = (act, vals, cur, fmt = x => x) => `<div class="seg" role="group">${vals.map(x => `<button class="${x === cur ? "on" : ""}" data-act="${act}" data-id="${x}" aria-pressed="${x === cur}">${fmt(x)}</button>`).join("")}</div>`;
+    const kid = (label, cash, eq, max) => `<span class="ob"><span class="ob-n">${label}</span><span class="ob-t"><i style="width:${(cash / max * 100).toFixed(1)}%;background:var(--navy)"></i>${eq ? `<i class="eq" style="width:${(eq / max * 100).toFixed(1)}%"></i>` : ""}</span><b>${m1(cash + eq)}</b></span>`;
+    const max = Math.max(eqEach + R, target) * 1.04;
+    const card = (title, line, rows) => `<div class="pv-card"><b>${title}</b><span class="opt-line">${line}</span><span class="obars">${rows}</span></div>`;
+    const cards = !mixed
+      ? `<div class="pv-card one"><b>One split: ${m1(eqEach)} each</b><span class="opt-line">${pv.kids === 1 ? "With one child there's no split to agree. Your questions are timing, tax and a trust." : pv.inBiz ? "Every child stays with the buyer, so equal is also equal in total. Your bigger questions are timing and a trust." : "No child stays with the buyer, so equal cash is equal in total. Your bigger questions are timing and a trust."}</span></div>`
+      : card("Equal cash", `Children who stay with the buyer also keep ${m1(R)} of its equity, so their total is higher.`,
+          kid(`In the business, ×${pv.inBiz}`, eqEach, R, max) + kid(`Not in it, ×${out}`, eqEach, 0, max))
+        + card("Equity counted", "Buyer equity counts toward each share, so every child's total is the same.",
+          kid(`In the business, ×${pv.inBiz}`, inCash, R, max) + kid(`Not in it, ×${out}`, target, 0, max));
+    return `<div class="page"><div class="cols"><div class="col-main">
+      <section class="hero"><div class="label">Before you talk to anyone: what could a sale mean for your family?</div>
+        <div class="pv-presets">${seg("pv-preset", X.presets.map(p => p.id), pv.preset, id => X.presets.find(p => p.id === id).label)}</div>
+        <div class="pv-in"><label><span>Offer for the business</span><b data-pvval>$${pv.value}M</b></label>
+          <input type="range" min="10" max="100" step="2" value="${pv.value}" data-act="pv-value" aria-label="Offer for the business, in millions"></div>
+        <div class="pv-row"><div><span class="lab">Children</span>${seg("pv-kids", [1, 2, 3, 4], pv.kids)}</div>
+          <div><span class="lab">Working in the business</span>${seg("pv-inbiz", [...Array(pv.kids + 1).keys()], pv.inBiz)}</div></div></section>
+      <section class="section"><div class="section-head"><h2>Likely to reach your family at closing</h2></div>
+        <div class="value huge">${m1(netV)}</div>
+        <p class="caption">After typical debt, fees and tax, with any earnout left out. ${m1(pot)} of it could go to the children.</p>
+        <div class="alloc" style="margin-top:14px" aria-hidden="true">${S.deal.buckets.map(b => `<i style="flex:${b.value};background:${b.color}"></i>`).join("")}</div>
+        <div class="alloc-legend">${S.deal.buckets.map(b => `<div><span class="dot" style="background:${b.color}"></span><b>${m1(netV * b.value / net())}</b><span>${b.label}</span></div>`).join("")}</div></section>
+      <section class="section"><div class="section-head"><h2>${mixed ? "Two ways to split it" : "How it splits"}</h2><span class="aside">Navy cash, orange equity</span></div><div class="pv-cards">${cards}</div></section>
+      </div><aside class="col-side">
+        <section class="panel"><div class="section-head"><h2>What changes with Family Table</h2></div>
+          <div class="cmp"><div class="cmp-h"><span></span><span>Without a plan</span><span>With Family Table</span></div>${X.compare.map(([k, a, b]) => `<div class="cmp-r"><b>${k}</b><span>${a}</span><span>${b}</span></div>`).join("")}</div></section>
+        <section class="panel"><div class="section-head"><h2>Your first month</h2></div><ol class="recap">${X.month.map(([w, t]) => `<li><span class="rc-ic">${ic("check", 14, 2.6)}</span><span class="tx"><b>${w}</b><span>${t}</span></span></li>`).join("")}</ol>
+          <a class="btn block" style="margin-top:14px" href="#/me/margaret/setup">Start with a PNC advisor</a></section>
+        <p class="micro faint">Illustrative ranges from a deal like the Wilsons'. A PNC tax specialist confirms real figures.</p>
+      </aside></div></div>`;
+  }
+
+  // ---------- onboarding: confirm the facts, choose and sharpen goals ----------
+  function setupPage() {
+    const sel = state.goals, G = Object.fromEntries(S.goals.map(g => [g.id, g])), years = 9000 / state.spend;
+    const refine = {
+      fair: () => `<p class="rf-q">For you, fair means…</p><div class="rf-opts">${S.options.map(o => { const g = gifts(o.w); return `<button class="rf-opt ${state.fairMeans === o.id ? "on" : ""}" data-act="fair-means" data-id="${o.id}" aria-pressed="${state.fairMeans === o.id}"><b>${o.label}</b><span>Ben ${money(g.ben)}, Claire ${money(g.claire)}, Sam ${money(g.sam)}</span></button>`; }).join("")}</div>`,
+      live: () => `<p class="rf-q">How much would you and Tom spend a year?</p><div class="pv-in"><label><span>A year</span><b data-spend>$${state.spend}K</b></label><input type="range" min="200" max="450" step="25" value="${state.spend}" data-act="spend" aria-label="Spending a year, in thousands"></div>
+        <p class="rf-out"><b data-years>${Math.floor(years)} years</b> is how long your ${money(9)} lasts at that pace, before any growth.</p>`,
+      chapter: () => `<p class="rf-q">What could your next chapter look like?</p><div class="chips">${CHAPTER.map(([id, t]) => `<button class="chip ${state.chapter.includes(id) ? "on" : ""}" data-act="chapter" data-id="${id}" aria-pressed="${state.chapter.includes(id)}">${t}</button>`).join("")}</div>`,
+      give: () => `<p class="rf-q">How much of the ${money(6)} you invest goes to a family foundation?</p><div class="seg" role="group">${[1, 2, 3].map(x => `<button class="${state.foundation === x ? "on" : ""}" data-act="foundation" data-id="${x}" aria-pressed="${state.foundation === x}">${money(x)}</button>`).join("")}</div>`,
+      name: () => `<div class="switch-row"><span class="tx"><b>Ask NorthPeak to keep the Wilson Transport name for 3 years</b><span>Alex adds it to the questions for the letter of intent.</span></span><button class="switch" role="switch" aria-checked="${state.keepName}" aria-label="Ask to keep the company name" data-act="keep-name"></button></div>`,
+    };
+    return `<div class="page"><div class="cols"><div class="col-main">
+      <section class="hero"><div class="label">Set up your plan</div><h1 class="title">Tell Alex what matters most</h1>
+        <div class="caption">PNC has filled in what it already knows. Check it, then pick up to three goals and sharpen each one.</div></section>
+      <section class="section"><div class="section-head"><h2>The facts</h2><span class="aside">Tell Alex if one is wrong</span></div>
+        <div class="rows">${S.facts.map(([k, v, src]) => `<div class="row"><span class="ic g">${ic("check", 18, 2.4)}</span><span class="tx"><b>${k}</b><span>${src}</span></span><span class="rt">${v}</span></div>`).join("")}</div></section>
+      <section class="section"><div class="section-head"><h2>Your goals</h2><span class="aside">${sel.length} of 3 picked, in order</span></div>
+        <div class="goals">${S.goals.map(g => { const i = sel.indexOf(g.id); return `<button class="goal ${i >= 0 ? "on" : ""}" data-act="goal" data-id="${g.id}" aria-pressed="${i >= 0}"><span class="g-n">${i >= 0 ? i + 1 : ic(g.icon, 18)}</span><b>${g.label}</b></button>`; }).join("")}</div></section>
+      ${sel.map((id, i) => `<section class="section refine"><div class="section-head"><h2><span class="rk">${i + 1}</span>${G[id].label}</h2></div>${refine[id]()}</section>`).join("")}
+      </div><aside class="col-side">
+        <section class="panel"><div class="section-head"><h2>What Alex will see</h2></div><div class="rows">
+          ${sel.length ? sel.map((id, i) => `<div class="row"><span class="ic o">${i + 1}</span><span class="tx"><b>${G[id].label}</b><span>${id === "fair" ? (state.fairMeans ? "Fair means: " + OPT[state.fairMeans].label : "Not sharpened yet") : id === "live" ? `$${state.spend}K a year, about ${Math.floor(years)} years covered` : id === "chapter" ? `${state.chapter.length} idea${state.chapter.length === 1 ? "" : "s"} picked` : id === "give" ? `${money(state.foundation)} to a family foundation` : state.keepName ? "Ask to keep the name for 3 years" : "Not asked yet"}</span></span></div>`).join("") : `<p class="small muted">Pick at least one goal.</p>`}</div>
+          <p class="micro faint" style="margin-top:8px">Your goals go to Alex. Your family sees only the options they lead to.</p>
+          <div style="margin-top:14px">${state.invited ? `<button class="btn done block" disabled>${ic("check", 18, 2.4)} Goals saved, family invited</button>` : `<button class="btn block" data-act="invite" ${sel.length ? "" : "disabled"}>Save my goals and invite the family</button>`}</div></section>
+      </aside></div></div>`;
+  }
+
+  // ---------- family: decision tree ----------
+  const pathFor = pid => Object.assign({ count: votes()[pid] || state.pick }, state.tree[pid] || {});
+  function decide(pid) {
+    const path = pathFor(pid), T = S.tree, chosen = T.filter(n => path[n.id]).length;
+    let left = 1; T.forEach(n => { if (!path[n.id]) left *= n.opts.length; });
+    const vs = votes(), nv = Object.keys(vs).length, t = tally(), lead = S.options.reduce((a, o) => t[o.id] > t[a.id] ? o : a, S.options[0]);
+    const levels = T.map((n, i) => {
+      if (i > 0 && !path[T[i - 1].id]) return "";
+      return `<li class="dt-node ${path[n.id] ? "done" : "open"}"><span class="dt-dot">${path[n.id] ? ic("check", 14, 2.8) : i + 1}</span><div class="dt-body"><b>${n.q}</b>
+        <div class="dt-opts">${n.opts.map(([id, l, s]) => `<button class="dt-opt ${path[n.id] === id ? "on" : ""}" data-act="tree" data-k="${n.id}" data-id="${id}" aria-pressed="${path[n.id] === id}"><b>${l}</b><span>${s}</span></button>`).join("")}</div>
+        ${n.id === "count" && nv >= MIN_GROUP ? `<p class="micro faint">The family's private vote leans ${lead.label}, ${t[lead.id]} of ${nv}. Counts only.</p>` : ""}</div></li>`;
+    }).join("");
+    let outcome = "";
+    if (chosen === T.length) {
+      const w = OPT[path.count].w, g = gifts(w), later = path.earn === "half" ? 4 / KIDS.length : 0, mx = Math.max(...KIDS.map(k => g[k] + later)) * 1.04;
+      outcome = `<section class="panel outcome"><div class="section-head"><h2>Your plan</h2><span class="aside">1 of 12</span></div>
+        <div class="obars">${KIDS.map(k => `<span class="ob ${k === pid ? "mine" : ""}"><span class="ob-n">${k === pid ? "You" : P[k].short}</span><span class="ob-t"><i style="width:${(g[k] / mx * 100).toFixed(1)}%;background:${P[k].color}"></i>${later ? `<i class="later" style="width:${(later / mx * 100).toFixed(1)}%"></i>` : ""}</span><b>${money(g[k] + later)}</b></span>`).join("")}</div>
+        <p class="small muted" style="margin-top:10px">${path.pay === "trust" ? `Paid through a family trust: ${pid && KIDS.includes(pid) ? `about ${kOrM(g[pid] / 10)} a year for you` : "about a tenth of each share a year"}, for 10 years.` : "Paid in cash at closing, next fall."}${later ? ` Plus ${money(later)} each later, only if the earnout targets are met (striped).` : ""}</p>
+        ${KIDS.includes(pid) || pid === "margaret" ? (state.pathSent[pid] ? `<button class="btn done block" disabled>${ic("check", 18, 2.4)} Sent to Alex for Nov 12</button>` : `<button class="btn block" data-act="send-path">Send my path to Alex for Nov 12</button>`) : ""}
+        <p class="micro faint" style="margin-top:8px">Only Alex sees a path you send. The family decides together on Nov 12; this is in principle until counsel confirms it.</p></section>`;
+    }
+    return `<div class="page"><div class="cols"><div class="col-main">
+      <section class="hero"><div class="label">Possible plans left</div><div class="value huge"><span>${left}</span><span class="unit">of 12</span></div>
+        <div class="caption">Three choices turn twelve possible plans into one. Settle them in order; each one shows what it does to every share.</div>
+        <div class="dt-prog" aria-label="${chosen} of 3 settled">${T.map(n => `<i class="${path[n.id] ? "on" : ""}"></i>`).join("")}</div></section>
+      <section class="section"><ol class="dtree">${levels}</ol></section>
+      </div><aside class="col-side">${outcome || `<section class="panel"><div class="section-head"><h2>Your plan</h2></div><p class="small muted">Settle all three choices to see every child's number under your plan.</p></section>`}
+        ${nextLink(`me/${pid}/ask`, "Ask Alex about it")}</aside></div></div>`;
+  }
+
+  // ---------- advisor: meeting guide and presenter mode ----------
+  function advGuide() {
+    const total = S.guide.reduce((s, g) => s + g.min, 0), sent = Object.keys(state.pathSent).filter(k => state.pathSent[k]);
+    const G = Object.fromEntries(S.goals.map(g => [g.id, g]));
+    return `<div class="page"><div class="cols"><div class="col-main">
+      <section class="hero"><div class="label">Your guide for Thursday, Nov 12 ${state.approved ? `<span class="badge g">From the approved brief</span>` : `<span class="badge p">Draft</span>`}</div>
+        <div class="value huge">${total}<span class="unit">minutes</span></div>
+        <div class="caption">AI turned the brief into a run of show. You present; the Hawthorn facilitator runs the fairness discussion.</div>
+        <div class="ros" aria-hidden="true">${S.guide.map((g, i) => `<i style="flex:${g.min}" class="${i === 2 ? "hot" : ""}"><span>${g.min}</span></i>`).join("")}</div></section>
+      <section class="section"><ol class="guide">${S.guide.map((g, i) => `<li class="gd"><div class="gd-h"><span class="gd-n">${i + 1}</span><b>${g.title}</b><span class="gd-m">${g.min} min</span></div>
+        <dl><dt>Say</dt><dd>${g.say}</dd><dt>Show</dt><dd>${g.show}</dd><dt>Ask</dt><dd>${g.ask}</dd></dl></li>`).join("")}</ol></section>
+      </div><aside class="col-side">
+        <section class="panel present-panel"><div class="section-head"><h2>Present to the family</h2></div><p class="small muted">Five screens built from the family's numbers, never anyone's words.</p>
+          <button class="btn block" data-act="present-open" style="margin-top:12px">${ic("play", 18)} Present to the family</button></section>
+        <section class="panel"><div class="section-head"><h2>Margaret's goals</h2></div><div class="rows">${state.goals.map((id, i) => `<div class="row"><span class="ic o">${i + 1}</span><span class="tx"><b>${G[id].label}</b><span>${id === "fair" && state.fairMeans ? "Fair means: " + OPT[state.fairMeans].label : id === "live" ? `$${state.spend}K a year` : id === "give" ? money(state.foundation) + " to a foundation" : "Picked"}</span></span></div>`).join("")}</div>
+          ${sent.length ? `<p class="small muted" style="margin-top:8px">Decision paths sent to you: ${sent.map(k => P[k].short).join(", ")}.</p>` : ""}</section>
+        <section class="panel"><div class="section-head"><h2>Guardrails</h2></div><ul class="guard">${S.guardrails.map(g => `<li>${ic("shield", 16)}${g}</li>`).join("")}</ul></section>
+        <section class="panel"><div class="section-head"><h2>Questions they may ask</h2></div>${S.faqs.map(([q, a]) => `<div class="faq"><b>${q}</b><span>${a}</span></div>`).join("")}</section>
+      </aside></div></div>`;
+  }
+  function presentDeck() {
+    const ths = summaryThemes().map(th => ({ th, g: gap(th) })).sort((a, b) => b.g - a.g), top = ths[0], low = ths[ths.length - 1];
+    const slides = [
+      [`Where you already agree`, `<div class="pz-big">${low.g.toFixed(2)}</div><p>The smallest gap in the family: everyone says Margaret's next chapter isn't planned yet.</p>`],
+      [`The question in front of you`, `<div class="pz-big orange">${top.g.toFixed(2)}</div><p>The widest gap is on equal shares. This is a range from the whole family, not anyone's answer.</p><div class="pz-range"><i></i></div><div class="pz-ends"><span>Strongly disagree</span><span>Strongly agree</span></div>`],
+      [`Three ways to split ${money(12)}`, `<div class="pz-opts">${S.options.map(o => `<div><b>${o.label}</b>${optBars(o, null)}</div>`).join("")}</div>`],
+      [`Three choices, one plan`, `<div class="pz-big">12 → 1</div><ol class="pz-list">${S.tree.map(n => `<li>${n.q}</li>`).join("")}</ol>`],
+      [`What happens next`, `<ul class="pz-list">${S.people.map(p => `<li><b>${p.short}</b> ${STEPS_OTHERS[p.id].replace(/^\w/, c => c.toLowerCase())}</li>`).join("")}</ul>`],
+    ];
+    const i = Math.min(ui.slide, slides.length - 1), [t, body] = slides[i];
+    return `<div class="present" role="dialog" aria-label="Presenting to the family"><div class="pz-top"><span class="brand">${mark}Family Table</span><span class="pz-c">${i + 1} / ${slides.length}</span><button class="x" data-act="present-close" aria-label="Stop presenting">${ic("x", 18)}</button></div>
+      <div class="pz-slide"><h2>${t}</h2>${body}</div>
+      <div class="pz-nav"><button class="btn ghost sm" data-act="present-nav" data-id="-1" ${i === 0 ? "disabled" : ""}>Back</button><div class="pz-dots">${slides.map((_, k) => `<i class="${k === i ? "on" : ""}"></i>`).join("")}</div>
+        ${i === slides.length - 1 ? `<button class="btn sm" data-act="present-close">Done</button>` : `<button class="btn sm" data-act="present-nav" data-id="1">Next</button>`}</div></div>`;
+  }
+
+  // ---------- one year on: where every dollar now sits ----------
+  function productsHtml() {
+    const n = S.products.length;
+    return `<section class="section"><div class="section-head"><h2>What the money does now</h2></div>
+      <div class="prod-hero"><div><b>${n}</b><span>PNC services hold the ${money(net())}</span></div><div><b>100%</b><span>of the proceeds still at PNC</span></div></div>
+      ${S.deal.buckets.map(b => { const ps = S.products.filter(p => p.bucket === b.id);
+        return `<div class="pb"><div class="pb-h"><b>${b.label}</b><span>${money(b.value)}</span></div>
+          <div class="pb-bar">${ps.map((p, i) => `<i style="flex:${p.amt};background:${b.color};opacity:${(1 - i * 0.4).toFixed(2)}"></i>`).join("")}</div>
+          <div class="rows">${ps.map((p, i) => `<div class="row"><span class="dot" style="background:${b.color};opacity:${(1 - i * 0.4).toFixed(2)}"></span><span class="tx"><b>${p.name}</b><span>${p.who}. ${p.line}</span></span><span class="rt">${money(p.amt)}</span></div>`).join("")}</div></div>`; }).join("")}
+      <div class="svc"><span class="lab">Also in the relationship, with no balance</span>${S.services.map(s => `<span>${ic("check", 14, 2.6)}${s}</span>`).join("")}</div></section>`;
   }
 
   // ---------- story cards (video only) ----------
@@ -586,6 +740,7 @@
         <a class="row" href="#/year-one" data-act="close"><span class="ic o">${ic("repeat")}</span><span class="tx"><b>One year on</b><span>Where the plan ends up</span></span>${chev}</a></div>`);
       return;
     }
+    if (sheet.kind === "present") { sheetRoot.innerHTML = presentDeck(); return; }
     if (sheet.kind === "breakdown") { sheetRoot.innerHTML = shell("From offer to closing", `${waterfall()}<p class="micro faint" style="margin-top:12px">From PNC's proceeds calculator. A PNC tax specialist confirms real figures.</p>`); return; }
     if (sheet.kind === "why") {
       const v = viewer(), p = P[v];
@@ -612,7 +767,7 @@
   }
   // Entrance choreography on arrival only; in-page changes only tween the numbers that changed.
   function enter() {
-    app.querySelectorAll(".rows, .stages, .ends, .voices, .col-side, .opts, .cast-row, .gaps, .recap, .tally, .chips").forEach(c => [...c.children].forEach((el, i) => el.style.setProperty("--i", i)));
+    app.querySelectorAll(".rows, .stages, .ends, .voices, .col-side, .opts, .cast-row, .gaps, .recap, .tally, .chips, .goals, .guide, .pv-cards, .dtree").forEach(c => [...c.children].forEach((el, i) => el.style.setProperty("--i", i)));
     app.classList.add("anim"); clearTimeout(animTimer); animTimer = setTimeout(() => app.classList.remove("anim"), 2200);
   }
   function numbers(arrive) {
@@ -629,8 +784,9 @@
     let html, bare = false;
     if (route.startsWith("story/")) { html = story(route.split("/")[1]); bare = true; }
     else if (route === "year-one") html = yearOne();
-    else if (v === "alex") html = ({ advisor: advSignal, "advisor/align": advAI, "advisor/docs": advAI, "advisor/inbox": advInbox, "advisor/plan": advPlan }[route] || advSignal)();
-    else if (v) html = sub === "checkin" ? checkin(v) : sub === "options" || sub === "vote" ? options(v) : sub === "ask" ? askAlex(v) : sub === "plan" ? famPlan(v) : memberHome(v);
+    else if (route === "preview") html = previewPage();
+    else if (v === "alex") html = ({ advisor: advSignal, "advisor/align": advAI, "advisor/docs": advAI, "advisor/inbox": advInbox, "advisor/plan": advPlan, "advisor/guide": advGuide }[route] || advSignal)();
+    else if (v) html = sub === "checkin" ? checkin(v) : sub === "options" || sub === "vote" ? options(v) : sub === "ask" ? askAlex(v) : sub === "plan" ? famPlan(v) : sub === "decide" ? decide(v) : sub === "setup" && v === "margaret" ? setupPage() : memberHome(v);
     else { html = splash(); bare = true; route = ""; }
     document.body.classList.toggle("story", route.startsWith("story/"));
     document.body.classList.toggle("onboarding", route === "");
@@ -674,6 +830,19 @@
     else if (a === "call-open") { ui.callOpen = true; render(); }
     else if (a === "call" && v) { ui.callOpen = false; set({ calls: Object.assign({}, state.calls, { [v]: S.slots[+id] }) }); }
     else if (a === "confirm-call") set({ confirmed: Object.assign({}, state.confirmed, { [id]: true }) });
+    else if (a === "pv-preset") { const pr = S.preview.presets.find(x => x.id === id); set({ previewed: true, pv: { preset: id, value: pr.value, kids: pr.kids, inBiz: pr.inBiz } }); }
+    else if (a === "pv-kids") { const k = +id; set({ previewed: true, pv: Object.assign({}, state.pv, { preset: null, kids: k, inBiz: Math.min(state.pv.inBiz, k) }) }); }
+    else if (a === "pv-inbiz") set({ previewed: true, pv: Object.assign({}, state.pv, { preset: null, inBiz: +id }) });
+    else if (a === "goal") { const g = state.goals; set({ goals: g.includes(id) ? g.filter(x => x !== id) : g.length < 3 ? [...g, id] : g }); }
+    else if (a === "fair-means") set({ fairMeans: id });
+    else if (a === "foundation") set({ foundation: +id });
+    else if (a === "keep-name") set({ keepName: !state.keepName });
+    else if (a === "tree" && v) { const cur = pathFor(v), T = S.tree, k = T.findIndex(n => n.id === el.dataset.k), next = {};
+      T.forEach((n, i) => { if (i < k) next[n.id] = cur[n.id]; }); next[el.dataset.k] = id; set({ tree: Object.assign({}, state.tree, { [v]: next }) }); }
+    else if (a === "send-path" && v) set({ pathSent: Object.assign({}, state.pathSent, { [v]: true }) });
+    else if (a === "present-open") { ui.slide = 0; state.presented = true; save(); sheet = { kind: "present" }; renderSheet(); }
+    else if (a === "present-nav") { ui.slide = Math.max(0, ui.slide + +id); renderSheet(); }
+    else if (a === "present-close") { sheet.kind = null; renderSheet(); render(); }
     else if (a === "tour-start") { sheet.kind = null; state = Object.assign(fresh(), { tour: 0 }); goStep(0); }
     else if (a === "tour-go") goStep(state.tour);
     else if (a === "tour-next") { if (state.tour >= TOUR.length - 1) set({ tour: -1 }); else goStep(state.tour + 1); }
@@ -687,12 +856,19 @@
   document.addEventListener("input", e => {
     const el = e.target;
     if (el.dataset.draft) { state.drafts[el.dataset.draft] = el.value; save(); }
+    if (el.dataset.act === "pv-value") { const l = app.querySelector("[data-pvval]"); if (l) l.textContent = "$" + el.value + "M"; }
+    if (el.dataset.act === "spend") { state.spend = +el.value; save(); const a1 = app.querySelector("[data-spend]"), a2 = app.querySelector("[data-years]"); if (a1) a1.textContent = "$" + state.spend + "K"; if (a2) a2.textContent = Math.floor(9000 / state.spend) + " years"; }
     if (el.dataset.live) {
       const box = document.querySelector(`[data-tags="${el.dataset.live}"]`);
       if (el.dataset.live !== "intro") state.answers[el.dataset.live] = el.value;
       if (box) box.innerHTML = `<span class="lab">Reading…</span>`;
       clearTimeout(el._t); el._t = setTimeout(() => { if (box) box.innerHTML = themesHtml(el.value); save(); }, 450);
     }
+  });
+  // The preview recalculates when the slider is released, so dragging stays smooth.
+  document.addEventListener("change", e => {
+    const el = e.target;
+    if (el.dataset.act === "pv-value") { const y = scrollY; state.pv = Object.assign({}, state.pv, { preset: null, value: +el.value }); state.previewed = true; save(); render(); scrollTo(0, y); }
   });
   document.addEventListener("keydown", e => { if (e.key === "Escape" && sheet.kind) { sheet.kind = null; renderSheet(); } });
   window.addEventListener("hashchange", () => {

@@ -6,8 +6,8 @@ const path = require("path");
 const BIN = path.join(process.env.HOME, "Library/Caches/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-mac-arm64/chrome-headless-shell");
 const BASE = process.argv[2] || "http://localhost:4320/";
 const PAGES = ["index.html", "case.html", "architecture.html"];
-const ROUTES = ["", "advisor", "advisor/align", "advisor/docs", "advisor/inbox", "advisor/plan", "year-one",
-  ...["margaret", "tom", "ben", "claire", "sam"].flatMap(p => [`me/${p}`, `me/${p}/checkin`, `me/${p}/options`, `me/${p}/ask`, `me/${p}/plan`])];
+const ROUTES = ["", "preview", "advisor", "advisor/align", "advisor/docs", "advisor/guide", "advisor/inbox", "advisor/plan", "year-one", "me/margaret/setup",
+  ...["margaret", "tom", "ben", "claire", "sam"].flatMap(p => [`me/${p}`, `me/${p}/checkin`, `me/${p}/options`, `me/${p}/decide`, `me/${p}/ask`, `me/${p}/plan`])];
 const WIDTHS = [360, 390, 768, 1024, 1440];
 const out = { links: [], errors: [], overflow: [], clipped: [], dead: [], noAlt: [], smallTaps: [], tour: [], ask: [] };
 
@@ -69,11 +69,13 @@ const out = { links: [], errors: [], overflow: [], clipped: [], dead: [], noAlt:
     await p.goto(BASE + "prototype/?tour", { waitUntil: "networkidle" });
     out.tour.push("start: " + (await p.evaluate(() => location.hash + (document.querySelector('.onb [data-act="tour-start"]') ? " (splash with start button)" : " (NO SPLASH)"))));
     await p.click('[data-act="tour-start"]');
-    for (let i = 0; i < 8; i++) {
+    for (let i = 0; i < 10; i++) {
       await p.waitForTimeout(500);
       const step = await p.evaluate(() => ({ route: location.hash, title: document.querySelector(".tour b")?.textContent, target: !!document.querySelector(".tour-target"), last: document.querySelector('[data-act="tour-next"]')?.textContent === "Finish" }));
       if (step.target) await p.click(".tour-target");
       else if (!step.last) out.tour.push(`step ${i + 1} ${step.title}: NO HIGHLIGHTED TARGET`);
+      await p.waitForTimeout(200);
+      if (await p.$(".present")) { out.tour.push(`  presenter opened with ${await p.evaluate(() => document.querySelector(".pz-c").textContent)} slides`); for (let k = 0; k < 4; k++) await p.click('.present [data-act="present-nav"][data-id="1"]'); await p.click('.present [data-act="present-close"]'); }
       await p.waitForTimeout(300);
       const after = await p.evaluate(() => ({ btn: document.querySelector('[data-act="tour-next"]')?.textContent, msg: document.querySelector(".tour p")?.textContent }));
       out.tour.push(`step ${i + 1} ${step.title} @ ${step.route}: ${step.target ? "tapped target" : "no action needed"} -> “${after.btn}”, “${after.msg}”`);

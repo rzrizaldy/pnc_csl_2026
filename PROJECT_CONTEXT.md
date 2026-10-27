@@ -237,10 +237,15 @@ A gap of 0.75 or more recommends a facilitator.
 - Members `#/me/<margaret|tom|ben|claire|sam>`: Home (one big number), `/checkin`, `/options` (Vote; `/vote` is an alias), `/ask` (Ask Alex), `/plan` (next step; Margaret's next chapter)
 - `#/year-one`: one year on, the BAU payoff (fictional, derived: Balanced split, $8.5M to Claire and Sam, 5 of 5 with PNC, about $216K a year at the illustrative 0.8%)
 - Video cards: `#/story/{hook,cast,problem,sauce,close}`
-- `?tour` resets and opens the splash; its button runs the 8-step story: Signal (Alex), Margaret invites, Claire shares, the AI at work (Alex approves), Sam votes, Sam asks Alex, Alex sends the AI draft, one year on. `?reset` clears state.
+- `#/preview`: before anyone engages PNC. Presets (like the Wilsons; two children both in it; four children, two in it) or sliders (offer, children, children in the business) show the likely amount at closing, live on / give / invest, two split scenarios, "without a plan vs with Family Table", and the first month. Ratios come from the Wilson deal (net 27/48, gift 12/27, equity 1.5/48 per child who stays).
+- `#/me/margaret/setup`: onboarding. Confirm the facts PNC holds, pick up to three goals in order, and sharpen each (what fair means, yearly spending → years covered, next-chapter ideas, foundation amount, keep the name). "Save my goals and invite the family". Margaret's "fair means" feeds the AI brief.
+- `#/me/<id>/decide`: the decision tree. Three choices (does Ben's equity count; paid at closing or through a 10-year trust; where half the earnout goes) narrow 12 possible plans to 1, showing every child's number; the path can be sent to Alex.
+- `#/advisor/guide`: Alex's 90-minute meeting guide (say, show, ask per segment), Margaret's goals, guardrails, likely questions, and **Present to the family**: a 5-screen presenter mode built from numbers, never names.
+- `#/year-one` also shows **what the money does now**: the $27.0M across six PNC services (income portfolio, cash and credit line, next-gen accounts, Ben's account and equity plan, long-term portfolio, family foundation), plus services with no balance.
+- `?tour` resets and opens the splash; its button runs 10 steps: Signal (Alex), Margaret previews, Margaret sets goals and invites, Claire shares, the AI brief (Alex approves), Alex's guide and presenter, Sam votes, Sam's decision tree, Alex sends the AI-drafted reply, one year on. `?reset` clears state.
 - **Voting:** three options (Equal, Balanced, Equity counted). Each vote is private; the tally shows counts only, once `MIN_GROUP` (3) have voted; advisory input to Nov 12; changeable until then. Seeded: Margaret and Ben have voted.
 - **Ask Alex:** a member sends a suggested or typed question; the AI drafts from the plan and the calculator (or flags that Alex must write it); Alex edits and sends; the member can share the answer with the family (off by default) and book a call. The old instant AI Ask sheet and the Claude/GPT toggle are gone.
-- localStorage key: `family-table-v7`
+- localStorage key: `family-table-v8`
 - Debug: `window.FT.reset()`, `FT.state()`, `FT.set(patch)`, `FT.step(i)`
 - The phone iframe on `index.html` shows `#/me/sam/options`.
 
@@ -299,7 +304,7 @@ Serve the repo root first: `python3 -m http.server 4320` (the scripts default to
 |---|---|
 | `shots.js` | Desktop and mobile screenshots into `prototype/shots/` (reduced motion); some set demo state first via `FT.set` |
 | `slide_crops.js` | 1100×518 @2x crops of the advisor screens, for slides |
-| `qa.js [base]` | Links, console errors, overflow and clipped text at 360/390/768/1024/1440 on every route, dead buttons, alt text, tap targets, the 8-step demo from the splash, and the ask-Alex loop for all five members |
+| `qa.js [base]` | Links, console errors, overflow and clipped text at 360/390/768/1024/1440 on every route, dead buttons, alt text, tap targets, the 10-step demo from the splash, and the ask-Alex loop for all five members |
 | `motion_check.js [base] [out]` | Entrance and AI-trace frames, the option tween, the vote tally below and above `MIN_GROUP`, privacy opt-out, XSS escaping in check-ins, questions and replies |
 | `slides_check.js <artifact root> <out>` | Renders each slide at 1920×1080 and flags anything past the 920px line. Its `BLOBS` map ties `/_blob/<id>` images to local shots |
 
@@ -309,7 +314,7 @@ Serve the repo root first: `python3 -m http.server 4320` (the scripts default to
 
 **Last full QA, Oct 27 (round 6), local on port 4320:**
 - 0 console errors, overflow, clipped text, dead buttons or missing alt text, on all 32 routes at 5 widths
-- the 8-step demo completes from the splash, and the bar closes on one year on
+- the 10-step demo completes from the splash, including the presenter, and the bar closes on one year on
 - ask-Alex loop: 9 AI drafts approved and sent, every member sees Alex's replies with their number cards
 - motion_check: opt-out drops the summary from gap 1.00 (4 people) to 0.75 (3); tally hidden at 2 votes, counts only at 3; no injected markup anywhere
 - known false positives: the font preconnect hints, and the 32px switches, which have an expanded tap area
@@ -337,6 +342,7 @@ Serve the repo root first: `python3 -m http.server 4320` (the scripts default to
    - Ask Alex (AI drafts, Alex sends) replaces the instant AI Ask and its model toggle
    - one year on, the BAU payoff
    - cut: the watchlist, the slider and trust switch, the documents tab (folded into the trace), the counsel's-summary flow
+7. **Round 7, Oct 27:** Rz asked for a scenario preview before anyone engages PNC, clear input and goal refinement at onboarding, a decision tree so the family firms up its decision, a detailed brief and presenting guide for the advisor, and an end journey that shows which PNC products the money goes into. All five are in the app and the 10-step demo.
 
 ## 11. Open items for the team
 1. Four interviews, with permission to quote (`docs/DISCOVERY_WORKSHEET.md`). This is the biggest scoring gap.

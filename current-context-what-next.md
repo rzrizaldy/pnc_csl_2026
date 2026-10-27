@@ -34,7 +34,7 @@ Updated 2026-10-27 (round 6: app rework). This file is overwritten, not appended
 - **Avoid AI-template tells:** no one-sided stripes, no tracked uppercase labels (the site nav is the exception), no "A · B · C" strings, no numbering on non-sequences, no per-person stance dots.
 - **Numbers** (`prototype/data.js`; change only as a set): offer $48.0M → $27.0M at closing; live on 9.0, give 12.0, invest 6.0; splits 4/4/4, 3.5/4.25/4.25, 3.0/4.5/4.5; heirs who bank elsewhere $8.0–9.0M; gaps 1.00, 0.75, 0.50, 0.50, 0.25.
 - **Privacy:** nothing shared by default; Claire can opt out of the summary (fair drops to 0.75 from 3 people); `MIN_GROUP` = 3 for the summary and the vote tally; no per-person positions or names on aggregates; `esc()` on every typed string (check-in answers, questions, Alex's edited replies); replies are shared with the family only if the member switches it on.
-- **Storage key:** `family-table-v7`. Debug: `FT.reset()`, `FT.state()`, `FT.set(patch)`, `FT.step(i)`.
+- **Storage key:** `family-table-v8`. Debug: `FT.reset()`, `FT.state()`, `FT.set(patch)`, `FT.step(i)`.
 
 ## Do not touch
 - The team's Canva deck `DAHY7Vfs02I`: don't edit without asking.
@@ -46,12 +46,12 @@ Updated 2026-10-27 (round 6: app rework). This file is overwritten, not appended
 - **Slide images** are artifact assets (`/_blob/<id>`); `video/src/slides_check.js` maps the ids to local shots.
 
 ## Verification completed (Oct 27, round 6)
-- `node video/src/qa.js http://localhost:4320/`: 0 console errors, overflow, clipped text, dead buttons or missing alt on 32 routes at 5 widths; the 8-step demo completes from the splash; the ask-Alex loop sends 9 replies and every member sees them. Known false positives: two font preconnect hints, the 32px switches.
+- `node video/src/qa.js http://localhost:4320/`: 0 console errors, overflow, clipped text, dead buttons or missing alt on 32 routes at 5 widths; the 10-step demo completes from the splash; the ask-Alex loop sends 9 replies and every member sees them. Known false positives: two font preconnect hints, the 32px switches.
 - `node video/src/motion_check.js`: the trace plays to all six steps; the option tween runs; the tally is hidden at 2 votes and shows counts only at 3; the opt-out moves the summary from 1.00 (4 people) to 0.75 (3); markup typed into a check-in, a question or a reply is never injected.
 - `node video/src/shots.js http://localhost:4320/prototype/` regenerated `prototype/shots/`.
 
 ## Next steps
 1. Rizaldy reviews the new demo and merges the worktree branch.
-2. Update `video/RECORDING_SCRIPT.md` to the 8-step demo order before recording.
+2. Script v3 follows the 10-step demo; lock it before recording.
 3. If the slides should show the new app, regenerate the crops (`video/src/slide_crops.js`) and re-upload them to the artifact.
 4. Interviews are still the biggest scoring gap (TEAM_NOTES §4).

@@ -5,7 +5,7 @@
 Target: **about 1:50 of speaking**, 2:00 at most.
 **Bold** = stress this word. ` / ` = a small breath.
 
-The screen follows the 8-step demo from the splash (`prototype/?tour`), alternating the family and advisor sides and ending on One year on.
+The screen follows the 10-step demo from the splash (`prototype/?tour`), alternating the family and advisor sides and ending on One year on.
 
 ---
 
@@ -30,7 +30,7 @@ PNC already **banks the business**. / Payments to deal advisers flag a likely sa
 *(pause 2 s)*
 
 ### 5 · Join: family side · about 8 s
-Margaret invites her family. / Each of them answers **in private**. / She sees **who** has answered, / never **what** they said.
+Margaret previews what a sale could mean, / sets her goals, / and invites her family. / Each of them answers **in private**.
 
 *(pause 2 s)*
 
@@ -45,7 +45,7 @@ Alex now hears **four voices**, not one. / AI reads the check-ins, / scores the 
 *(pause 2 s)*
 
 ### 8 · Allocate: family side · about 9 s
-Sam sees **his number** under every split, / and votes **in private**. / The family sees a count, / never a name.
+Sam sees **his number** under every split, / and votes **in private**. / Three choices / turn twelve possible plans / into **one**.
 
 *(pause 2 s)*
 

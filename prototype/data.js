@@ -120,6 +120,78 @@ window.SEED = {
     { id: "balanced", label: "Balanced", w: 0.5, line: "Half of Ben's buyer equity counts, so the gap between siblings narrows." },
     { id: "equity", label: "Equity counted", w: 1, line: "All of Ben's buyer equity counts, so every child's total is $4.5M." },
   ],
+  // Before a family engages with PNC: a scenario preview. Ratios come from the Wilson deal so every preset is consistent
+  // with the demo: net at closing = 27/48 of the offer, the children's gift = 12/27 of net, buyer equity kept by each
+  // child who stays = 1.5/48 of the offer. Illustrative only.
+  preview: {
+    netRatio: 27 / 48, giftShare: 12 / 27, equityRatio: 1.5 / 48,
+    presets: [
+      { id: "wilson", label: "Like the Wilsons", value: 48, kids: 3, inBiz: 1 },
+      { id: "both", label: "Two children, both in it", value: 30, kids: 2, inBiz: 2 },
+      { id: "mixed", label: "Four children, two in it", value: 80, kids: 4, inBiz: 2 },
+    ],
+    compare: [
+      ["Who is heard", "The founder, usually alone", "Every family member, privately"],
+      ["When the family talks", "After the deal is signed", "Before the letter of intent"],
+      ["Each child's number", "A guess, or a surprise", "Their own number, under every option"],
+      ["The next generation", "13% stay with their parents' advisor", "Meets PNC before the money moves"],
+    ],
+    month: [
+      ["Week 1", "A call with your PNC advisor"],
+      ["Weeks 1–2", "A private check-in for each family member"],
+      ["Week 3", "Your options, with every child's number"],
+      ["Week 4", "A family meeting with a Hawthorn facilitator"],
+    ],
+  },
+
+  // Onboarding: the founder confirms the facts PNC already holds, then picks and sharpens her goals.
+  facts: [
+    ["Offer from NorthPeak", "$48.0M", "From the latest offer, shared with Alex"],
+    ["Company debt", "$3.5M", "From Wilson Transport's PNC accounts"],
+    ["Expected closing", "Next fall", "From the deal timeline"],
+    ["Family", "5 people", "Margaret, Tom, Ben, Claire and Sam"],
+  ],
+  goals: [
+    { id: "fair", label: "Treat the children fairly", icon: "scale" },
+    { id: "live", label: "Keep enough to live on", icon: "home" },
+    { id: "chapter", label: "Have a next chapter of my own", icon: "compass" },
+    { id: "give", label: "Give back to Pittsburgh", icon: "users" },
+    { id: "name", label: "Keep the company name and staff", icon: "shield" },
+  ],
+
+  // The decision tree the family works through before Nov 12: 3 × 2 × 2 = 12 possible plans.
+  tree: [
+    { id: "count", q: "Does Ben's $1.5M of buyer equity count toward his share?", opts: [["equal", "No", "Equal"], ["balanced", "Half of it", "Balanced"], ["equity", "All of it", "Equity counted"]] },
+    { id: "pay", q: "How is each child's gift paid?", opts: [["close", "All at closing", "Cash next fall"], ["trust", "Through a family trust", "Paid out over 10 years"]] },
+    { id: "earn", q: "If the $8.0M earnout pays out later, where does it go?", opts: [["parents", "Margaret and Tom keep it", "Their cushion grows"], ["half", "Half to the children", "$4.0M, split equally"]] },
+  ],
+
+  // Alex's meeting guide for Nov 12, drafted by AI from the approved brief. Minutes add up to 90.
+  guide: [
+    { min: 10, title: "Welcome and ground rules", say: "Nobody's answers are on the table, only the family's range. Decisions today are in principle.", show: "The agenda", ask: "What would make today a good meeting for you?" },
+    { min: 15, title: "Where you already agree", say: "Everyone, Margaret included, says her next chapter isn't planned yet. Start there.", show: "Gap 0.25 on Margaret's next chapter", ask: "Margaret, what would a good Monday look like a year from now?" },
+    { min: 30, title: "The fairness question", say: "The family is furthest apart on equal shares. Show the range, never who said what.", show: "The three options, every child's bar", ask: "What would make a split feel fair to someone outside the business?" },
+    { min: 20, title: "Walk the decision tree", say: "Three choices turn 12 possible plans into one. Settle them in order.", show: "The decision tree", ask: "Can we agree the first choice in principle today?" },
+    { min: 15, title: "The will and next steps", say: "Share counsel's summary of the 2012 will, not a conclusion. Each person leaves with one next step.", show: "Everyone's next step", ask: "Who needs a follow-up call with me this week?" },
+  ],
+  guardrails: ["Never attribute a view to a person", "Every number comes from the calculator", "Counsel's summary, never a legal conclusion", "The facilitator runs the fairness discussion"],
+  faqs: [
+    ["Why doesn't everyone just get the same?", "Ben keeps $1.5M of NorthPeak equity. Equal cash means his total is higher; the options show what each choice does."],
+    ["Can we change our minds later?", "Yes. Today's decisions are in principle. The family confirms them with counsel before closing."],
+    ["What if the earnout never pays?", "Nothing changes at closing. The earnout is excluded from every number you've seen."],
+  ],
+
+  // One year on: where each dollar of the $27.0M sits, by PNC service. Totals match the buckets and the Balanced split.
+  products: [
+    { bucket: "spend", name: "Income portfolio", who: "Margaret and Tom", amt: 7.5, line: "Funds their spending for 30 years" },
+    { bucket: "spend", name: "Cash and a credit line", who: "Margaret and Tom", amt: 1.5, line: "Cash on hand without selling investments" },
+    { bucket: "gift", name: "Next-gen accounts", who: "Claire and Sam", amt: 8.5, line: "Opened after Alex's introduction" },
+    { bucket: "gift", name: "Ben's account and equity plan", who: "Ben", amt: 3.5, line: "Plus planning for his $1.5M of NorthPeak stock" },
+    { bucket: "invest", name: "Long-term portfolio", who: "The family", amt: 4.0, line: "Managed for the next generation" },
+    { bucket: "invest", name: "Wilson family foundation", who: "Margaret", amt: 2.0, line: "With PNC's philanthropic advisory" },
+  ],
+  services: ["Estate plan and family trust, updated for an estate in cash", "A yearly family meeting with Hawthorn IFS", "Business banking for Ben at NorthPeak"],
+
   // Private votes already cast before the demo starts. In production each vote sits in the member's own vault;
   // the app only ever reads the counts, and only once at least MIN_GROUP people have voted.
   votes: { margaret: "balanced", ben: "equity" },

@@ -48,16 +48,18 @@ Stages match the team deck (Signal, Join, Align, Allocate, Activate, Continue). 
 
 ## The demo, alternating sides
 
-The app opens on a splash (what it does, the six stages, the end state). Its button runs eight steps:
+The app opens on a splash (what it does, the six stages, the end state), with a second way in: a scenario preview anyone can use before talking to PNC. The demo button runs ten steps:
 
 1. **Advisor, Signal:** the score is 81. Call Margaret.
-2. **Family, Join:** Margaret sees $27.0M and invites her family.
-3. **Family, Align:** Claire shares one private answer.
-4. **Advisor, Align:** the AI trace turns four check-ins into one finding, fairness at 1.00. Alex approves the brief.
-5. **Family, Allocate:** Sam sees his number under each option and votes in private.
-6. **Family, Activate:** Sam asks Alex a question.
-7. **Advisor, Activate:** the AI drafts the reply; Alex edits and sends it.
-8. **Both sides, Continue:** one year on. The sale has closed and the plan is business as usual.
+2. **Family, Preview:** Margaret sees what a sale could mean for her family, and tries another family's scenario.
+3. **Family, Join:** she confirms the facts, sharpens her goals (what fair means to her), and invites the family.
+4. **Family, Align:** Claire shares one private answer.
+5. **Advisor, Align:** the AI trace turns four check-ins into one finding, fairness at 1.00, against Margaret's goal. Alex approves the brief.
+6. **Advisor, Align:** the AI turns the brief into a 90-minute meeting guide; Alex presents five screens to the family.
+7. **Family, Allocate:** Sam sees his number under each option and votes in private.
+8. **Family, Allocate:** Sam walks the decision tree; three choices narrow 12 plans to 1.
+9. **Advisor, Activate:** Sam's question arrives; the AI drafts the reply; Alex edits and sends it.
+10. **Both sides, Continue:** one year on. Every dollar of the $27.0M sits in a PNC service, and all five Wilsons work with PNC.
 
 ## What stays the same
 - **Privacy model:** nothing is shared by default. Members can opt out of the summary. The summary needs at least 3 contributors, shows no per-person positions, and escapes all text.
