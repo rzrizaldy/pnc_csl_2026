@@ -1,35 +1,32 @@
-// Seed data for the prototype. The Hale family is fictional: a mid-market family business whose members
-// are modelled on the family archetypes in HBO's Succession. Every firm, person and figure is illustrative.
+// Seed data for the prototype. The Wilson family matches the team's personas: Margaret Wilson, the founder, and
+// Alex Lee, her PNC advisor. Every firm, person and figure is fictional and illustrative.
 window.SEED = {
   business: {
-    name: "Hale Freight",
+    name: "Wilson Transport",
     city: "Pittsburgh",
-    founded: 1986,
-    staff: 260,
-    relationship: "PNC business client since 2004",
+    founded: 1990,
+    staff: 240,
+    relationship: "PNC business client since 2003",
     buyer: "NorthPeak Logistics",
   },
 
   // Order = seats around the family table, clockwise from the top.
   people: [
-    { id: "walt", name: "Walt Hale", short: "Walt", age: 78, role: "Founder and CEO", inBiz: true, gen: 1,
-      archetype: "Logan Roy", pattern: "Won't name a successor. Has made promises in private.",
-      status: "checked", pnc: "Business + Private Bank", color: "#10214D" },
-    { id: "marisa", name: "Marisa Hale", short: "Marisa", age: 63, role: "Walt's wife", inBiz: false, gen: 1,
-      archetype: "Marcia Roy", pattern: "Second marriage. Not an owner, but her future depends on the plan.",
-      status: "invited", pnc: "Joint with Walt", color: "#8C929B" },
-    { id: "dale", name: "Dale Hale", short: "Dale", age: 54, role: "Eldest son, runs a ranch, not in the business", inBiz: false, gen: 2,
-      archetype: "Connor Roy", pattern: "Outside the business. Mostly needs to know when the cash arrives.",
-      status: "checked", pnc: "None, banks elsewhere", color: "#6593C9" },
-    { id: "kyle", name: "Kyle Hale", short: "Kyle", age: 47, role: "COO, 22 years in the business", inBiz: true, gen: 2,
-      archetype: "Kendall Roy", pattern: "Has believed for years that he is next in line.",
+    { id: "margaret", name: "Margaret Wilson", short: "Margaret", age: 63, role: "Founder and CEO", inBiz: true, gen: 1,
+      line: "Wants a plan her family understands and trusts.",
+      status: "checked", pnc: "Business banking", color: "#10214D" },
+    { id: "tom", name: "Tom Wilson", short: "Tom", age: 65, role: "Margaret's husband, retired teacher", inBiz: false, gen: 1,
+      line: "Not an owner, but his future depends on the plan.",
+      status: "invited", pnc: "Joint with Margaret", color: "#8C929B" },
+    { id: "ben", name: "Ben Wilson", short: "Ben", age: 40, role: "COO, 16 years in the business", inBiz: true, gen: 2,
+      line: "Will stay on with the buyer. Thinks his years should count.",
       status: "checked", pnc: "Business banking", color: "#6F9A4B" },
-    { id: "ross", name: "Ross Hale", short: "Ross", age: 42, role: "Head of sales", inBiz: true, gen: 2,
-      archetype: "Roman Roy", pattern: "Talented, not yet ready, wants a title.",
-      status: "checked", pnc: "None, banks elsewhere", color: "#E39A2E" },
-    { id: "sloane", name: "Sloane Hale", short: "Sloane", age: 40, role: "Policy consultant in DC, not in the business", inBiz: false, gen: 2,
-      archetype: "Shiv Roy", pattern: "Walt told her privately she would lead one day.",
+    { id: "claire", name: "Claire Wilson", short: "Claire", age: 37, role: "Nurse practitioner in Columbus, not in the business", inBiz: false, gen: 2,
+      line: "Thinks equal is fair. Has never said so to her mother.",
       status: "checked", pnc: "None, banks elsewhere", color: "#6D4AA0" },
+    { id: "sam", name: "Sam Wilson", short: "Sam", age: 33, role: "Software engineer in Austin, not in the business", inBiz: false, gen: 2,
+      line: "Mostly wants to know how much, and when.",
+      status: "checked", pnc: "None, banks elsewhere", color: "#6593C9" },
   ],
 
   signal: {
@@ -50,120 +47,107 @@ window.SEED = {
   // Deterministic proceeds (illustrative; a PNC tax specialist confirms real figures).
   deal: { offer: 48.0, earnout: 8.0, debt: 3.5, fees: 1.5, tax: 8.0,
     buckets: [
-      { id: "spend", label: "Live on", detail: "Walt and Marisa, 30 years, with a cushion", value: 9.0, color: "#6F9A4B" },
-      { id: "gift", label: "Give to the kids", detail: "Split four ways; see Options", value: 12.0, color: "#6D4AA0" },
+      { id: "spend", label: "Live on", detail: "Margaret and Tom, 30 years, with a cushion", value: 9.0, color: "#6F9A4B" },
+      { id: "gift", label: "Give to the children", detail: "Split three ways; see Options", value: 12.0, color: "#6D4AA0" },
       { id: "invest", label: "Invest and give back", detail: "Long-term portfolio and a family foundation", value: 6.0, color: "#6593C9" },
     ],
-    // equity the active children keep with the buyer, used by the options slider
-    rollover: { kyle: 1.5, ross: 0.5 },
+    // equity the child in the business keeps with the buyer, used by the options slider
+    rollover: { ben: 1.5 },
     timeline: [
-      { id: "loi", label: "Letter of intent", when: "Oct", done: true },
-      { id: "diligence", label: "Buyer checks the books", when: "Nov–Jan", now: true },
-      { id: "close", label: "Closing, cash arrives", when: "Mar" },
-      { id: "earnout", label: "Earnout, if targets are met", when: "Years 1–3" },
+      { id: "offer", label: "Offer in hand", when: "Oct", now: true },
+      { id: "loi", label: "Letter of intent", when: "Jan" },
+      { id: "diligence", label: "Buyer checks the books", when: "Feb–Jul" },
+      { id: "close", label: "Closing, cash arrives", when: "Next fall" },
     ],
   },
 
-  // Stances on a −2..+2 scale, extracted from private check-ins (5 of 6 done; Marisa not yet).
+  // Stances on a −2..+2 scale, extracted from private check-ins (4 of 5 done; Tom not yet).
   themes: [
-    { id: "fair", label: "Equal shares for every child", short: "Equal shares", s: { walt: 0, dale: 2, kyle: -2, ross: -1, sloane: 1 } },
-    { id: "sell", label: "Sell now rather than wait", short: "Sell now", s: { walt: 2, dale: 2, kyle: -1, ross: 0, sloane: 1 } },
-    { id: "cash", label: "Cash soon matters most", short: "Cash soon", s: { walt: 1, dale: 2, kyle: 0, ross: 0, sloane: 1 } },
-    { id: "name", label: "Keep the Hale name alive", short: "Keep the name", s: { walt: 2, dale: 0, kyle: 2, ross: 1, sloane: 1 } },
-    { id: "after", label: "Walt's life after the sale is planned", short: "Walt's next chapter", s: { walt: -1, dale: -1, kyle: -1, ross: -2, sloane: -1 } },
+    { id: "fair", label: "Equal shares for every child", short: "Equal shares", s: { margaret: 1, ben: -2, claire: 2, sam: 1 } },
+    { id: "sell", label: "Sell now rather than wait", short: "Sell now", s: { margaret: 2, ben: -1, claire: 1, sam: 2 } },
+    { id: "cash", label: "Cash soon matters most", short: "Cash soon", s: { margaret: 0, ben: -1, claire: 0, sam: 1 } },
+    { id: "name", label: "Keep the company name and staff", short: "Keep the name", s: { margaret: 2, ben: 2, claire: 1, sam: 0 } },
+    { id: "after", label: "Margaret's life after the sale is planned", short: "Margaret's next chapter", s: { margaret: -1, ben: -1, claire: -2, sam: -1 } },
   ],
-  // The "secret promise" pattern: people who expect the top job.
-  claims: ["kyle", "ross", "sloane"],
+  // What the owner told Alex directly, before Family Table. The founder's view, set against the family's.
+  ownerPlan: { split: "Equal shares for all three children", says: "I think the kids are on the same page." },
 
   checkin: {
-    sloane: [
-      { id: "q1", theme: "lead", q: "Who do you think should lead after the sale, and why?",
-        a: "Dad told me two years ago, just the two of us, that I'd be the one to run things eventually. I don't think Kyle knows that." },
-      { id: "q2", theme: "fair", q: "What would feel fair when the money is split?",
-        a: "Equal shares. Kyle and Ross already get salaries and stock from the buyer. Dale and I get nothing unless it's in the split." },
-      { id: "q3", theme: "after", q: "What do you hope Dad's life looks like a year after the sale?",
-        a: "Honestly, I'm scared he'll have nothing to do and start a new fight. He needs a project." },
+    claire: [
+      { id: "q1", theme: "fair", q: "What would feel fair when the money is split?",
+        a: "Equal. Ben already gets a salary and stock from the buyer. Sam and I only get what's in the split. I've never said that to Mom." },
+      { id: "q2", theme: "unsaid", q: "Is there anything you haven't said to your family?",
+        a: "I don't want to fight with Ben over money, so I've never brought it up. I think he assumes his years in the company count." },
+      { id: "q3", theme: "after", q: "What do you hope Mom's life looks like a year after the sale?",
+        a: "She's worked every day for 35 years. I'm worried she'll be lost without it. She needs something that's hers." },
     ],
   },
 
   docs: [
-    { id: "divorce", name: "Walt & Carol divorce agreement, 1998", type: "PDF", pages: 42,
-      finding: "Clause 7.2: a sale of Hale Holdings needs written consent from all four children.",
-      impact: "If confirmed, any one child may be able to block the sale.", risk: "High", action: "Send to family attorney", done: "With the family attorney", conf: 0.93 },
-    { id: "note", name: "Handwritten note found in Walt's desk", type: "Scan", pages: 1,
-      finding: "Names Kyle as successor. Undated and unsigned; one line may underline or cross out the name.",
-      impact: "Probably not enforceable on its own, but family members may treat it as one. Counsel to advise.", risk: "High", action: "Ask counsel to review", done: "With counsel", conf: 0.71 },
-    { id: "buysell", name: "Shareholder buy-sell agreement, 2011", type: "PDF", pages: 18,
-      finding: "Valuation formula last updated in 2011, at 4× earnings.",
+    { id: "will", name: "Margaret's will, 2012", type: "PDF", pages: 14,
+      finding: "Leaves the company shares equally to the three children.",
+      impact: "After the sale the shares become cash. The will doesn't say whether Ben's buyer equity counts toward his share. Counsel to advise.", risk: "High", action: "Send to estate attorney", done: "With the estate attorney", conf: 0.9 },
+    { id: "policy", name: "Key-person life policy, 2015", type: "PDF", pages: 6,
+      finding: "Pays the company, not the family, and ends at closing.",
+      impact: "If Margaret can't continue before closing, the family may have no cover. An insurance specialist should review it.", risk: "Medium", action: "Send to insurance specialist", done: "With the insurance specialist", conf: 0.86 },
+    { id: "buysell", name: "Shareholder buy-sell agreement, 2009", type: "Scan", pages: 18,
+      finding: "Valuation formula fixed at 4× earnings in 2009.",
       impact: "The buyer's offer implies about 7×. Expect questions on price.", risk: "Medium", action: "Send to valuation specialist", done: "With the valuation specialist", conf: 0.88 },
   ],
 
   tasks: [
-    { who: "Hawthorn IFS facilitator", what: "Family meeting: who leads, and what is fair", due: "Nov 12", status: "Booked" },
-    { who: "Family attorney", what: "Confirm clause 7.2 consent needed from all four children", due: "Nov 8", status: "In progress" },
-    { who: "Trust specialist", what: "Model the staged family trust", due: "Nov 19", status: "Requested" },
-    { who: "Wealth advisor", what: "Accounts for Dale, Ross and Sloane for gifted assets", due: "Dec 3", status: "Waiting on consent" },
+    { who: "Hawthorn IFS facilitator", what: "Family meeting: what's fair, and what comes next", due: "Nov 12", status: "Booked" },
+    { who: "Estate attorney", what: "Update Margaret's 2012 will for an estate in cash", due: "Nov 19", status: "In progress" },
+    { who: "Business banking", what: "Review Ben's COO contract and buyer equity", due: "Nov 24", status: "Requested" },
+    { who: "Trust specialist", what: "Model a family trust for the gifts", due: "Dec 1", status: "Requested" },
+    { who: "Wealth advisor", what: "Accounts for Claire and Sam for gifted assets", due: "Dec 3", status: "Waiting on consent" },
   ],
 
   ledger: [
-    { t: "Oct 14", who: "Signal model", what: "Sale likelihood 81 for Hale Freight. Sent to Alex for review." },
-    { t: "Oct 15", who: "Alex Lee", what: "Reviewed the signal. Called Walt." },
-    { t: "Oct 20", who: "Walt Hale", what: "Invited his family. Chose private check-ins." },
-    { t: "Oct 24", who: "Document AI", what: "Found clause 7.2 and the undated note. Sent to Alex." },
-    { t: "Oct 25", who: "Alex Lee", what: "Approved the alignment brief. Booked Hawthorn IFS." },
+    { t: "Oct 14", who: "Signal model", what: "Sale likelihood 81 for Wilson Transport. Sent to Alex for review." },
+    { t: "Oct 15", who: "Alex Lee", what: "Reviewed the signal. Called Margaret." },
+    { t: "Oct 20", who: "Margaret Wilson", what: "Invited her family. Chose private check-ins." },
+    { t: "Oct 24", who: "Document AI", what: "Flagged the 2012 will and the key-person policy. Sent to Alex." },
+    { t: "Oct 25", who: "Alex Lee", what: "Approved the meeting brief. Booked Hawthorn IFS." },
   ],
 
-  contingency: "If Walt cannot continue before closing, Kyle leads day to day for 90 days and the family council decides within 30 days. Signed by Walt, dated, kept by PNC.",
-
-  // Adaptive UI: what each person sees first, and why. Cards are ranked per person.
-  focus: {
-    walt: { cards: ["proceeds", "nextchapter", "table", "timeline", "options"], why: "You're the owner, so the money and your next chapter come first." },
-    marisa: { cards: ["proceeds", "timeline", "checkin", "table"], why: "You haven't checked in yet, and your future depends on the split." },
-    dale: { cards: ["mine", "timeline", "options", "checkin"], why: "You told us cash timing matters most to you." },
-    kyle: { cards: ["role", "meeting", "options", "table"], why: "You told us your role after the sale matters most." },
-    ross: { cards: ["role", "options", "meeting", "timeline"], why: "You told us you want a clear title after the sale." },
-    sloane: { cards: ["meeting", "mine", "options", "checkin"], why: "You raised who leads, so the family meeting comes first." },
-  },
+  contingency: "If Margaret cannot continue before closing, Ben runs day-to-day operations for 90 days and the family decides next steps within 30 days, with Alex. Signed by Margaret, dated, kept by PNC.",
 
   // Demo assistant answers. Both models return the same structured card; only the wording differs.
   ask: {
-    walt: [
-      { q: "How much will Marisa and I keep?", card: "proceeds", tools: [["Read the latest letter of intent", "deal.terms(loi_v3)"], ["Ran the proceeds calculator", "calc.proceeds(offer=48.0)"]],
+    margaret: [
+      { q: "How much will Tom and I keep?", card: "proceeds", tools: [["Read the latest offer", "deal.terms(offer_v2)"], ["Ran the proceeds calculator", "calc.proceeds(offer=48.0)"]],
         a: { claude: "About $27.0M lands at closing, after debt, fees and estimated taxes. The $8.0M earnout is paid later and only if targets are met, so it isn't included.", gpt: "$27.0M at closing after debt, fees and estimated tax. The $8.0M earnout is contingent and excluded." } },
-      { q: "What happens if I can't continue before closing?", card: "contingency", tools: [["Checked the decision log", "ledger.lookup('contingency')"]],
-        a: { claude: "Your signed contingency plan applies: Kyle leads day to day for 90 days, and the family council decides within 30. Alex can help you update it.", gpt: "The signed plan applies: Kyle leads day to day for 90 days; the family council decides within 30 days." } },
+      { q: "How do I make the split feel fair to all three?", card: "split", tools: [["Read the anonymous family summary", "summary.gaps(min_group=3)"], ["Ran the gift calculator", "calc.gift_options()"]],
+        a: { claude: "Your family's widest gap is on fairness, so bring two options to the November 12 meeting: an equal split, and one that counts the $1.5M Ben keeps with the buyer. Let the facilitator lead that part, so it isn't you against one of your children.", gpt: "Fairness is the family's widest gap. Bring an equal split and an equity-counted split to Nov 12, and let the facilitator lead." } },
     ],
-    marisa: [
-      { q: "What happens to me if Walt dies?", card: "contingency", tools: [["Checked the decision log", "ledger.lookup('contingency')"], ["Searched estate documents", "docs.search('spouse')"]],
-        a: { claude: "The business has a signed contingency plan. Your personal position depends on Walt's estate plan, which predates your current agreements. Alex has scheduled an estate review.", gpt: "The business is covered by a signed plan. Your own position depends on Walt's estate plan, which needs review; Alex has scheduled one." } },
+    tom: [
+      { q: "What happens to me if Margaret can't continue?", card: "contingency", tools: [["Checked the decision log", "ledger.lookup('contingency')"], ["Searched estate documents", "docs.search('spouse')"]],
+        a: { claude: "The business has a signed contingency plan. Your own position depends on Margaret's 2012 will, which was written before the sale. An estate attorney is updating it, and Alex has scheduled a review with you.", gpt: "The business is covered by a signed plan. Your position depends on Margaret's 2012 will, which is being updated; Alex has scheduled a review." } },
     ],
-    dale: [
-      { q: "When will I receive my share?", card: "mine", tools: [["Read the deal timeline", "deal.timeline()"], ["Ran the gift calculator", "calc.gift_options(child='dale')"]],
-        a: { claude: "At closing, expected in March. Your share is $3.0M with an equal split, and up to $3.5M if your brothers' buyer equity is counted. The earnout isn't part of the family gift.", gpt: "Expected at closing in March: $3.0M with an equal split, up to $3.5M if Kyle and Ross's buyer equity is counted." } },
-      { q: "Can Dad sell without our consent?", card: "clause", tools: [["Searched family documents", "docs.search('consent AND sale')"], ["Checked advice policy", "policy.check(legal_advice=false)"]],
-        a: { claude: "Possibly not. A 1998 agreement appears to require written consent from all four children for a sale. The family attorney is confirming this before anyone relies on it.", gpt: "A 1998 agreement appears to require consent from all four children. The family attorney is confirming." } },
+    ben: [
+      { q: "What's my role after the sale?", card: "role", tools: [["Read the latest offer", "deal.terms(offer_v2, section='management')"]],
+        a: { claude: "The offer proposes a two-year COO contract and $1.5M of equity in NorthPeak; the buyer decides operating roles. How that equity counts in the family split is on the agenda for Thursday, November 12.", gpt: "The offer proposes a 2-year COO contract plus $1.5M of buyer equity. How it counts in the family split is on the Nov 12 agenda." } },
+      { q: "Does my buyer equity reduce my share?", card: "mine", tools: [["Ran the gift calculator", "calc.gift_options(child='ben')"]],
+        a: { claude: "It depends on the split the family chooses. With an equal split you receive $4.0M and your equity isn't counted. If it's fully counted, you receive $3.0M in cash, and with your $1.5M of equity your total matches your siblings' $4.5M.", gpt: "Equal split: $4.0M, equity not counted. Fully counted: $3.0M cash plus $1.5M equity, matching your siblings' $4.5M." } },
     ],
-    kyle: [
-      { q: "What's my role after the sale?", card: "role", tools: [["Read the letter of intent", "deal.terms(loi_v3, section='management')"]],
-        a: { claude: "The letter of intent proposes a two-year COO contract and $1.5M of equity in NorthPeak; the buyer decides operating roles. Family leadership is on the agenda for Thursday, November 12.", gpt: "The LOI proposes a 2-year COO contract plus $1.5M of rollover equity. Family leadership is on the Nov 12 agenda." } },
-      { q: "Can Dad sell without our consent?", card: "clause", tools: [["Searched family documents", "docs.search('consent AND sale')"], ["Checked advice policy", "policy.check(legal_advice=false)"]],
-        a: { claude: "Possibly not. A 1998 agreement appears to require written consent from all four children for a sale. The family attorney is confirming.", gpt: "A 1998 agreement may require consent from all four children. The family attorney is confirming." } },
+    claire: [
+      { q: "Who can see what I write?", card: "privacy", tools: [["Checked your sharing settings", "consent.status('claire')"]],
+        a: { claude: "Only you. Alex can read an answer only if you switch sharing on for it, and you can switch it off again. Your family never sees your words. If you stay in the family summary, your themes are counted without your name.", gpt: "Only you. Alex reads an answer only if you share it, and you can withdraw it. Your family never sees your words." } },
+      { q: "When is the family meeting?", card: "meeting", tools: [["Checked the family calendar", "calendar.next('family_meeting')"], ["Checked brief status", "brief.status()"]],
+        a: { claude: "Thursday, November 12, with a Hawthorn facilitator. The agenda opens with your mother's next chapter, then fairness. Your private answers stay private.", gpt: "Thursday, Nov 12, with a Hawthorn facilitator: Mom's next chapter, then fairness. Your answers remain private." } },
     ],
-    ross: [
-      { q: "Does the offer include a role for me?", card: "role", tools: [["Read the letter of intent", "deal.terms(loi_v3, section='management')"]],
-        a: { claude: "Not yet. The letter keeps the sales team for 12 months but doesn't name your role. Raise it with Alex before the letter is signed.", gpt: "No role is named for you yet; the sales team is retained for 12 months. Raise it with Alex before signing." } },
-    ],
-    sloane: [
-      { q: "Who decides who leads?", card: "meeting", tools: [["Checked the family calendar", "calendar.next('family_meeting')"], ["Checked brief status", "brief.status()"]],
-        a: { claude: "The family discusses it together at the Thursday, November 12 meeting with a Hawthorn facilitator; the buyer decides roles inside NorthPeak. Your private answers stay private.", gpt: "It's on the agenda for the facilitated family meeting on Nov 12. Your answers remain private." } },
-      { q: "Can Dad sell without our consent?", card: "clause", tools: [["Searched family documents", "docs.search('consent AND sale')"], ["Checked advice policy", "policy.check(legal_advice=false)"]],
-        a: { claude: "Possibly not. A 1998 agreement appears to require written consent from all four children for a sale. The family attorney is confirming.", gpt: "A 1998 agreement may require consent from all four children. The family attorney is checking." } },
+    sam: [
+      { q: "When will I receive my share?", card: "mine", tools: [["Read the deal timeline", "deal.timeline()"], ["Ran the gift calculator", "calc.gift_options(child='sam')"]],
+        a: { claude: "At closing, expected next fall. Your share is $4.0M with an equal split, and up to $4.5M if Ben's buyer equity is counted. The earnout isn't part of the family gift.", gpt: "Expected at closing next fall: $4.0M with an equal split, up to $4.5M if Ben's buyer equity is counted." } },
+      { q: "Do I have to move my money to PNC?", card: "account", tools: [["Checked payment instructions", "plan.payout('sam')"], ["Checked advice policy", "policy.check(product_push=false)"]],
+        a: { claude: "No. Your gift can be paid to any bank. If you'd like your account in the same place as the family's plan, PNC can open one for you in minutes.", gpt: "No. It can be paid to any bank. PNC can open an account if you want one next to the family plan." } },
     ],
     alex: [
-      { q: "Prepare me for the family meeting", card: "prep", tools: [["Summarized gaps", "brief.gaps()"], ["Counted leadership claims", "claims.count()"], ["Pulled high-risk findings", "docs.findings(risk='High')"]],
-        a: { claude: "Cover three items, in order: counsel's view on the consent clause, leadership, then fairness. Present the leadership overlap as a pattern, not a person, and keep individual answers private.", gpt: "Agenda: consent clause, leadership, fairness. Frame the leadership overlap as a pattern; keep individual answers private." } },
-      { q: "Which heirs are at risk?", card: "heirs", tools: [["Queried the household graph", "graph.heirs(pnc=false)"]],
-        a: { claude: "Dale, Ross and Sloane bank elsewhere. Together they could receive $9.0M to $10.0M at closing. Sloane is the most engaged; start there.", gpt: "Three heirs have no PNC relationship and could receive $9.0M–$10.0M combined. Start with Sloane." } },
+      { q: "Prepare me for the family meeting", card: "prep", tools: [["Summarized gaps", "brief.gaps()"], ["Compared the owner's plan", "plan.compare(owner='margaret')"], ["Pulled high-risk findings", "docs.findings(risk='High')"]],
+        a: { claude: "Open with common ground: everyone, Margaret included, says her next chapter isn't planned. Then fairness, the widest gap. Margaret's plan assumes an equal split, so present the range, not the people, and let the facilitator lead. Close with the will update.", gpt: "Agenda: Margaret's next chapter (common ground), fairness (widest gap, present as a range), then the will update." } },
+      { q: "Which heirs bank elsewhere?", card: "heirs", tools: [["Queried the household graph", "graph.heirs(pnc=false)"]],
+        a: { claude: "Claire and Sam bank elsewhere. Together they could receive $8.0M to $9.0M at closing. Claire is the most engaged; start there, with Margaret's agreement.", gpt: "Claire and Sam have no PNC relationship and could receive $8.0M–$9.0M combined. Start with Claire." } },
     ],
   },
 };

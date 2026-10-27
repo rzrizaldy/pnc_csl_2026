@@ -1,5 +1,7 @@
 # Family Table: devil's-advocate review (v2)
 
+> **Update, Oct 27:** the product now uses the team's Wilson personas, and the Succession framing is gone (see `TWO_WAY_JOURNEY.md`). That resolves kill shot 5. Hale names below are historical. In the Wilson case the heirs' gifts are $8.0–9.0M, and the core insight is fairness, not "3 of 5 expect to lead".
+
 Reviewed Oct 26, 2026. Baseline is commit `2420b22`; fixes are in the commit that adds this file.
 
 An earlier revision by another agent is preserved on branch `agent-b-revision`. This review keeps its valid findings and reverses its over-corrections.

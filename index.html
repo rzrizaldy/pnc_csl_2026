@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Family Table — CSL 2026</title>
-  <meta name="description" content="Family Table: a PNC Private Bank concept that helps a family plan the sale of its business together. Built around a case study of HBO's Succession.">
+  <meta name="description" content="Family Table: a PNC Private Bank concept that helps a family plan the sale of its business together, and helps its advisor see the whole family a year before closing.">
   <meta name="theme-color" content="#1A2B5C">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
@@ -18,14 +18,14 @@
 
 <header class="hero"><div class="wrap">
   <div class="eyebrow">CSL 2026, Carnegie Mellon University. Track: the sale of a family business</div>
-  <h1>In Succession, a family sells its company and loses each other.</h1>
-  <p class="sub">Family Table is a PNC Private Bank concept that helps real families avoid that ending. Everyone has their say in private. The advisor sees the problems early. The money, and the next generation, stay with PNC.</p>
-  <div class="ctas"><a class="btn cta" href="prototype/?tour">Take the 2-minute tour</a><a class="btn line" href="case.html">Read the Succession case</a></div>
+  <h1>Margaret is selling the business she built. Her family has never talked about what's fair.</h1>
+  <p class="sub">Family Table gives the family one private, guided place to plan the sale together. It gives their PNC advisor the whole family's view a year before closing, instead of the founder's alone.</p>
+  <div class="ctas"><a class="btn cta" href="prototype/?tour">Take the 2-minute tour</a><a class="btn line" href="#sides">See both sides</a></div>
 </div></header>
 
 <section class="block"><div class="wrap">
   <h2>The problem</h2>
-  <p class="lead">Selling a family business is the moment a bank either keeps a family for life or watches the money walk out. Most families aren't ready to talk about it.</p>
+  <p class="lead">Selling a family business is the moment a bank either keeps a family for life or watches the money walk out. Most families aren't ready to talk about it, and the advisor usually hears from one person.</p>
   <div class="grid c4">
     <div class="card stat"><b>13%</b><p>of adult children use their parents' financial advisor.</p><small>Cerulli Associates, 2019</small></div>
     <div class="card stat"><b>75%</b><p>of owners “profoundly regretted” selling a year later.</p><small>PNC, Begin at the end</small></div>
@@ -34,28 +34,58 @@
   </div>
 </div></section>
 
-<section class="block"><div class="wrap">
-  <h2>Try it on a phone</h2>
-  <p class="lead">Meet the Hales: a fictional $48M freight company where each family member is modelled on a character from Succession. Pick a person and the app rearranges itself around what matters to them.</p>
-  <div class="duo">
-    <div class="phone"><iframe src="prototype/#/me/dale" title="Family Table prototype, Dale's view" loading="lazy"></iframe></div>
-    <div class="grid c2" style="margin-top:0">
-      <a class="shot" href="prototype/?reset#/advisor"><img src="prototype/shots/advisor.png" alt="Advisor home: sale signal, family table and alerts" loading="lazy"><div><b>Alex, the PNC advisor</b><span>Sees a likely sale a year early, who has had their say, and what needs attention.</span></div></a>
-      <a class="shot" href="prototype/?reset#/advisor/align"><img src="prototype/shots/advisor_align.png" alt="Alignment: who leads, gaps by theme, AI brief" loading="lazy"><div><b>Where the family disagrees</b><span>Three people expect to lead. Names stay hidden unless they share.</span></div></a>
-      <a class="shot" href="prototype/?reset#/me/sloane/checkin"><img src="prototype/shots/me_sloane_checkin.png" alt="Sloane's private check-in with live AI themes" loading="lazy"><div><b>A private check-in</b><span>AI picks out themes as Sloane types. She decides what Alex can read.</span></div></a>
-      <a class="shot" href="prototype/?reset#/advisor/docs"><img src="prototype/shots/advisor_docs.png" alt="Document AI findings" loading="lazy"><div><b>The clause nobody remembered</b><span>Document AI finds the 1998 consent clause months before closing.</span></div></a>
-    </div>
+<section class="block" id="sides"><div class="wrap">
+  <h2>Two sides of one sale</h2>
+  <p class="lead">Our two personas. Each thing they need maps to one screen in the prototype.</p>
+  <div class="sides">
+    <article class="persona-side">
+      <header><span class="av" style="background:#10214D">MW</span><div><h3>Margaret Wilson</h3><p>Founder of a family transportation business. Existing PNC commercial client. Sale expected in 12 to 18 months; most of her wealth is in the business.</p></div></header>
+      <blockquote>“Help me turn the sale into a plan my family understands and trusts.”</blockquote>
+      <ul class="needs">
+        <li><div><small>She needs</small><b>A clear view of what the family can spend, gift and invest</b></div><div><small>Family Table</small><p>One number first: $27.0M at closing, already split into live on, give and invest.</p><a href="prototype/?reset#/me/margaret">Margaret's home</a></div></li>
+        <li><div><small>She needs</small><b>A split that feels fair to children in and out of the business</b></div><div><small>Family Table</small><p>Private check-ins, a split every child can see move, and a facilitated meeting.</p><a href="prototype/?reset#/me/sam/options">Sam's options</a></div></li>
+        <li><div><small>She needs</small><b>Purpose and family connection after the sale</b></div><div><small>Family Table</small><p>One next step at a time, starting with her next chapter.</p><a href="prototype/?reset#/me/margaret/plan">Margaret's plan</a></div></li>
+      </ul>
+      <p class="friction"><b>What gets in the way.</b> The family avoids direct conversations. Deal advice and family guidance happen separately. She'll use a guided portal, not a dense dashboard.</p>
+    </article>
+    <article class="persona-side dark">
+      <header><span class="av" style="background:#EF6A00">AL</span><div><h3>Alex Lee</h3><p>PNC Relationship Manager and Private Business Strategist. Coordinates business banking, wealth management, trust and family advisory.</p></div></header>
+      <blockquote>“Help me understand the family early enough to guide the right conversation.”</blockquote>
+      <ul class="needs">
+        <li><div><small>Alex needs</small><b>To engage the family before the sale closes</b></div><div><small>Family Table</small><p>A sale-likelihood signal from the business accounts, 12 to 18 months ahead.</p><a href="prototype/?reset#/advisor">Alex's watchlist</a></div></li>
+        <li><div><small>Alex needs</small><b>Human facilitation when the family needs it</b></div><div><small>Family Table</small><p>Four voices instead of one, as gaps not words. A gap of 0.75 or more recommends a Hawthorn facilitator.</p><a href="prototype/?reset#/advisor/align">The family summary</a></div></li>
+        <li><div><small>Alex needs</small><b>To keep the proceeds and meet the next generation</b></div><div><small>Family Table</small><p>Five specialist teams in one plan, and an introduction to the two heirs who bank elsewhere.</p><a href="prototype/?reset#/advisor/plan">Alex's plan</a></div></li>
+      </ul>
+      <p class="friction"><b>What gets in the way.</b> Alex often hears only the founder. Concerns go undocumented. PNC's capabilities sit across business units. Tension surfaces after decisions are made.</p>
+    </article>
   </div>
 </div></section>
 
 <section class="block"><div class="wrap">
-  <h2>Four steps, two sides</h2>
-  <p class="lead">One simple journey. At every step the family sees one thing, the advisor sees another, AI does the reading, and a person makes the decision.</p>
-  <div class="journey">
-    <div class="jstep" style="--c:var(--orange)"><h3><span>1</span>Spot</h3><dl><dt>Advisor sees</dt><dd>A likely sale, 12–18 months out, and why.</dd><dt>Family sees</dt><dd>An invitation from the owner to plan together.</dd><dt>AI does</dt><dd>Scores business-account activity.</dd><dt>Person decides</dt><dd>Alex decides whether to call.</dd></dl></div>
-    <div class="jstep" style="--c:var(--purple)"><h3><span>2</span>Listen</h3><dl><dt>Family sees</dt><dd>A private check-in. Nobody else reads it.</dd><dt>Advisor sees</dt><dd>Who has had their say; themes, not words.</dd><dt>AI does</dt><dd>Turns answers into themes; reads old documents.</dd><dt>Person decides</dt><dd>Each member chooses what to share.</dd></dl></div>
-    <div class="jstep" style="--c:var(--blue)"><h3><span>3</span>Align</h3><dl><dt>Advisor sees</dt><dd>The size of each disagreement, and a draft brief.</dd><dt>Family sees</dt><dd>What they'd each get under each option.</dd><dt>AI does</dt><dd>Drafts the brief; explains the calculator's numbers.</dd><dt>Person decides</dt><dd>A facilitated family meeting.</dd></dl></div>
-    <div class="jstep" style="--c:var(--green)"><h3><span>4</span>Act</h3><dl><dt>Family sees</dt><dd>One next step each, and a signed plan.</dd><dt>Advisor sees</dt><dd>Tasks for specialists; heirs to welcome.</dd><dt>AI does</dt><dd>Keeps the plan and the log up to date.</dd><dt>Person decides</dt><dd>Everyone signs; PNC keeps the record.</dd></dl></div>
+  <h2>How one sale moves between them</h2>
+  <p class="lead">Six stages, two lanes. At each stage something one side does changes what the other side sees. The tour walks it in six taps, alternating sides.</p>
+  <div class="lanes">
+    <div class="lane-label fam">Margaret and family</div><div class="lane-label hand">What passes between</div><div class="lane-label adv">Alex, PNC</div>
+    <div class="stage"><h3>Signal</h3><p class="fam">The sale is still private. Nobody in the family has been asked anything.</p><p class="hand"><span aria-hidden="true">↑</span> Alex calls Margaret</p><p class="adv">Sale likelihood rises to 81 on business-account activity.</p></div>
+    <div class="stage"><h3>Join</h3><p class="fam">Margaret invites the family. Each person gets a private check-in.</p><p class="hand"><span aria-hidden="true">↓</span> Who has answered, never what</p><p class="adv">Sees that 4 of 5 have checked in.</p></div>
+    <div class="stage"><h3>Align</h3><p class="fam">Claire writes what she's never said to her mother, and shares one answer.</p><p class="hand"><span aria-hidden="true">↓</span> Themes from four people</p><p class="adv">Sees the fairness gap against Margaret's equal-split plan. Approves the brief.</p></div>
+    <div class="stage"><h3>Allocate</h3><p class="fam">Each child sees their own number under each split.</p><p class="hand"><span aria-hidden="true">↕</span> Options for the Nov 12 meeting</p><p class="adv">Brings the options. A Hawthorn facilitator leads the conversation.</p></div>
+    <div class="stage"><h3>Activate</h3><p class="fam">One next step each. Old documents go to the right specialist.</p><p class="hand"><span aria-hidden="true">↑</span> Specialists and introductions</p><p class="adv">Routes the will to an estate attorney. Introduces PNC to Claire and Sam.</p></div>
+    <div class="stage"><h3>Continue</h3><p class="fam">Margaret starts her next chapter. The plan stays current.</p><p class="hand"><span aria-hidden="true">↕</span> A check-in every year</p><p class="adv">Keeps a relationship with all five, not just one.</p></div>
+  </div>
+</div></section>
+
+<section class="block"><div class="wrap">
+  <h2>Try it on a phone</h2>
+  <p class="lead">The Wilsons are fictional: a $48M trucking company in Pittsburgh. Pick a person and the app reorders itself around what matters to them.</p>
+  <div class="duo">
+    <div class="phone"><iframe src="prototype/#/me/margaret" title="Family Table prototype, Margaret's view" loading="lazy"></iframe></div>
+    <div class="grid c2" style="margin-top:0">
+      <a class="shot" href="prototype/?reset#/advisor"><img src="prototype/shots/advisor.png" alt="Advisor home: Wilson Transport sale signal, family table and alerts" loading="lazy"><div><b>Alex's watchlist</b><span>A likely sale a year early, and what needs attention this week.</span></div></a>
+      <a class="shot" href="prototype/?reset#/advisor/align"><img src="prototype/shots/advisor_align.png" alt="Family summary: four of five voices, the founder's view against the family's, gaps by topic, and a draft brief" loading="lazy"><div><b>Four voices, not one</b><span>Margaret's plan assumes an equal split. The family's widest gap is fairness.</span></div></a>
+      <a class="shot" href="prototype/?reset#/me/claire/checkin"><img src="prototype/shots/me_claire_checkin.png" alt="Claire's private check-in with live AI themes and share switches" loading="lazy"><div><b>A private check-in</b><span>AI picks out themes as Claire types. She decides what Alex can read.</span></div></a>
+      <a class="shot" href="prototype/?reset#/me/sam/options"><img src="prototype/shots/me_sam_options.png" alt="Sam's gift options with a split slider" loading="lazy"><div><b>Every child sees their number</b><span>Equal, balanced or equity counted. Every share moves together.</span></div></a>
+    </div>
   </div>
 </div></section>
 
@@ -63,10 +93,10 @@
   <h2>What the AI does, and doesn't</h2>
   <p class="lead">AI reads, sorts and explains. Fixed formulas do the money. People make every decision. In the prototype the AI is simulated; in production, Claude or GPT sit behind one PNC gateway with the same guardrails.</p>
   <div class="grid c4">
-    <div class="card top-b"><h3>Spot</h3><p>A machine-learning score on business-account activity, with its top reasons.</p><span class="tag ml">Machine learning</span><span class="tag human">Advisor reviews</span></div>
-    <div class="card top-p"><h3>Listen</h3><p>Live themes as family members type, and a reading of old agreements and notes.</p><span class="tag llm">Language model</span><span class="tag human">Member shares</span></div>
-    <div class="card top-g"><h3>Adapt</h3><p>Each person's home is ordered around what they care about, and one tap explains why.</p><span class="tag rule">Rules today</span><span class="tag rule">Explainable</span></div>
-    <div class="card top-o"><h3>Ask</h3><p>An assistant that answers clearly, shows the steps it took, and won't give legal or tax advice.</p><span class="tag llm">Claude / GPT</span><span class="tag human">Advisor approves</span></div>
+    <div class="card"><h3>Signal</h3><p>A machine-learning score on business-account activity, with its top reasons.</p><span class="tag ml">Machine learning</span><span class="tag human">Advisor reviews</span></div>
+    <div class="card"><h3>Listen</h3><p>Live themes as family members type, and a reading of old wills, policies and agreements.</p><span class="tag llm">Language model</span><span class="tag human">Member shares</span></div>
+    <div class="card"><h3>Adapt</h3><p>Each person's home is ordered around what they care about, and one tap explains why.</p><span class="tag rule">Rules today</span><span class="tag rule">Explainable</span></div>
+    <div class="card"><h3>Ask</h3><p>An assistant that answers clearly, shows the steps it took, and won't give legal or tax advice.</p><span class="tag llm">Claude or GPT</span><span class="tag human">Advisor approves</span></div>
   </div>
   <p style="margin-top:14px"><a href="architecture.html">See the full solution architecture</a></p>
 </div></section>
@@ -74,21 +104,21 @@
 <section class="block"><div class="wrap">
   <h2>Why only PNC can build this</h2>
   <div class="grid c3">
-    <div class="card top-o"><h3>A signal PNC already holds</h3><p>PNC banks the business, so it can see a sale coming a year before closing. Outside wealth managers see the money only after it moves.</p></div>
-    <div class="card top-p"><h3>Private by default</h3><p>Each person answers alone. The advisor sees gaps, not words. Honest answers are data no competitor can buy or scrape.</p></div>
-    <div class="card top-g"><h3>One household graph</h3><p>Business, owners, spouse, heirs, trusts and accounts in one consented map, under one roof with Hawthorn IFS.</p></div>
+    <div class="card"><h3>A signal PNC already holds</h3><p>PNC banks the business, so it can see a sale coming a year before closing. Outside wealth managers see the money only after it moves.</p></div>
+    <div class="card"><h3>Private by default</h3><p>Each person answers alone. The advisor sees gaps, not words. Honest answers are data no competitor can buy or scrape.</p></div>
+    <div class="card"><h3>One household graph</h3><p>Business, owners, spouse, heirs, trusts and accounts in one consented map, under one roof with Hawthorn IFS.</p></div>
   </div>
 </div></section>
 
 <section class="block"><div class="wrap">
   <h2>What PNC gets, and what we still need to prove</h2>
   <div class="grid c2">
-    <div class="card"><h3>Value for PNC (Hale example)</h3><p><b>$27.0M</b> lands at closing: the balance PNC keeps only if the family chooses to stay.<br><b>3 of 4 heirs</b> bank elsewhere today; Family Table meets them before $9–10M reaches them.<br><b>One advisor</b> handles the family with a brief instead of weeks of calls.</p></div>
+    <div class="card"><h3>Value for PNC (Wilson example)</h3><p><b>$27.0M</b> lands at closing: the balance PNC keeps only if the family chooses to stay.<br><b>2 of 3 heirs</b> bank elsewhere today; Family Table meets them before $8–9M reaches them.<br><b>One advisor</b> hears the whole family before the letter of intent, not after.</p></div>
     <div class="card"><h3>Hypotheses to test in a pilot</h3><p>1. Family members answer honestly when answers stay private. <i>Measure: check-in completion above 70%.</i><br>2. Advisors act earlier on the signal. <i>Measure: first family meeting before the letter of intent.</i><br>3. Heirs open a PNC account. <i>Measure: next-gen accounts per family within 12 months.</i></p></div>
   </div>
 </div></section>
 
 <footer><div class="wrap">Alen Ilmi, Rizaldy Utomo, Nindy Aditya Dewi and Aditya Mulya Pratama, Carnegie Mellon University, for CSL 2026.<br>
-Student concept, not a PNC product. The Hale family, Alex Lee and all figures are fictional. Succession is an HBO series; references are commentary. <a href="https://github.com/rzrizaldy/pnc_csl_2026">Source on GitHub</a></div></footer>
+Student concept, not a PNC product. The Wilson family, Alex Lee and all figures are fictional. <a href="https://github.com/rzrizaldy/pnc_csl_2026">Source on GitHub</a></div></footer>
 </body>
 </html>

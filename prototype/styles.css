@@ -163,11 +163,36 @@ a.row:hover, button.row:hover { background: linear-gradient(90deg, transparent, 
 .gap-row.high .spread .range { background: #F8C9A3; }
 .spread .pt { position: absolute; top: 5px; width: 10px; height: 10px; margin-left: -5px; border-radius: 50%; background: var(--slate); box-shadow: 0 0 0 2px #fff; }
 
-.claim { display: flex; align-items: center; gap: 12px; margin-top: 14px; }
-.seat { width: 56px; height: 56px; border-radius: 12px; background: var(--navy); color: #fff; display: grid; place-items: center; text-align: center; font-size: 11px; font-weight: 600; line-height: 1.15; flex: none; }
-.claimants { display: flex; }
-.claimant { width: 36px; height: 36px; border-radius: 50%; background: var(--orange); color: #fff; display: grid; place-items: center; font-weight: 700; margin-left: -6px; box-shadow: 0 0 0 3px #fff; }
-.claimant:first-child { margin-left: 0; }
+/* voices: who has had their say (status only) */
+.voices { display: flex; flex-wrap: wrap; gap: 12px 14px; margin-top: 16px; }
+.voice { display: grid; justify-items: center; gap: 4px; font-size: 12.5px; color: var(--sub); font-weight: 500; }
+.voice .av { box-shadow: 0 0 0 3px var(--bg), 0 0 0 5px var(--line-2); opacity: .45; }
+.voice.on .av { box-shadow: 0 0 0 3px var(--bg), 0 0 0 5px var(--pos); opacity: 1; }
+.voice.on small { color: var(--text); }
+
+/* the founder's view against the family's */
+.compare { display: grid; gap: 10px; margin-top: 8px; }
+.compare > div { padding: 14px 16px; border-radius: var(--r); background: var(--surface); }
+.compare > div.hl { background: var(--orange-50); }
+.compare small { display: block; font-size: 13px; font-weight: 600; color: var(--sub); }
+.compare .hl small { color: var(--orange-700); }
+.compare b { display: block; font-size: 18px; font-weight: 600; color: var(--navy); margin-top: 4px; line-height: 1.25; }
+.compare span { display: block; font-size: 14.5px; color: var(--sub); margin-top: 4px; }
+
+/* founder's invite */
+.invite { display: flex; gap: 14px; align-items: flex-start; margin-top: 18px; background: var(--purple-50); border: 0; }
+.invite .ic { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; flex: none; background: var(--bg); color: var(--purple); }
+.invite b { display: block; font-size: 16px; font-weight: 600; color: var(--navy); }
+.invite p { font-size: 14.5px; color: var(--sub); margin-top: 2px; }
+.invite .btn { margin-top: 12px; }
+.invite.on { background: var(--pos-50); }
+.invite.on .voices { margin-top: 12px; }
+.invite.on .voice .av { box-shadow: 0 0 0 3px var(--pos-50), 0 0 0 5px var(--line-2); }
+.invite.on .voice.on .av { box-shadow: 0 0 0 3px var(--pos-50), 0 0 0 5px var(--pos); }
+
+/* pickable rows */
+button.row.pick { cursor: pointer; }
+button.row.pick.on b { color: var(--pos); }
 
 /* check-in */
 .q { padding: 18px 0; border-bottom: 1px solid var(--line); }
@@ -272,7 +297,8 @@ body.story .appbar, body.story .bnav { display: none; }
   .hero .value { font-size: 56px; }
   .stats, .cast { grid-template-columns: repeat(3, 1fr); }
   .people { grid-template-columns: 1fr 1fr; column-gap: 40px; }
-  .starts { grid-template-columns: repeat(3, 1fr); }
+  .starts { grid-template-columns: repeat(2, 1fr); }
+  .compare { grid-template-columns: 1fr 1fr; }
 }
 @media (min-width: 1024px) {
   .tabs { display: flex; gap: 26px; align-self: stretch; margin-left: 12px; }
@@ -296,7 +322,9 @@ body.story .appbar, body.story .bnav { display: none; }
 /* ---------- picker tiles ---------- */
 .starts { display: grid; gap: 12px; margin-top: 8px; }
 .start { display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto auto; column-gap: 14px; align-items: center; padding: 16px; border-radius: var(--r); background: var(--surface); color: var(--text); }
-.start .av { grid-row: 1 / 3; width: 48px; height: 48px; }
+.start { grid-template-rows: auto auto auto; }
+.start .av { grid-row: 1 / 4; width: 48px; height: 48px; align-self: start; }
+.start small { font-size: 13px; font-weight: 600; color: var(--orange-700); }
 .start b { font-size: 17px; color: var(--navy); }
 .start span:last-child { font-size: 14.5px; color: var(--sub); }
 .start:hover { background: #ECEEF2; }
@@ -305,6 +333,9 @@ body.story .appbar, body.story .bnav { display: none; }
 .tour { position: fixed; z-index: 35; left: 12px; right: 12px; bottom: 76px; background: var(--navy); color: #fff; border-radius: 16px; padding: 14px 16px 14px; box-shadow: 0 12px 32px rgba(16,33,77,.35); }
 .tour-top { display: flex; align-items: center; gap: 10px; font-size: 12.5px; color: rgba(255,255,255,.7); }
 .tour-dots { display: flex; gap: 4px; margin-left: 4px; }
+.tour .side { font-weight: 600; padding: 2px 8px; border-radius: 6px; }
+.tour .side.a { background: rgba(239,106,0,.22); color: #FFC089; }
+.tour .side.f { background: rgba(255,255,255,.14); color: #fff; }
 .tour-dots i { width: 18px; height: 4px; border-radius: 2px; background: rgba(255,255,255,.22); }
 .tour-dots i.past { background: rgba(255,255,255,.7); }
 .tour-dots i.cur { background: var(--orange); }
@@ -340,10 +371,11 @@ body.touring .page { padding-bottom: 240px; }
   .anim .trip .bars i.now::after { animation: ft-grow .9s .45s cubic-bezier(.2,.8,.2,1) both; transform-origin: left center; }
   .anim .chart .viz { animation: ft-wipe 1.2s .25s cubic-bezier(.45,0,.2,1) both; }
   .anim .area { animation: ft-fade .8s .95s both; }
-  .anim .end-dot, .anim .seat-g, .anim .claimant { transform-box: fill-box; transform-origin: center; }
+  .anim .end-dot, .anim .seat-g { transform-box: fill-box; transform-origin: center; }
   .anim .end-dot { animation: ft-pop .4s 1.4s cubic-bezier(.3,1.5,.5,1) both; }
   .anim .seat-g { animation: ft-pop .45s cubic-bezier(.3,1.5,.5,1) both; animation-delay: calc(var(--i, 0) * 70ms + 260ms); }
-  .anim .claimant { animation: ft-pop .4s cubic-bezier(.3,1.5,.5,1) both; animation-delay: calc(var(--i, 0) * 110ms + 320ms); }
+  .anim .voice { animation: ft-pop .4s cubic-bezier(.3,1.5,.5,1) both; animation-delay: calc(var(--i, 0) * 80ms + 300ms); }
+  .anim .compare > div { animation: ft-rise .5s cubic-bezier(.2,.8,.2,1) both; } .anim .compare > div + div { animation-delay: .25s; }
   .anim .storycard .inner > * { animation: ft-rise .7s cubic-bezier(.2,.8,.2,1) both; }
   .anim .storycard .inner > :nth-child(2) { animation-delay: .12s; } .anim .storycard .inner > :nth-child(3) { animation-delay: .3s; }
   .anim .storycard .inner > :nth-child(n+4) { animation-delay: .45s; }

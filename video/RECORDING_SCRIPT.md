@@ -1,54 +1,56 @@
-# Family Table: narration to record (for Nindy) · v2, Succession case
+# Family Table: narration to record (for Nindy), v3, two sides of one sale
 
 **Read all 11 lines in one take. Leave a 2-second pause between lines** (count "one, two" in your head). The video re-times itself to your pace, so don't rush.
 
 Target: **about 1:50 of speaking**, 2:00 at most.
 **Bold** = stress this word. ` / ` = a small breath.
 
+The screen follows the guided tour (`prototype/?tour`): it alternates the family side and the advisor side.
+
 ---
 
-### 1 · Hook · about 10 s
-In *Succession*, Logan Roy sells his company / and **loses his family**. / Secret promises. / A forgotten clause. / A note in a safe. / Real families **do the same**.
+### 1 · Hook · about 9 s
+Margaret Wilson is selling the trucking company / she built over **thirty-five years**. / Her family has never talked about / what's **fair**.
 
 *(pause 2 s)*
 
-### 2 · Problem · about 8 s
-When a family business sells, / the money usually **leaves the bank** with the kids. / Only **thirteen percent** of adult children use their parents' advisor.
+### 2 · Problem · about 10 s
+Most families don't, / until the money arrives. / By then the advisor has heard from **one person**, / and only **thirteen percent** of adult children / keep their parents' advisor.
 
 *(pause 2 s)*
 
-### 3 · Meet the Hales · about 6 s
-Meet the Hales: / a forty-eight-million-dollar freight company, / with **the same family**.
+### 3 · Two sides · about 8 s
+Family Table helps **both sides** of the sale: / Margaret's family, / and Alex, / her PNC advisor.
 
 *(pause 2 s)*
 
-### 4 · Spot · about 10 s
-PNC already **banks the business**. / Payments to deal advisers flag a likely sale / **a year ahead**, / so Alex, the advisor, calls / **before** anything is signed.
+### 4 · Signal: advisor side · about 10 s
+PNC already **banks the business**. / Payments to deal advisers flag a likely sale / **a year ahead**, / so Alex calls Margaret / **before** anything is signed.
 
 *(pause 2 s)*
 
-### 5 · Listen · about 9 s
-Each family member has their say, / **privately**. / As Sloane types, AI picks out the themes. / **She** decides what Alex can read.
+### 5 · Join: family side · about 8 s
+Margaret invites her family. / Each of them answers **in private**. / She sees **who** has answered, / never **what** they said.
 
 *(pause 2 s)*
 
-### 6 · Align · about 9 s
-Alex sees the **gaps**, not the words. / **Three** people expect to lead. / AI drafts the brief; / **Alex approves it**.
+### 6 · Align: family side · about 9 s
+Claire writes what she's never told her mother: / equal is the only fair split. / **She** decides / whether Alex can read it.
 
 *(pause 2 s)*
 
-### 7 · The clause · about 6 s
-Document AI finds the clause nobody remembered: / one that may let **any one child** block the sale.
+### 7 · Align: advisor side · about 12 s
+Alex now hears **four voices**, not one. / Margaret's plan assumes the kids agree. / The family's widest gap / is **fairness**. / AI drafts the brief, / a facilitator is booked, / and **Alex approves it**.
 
 *(pause 2 s)*
 
-### 8 · Adaptive · about 12 s
-And every screen **adapts**. / Dale just wants to know when he gets paid, / so that comes **first**. / He asks in plain words, / and Claude or GPT answers, / inside PNC's guardrails.
+### 8 · Allocate: family side · about 10 s
+Sam just wants his number. / So that comes **first**, / and every share moves together / as the family compares splits. / Claude or GPT explains, / **inside PNC's guardrails**.
 
 *(pause 2 s)*
 
-### 9 · Act · about 7 s
-The family compares fair splits, / agrees a plan, / and **signs it**. / No more notes in the safe.
+### 9 · Activate: advisor side · about 9 s
+Old documents go to the right specialist, / and Alex meets Claire and Sam / **before** eight million dollars reaches them.
 
 *(pause 2 s)*
 
@@ -57,17 +59,17 @@ Why only PNC? / It **sees** the sale coming. / It **hears** what families won't 
 
 *(pause 2 s)*
 
-### 11 · Close · about 6 s
-**Family Table.** / Keep the proceeds. / Meet the next generation. / Help a family **stay a family**.
+### 11 · Close · about 7 s
+**Family Table.** / A plan the family trusts. / An advisor who hears everyone. / Proceeds that **stay**.
 
 ---
 
 ## Tone
-- **Warm and a little wry** on line 1, which is the TV hook. Then calm and confident, like talking to one person.
-- **Slow down** on "thirteen percent", "a year ahead" and "any one child".
+- **Calm and warm** on line 1, like telling a friend about someone you know. Then confident, like talking to one person.
+- **Slow down** on "fair", "thirteen percent", "a year ahead" and "four voices".
 - **Land the ending:** a short beat after "Family Table.", then three even phrases.
 
-**Pronunciation:** Logan **LOH-gun** · Hale **HAYL** · Sloane **SLOHN**
+**Pronunciation:** Wilson **WIL-sun** · Hawthorn **HAW-thorn**
 
 ## How to record (5 minutes)
 1. **Room:** quiet, with soft furnishings and no fan. Light your face from the front with a window or lamp.

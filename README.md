@@ -2,9 +2,9 @@
 
 A student concept for PNC Private Bank, built for the 2026 CSL case competition, *Bridging Generational Trust: AI for Asset & Family Transitions*. The track is the sale or transition of a family-owned business.
 
-Built around a case study of HBO's *Succession*: six ways the Roy family's succession failed, each checked against PNC's own research and turned into a feature. The fictional Hale family (one member per Roy archetype) runs through a mobile-first prototype with adaptive screens and simulated Claude/GPT features.
+Built on the team's two personas: **Margaret Wilson**, a founder selling her family transportation business, and **Alex Lee**, her PNC advisor. The prototype shows one sale from both sides: a private, guided app for the family, and a workbench that gives the advisor the whole family's view a year before closing. Adaptive screens and simulated Claude/GPT features throughout.
 
-**Live:** [overview](https://rzrizaldy.github.io/pnc_csl_2026/) · [the Succession case](https://rzrizaldy.github.io/pnc_csl_2026/case.html) · [architecture](https://rzrizaldy.github.io/pnc_csl_2026/architecture.html) · [prototype](https://rzrizaldy.github.io/pnc_csl_2026/prototype/?reset)
+**Live:** [overview](https://rzrizaldy.github.io/pnc_csl_2026/) · [the Wilson case](https://rzrizaldy.github.io/pnc_csl_2026/case.html) · [architecture](https://rzrizaldy.github.io/pnc_csl_2026/architecture.html) · [prototype](https://rzrizaldy.github.io/pnc_csl_2026/prototype/?reset)
 
 Team: Alen Ilmi · Rizaldy Utomo · Nindy Aditya Dewi · Aditya Mulya Pratama, Carnegie Mellon University.
 
@@ -12,15 +12,16 @@ Team: Alen Ilmi · Rizaldy Utomo · Nindy Aditya Dewi · Aditya Mulya Pratama, C
 
 | Path | What |
 |---|---|
-| `index.html` | Overview: problem, 4-step journey, AI, why only PNC, value and hypotheses |
-| `case.html` | Succession case study: six failure patterns and the Hale family personas, with sources |
-| `architecture.html` | Solution architecture: 6-layer stack, privacy boundary, request flow, model output contract, AI components, pilot |
-| `prototype/` | Mobile-first prototype. Static HTML/CSS/JS, no build step. Pick a person at `#/`; advisor at `#/advisor/...`, family members at `#/me/<id>/...` |
+| `index.html` | Overview: problem, the two personas side by side, the two-lane journey, AI, why only PNC, value and hypotheses |
+| `case.html` | The Wilson case: personas and five moments where a family sale goes wrong, with sources |
+| `architecture.html` | Solution architecture: 6-layer stack, privacy boundary, service blueprint, request flow, model output contract, AI components, pilot |
+| `prototype/` | Mobile-first prototype. Static HTML/CSS/JS, no build step. Pick a side at `#/`, or take the tour at `?tour`; advisor at `#/advisor/...`, family members at `#/me/<id>/...` |
 | `prototype/shots/` | Desktop (1920×1080) and mobile (`*_m.png`) screenshots |
 | `slides/claude_deck/` | Source of the consulting-style slides (Claude Slides format) |
 | `slides/build_secret_sauce.py` | Secret Sauce slide as editable PPTX shapes, for Canva import |
 | `video/` | Video plan and narration script |
 | `TEAM_NOTES.md` | Team coordination: owners, deadlines, open decisions |
+| `docs/TWO_WAY_JOURNEY.md` | Reassessment: each persona goal mapped to a screen, and the two-lane journey |
 
 ## Run locally
 
@@ -38,4 +39,4 @@ cd video/src && node shots.js http://localhost:4311/prototype/
 
 ## Disclaimers
 
-This is a student concept, not a PNC product. The Hale family, Alex Lee and all figures are fictional. Succession is an HBO series, referenced for commentary. AI responses in the prototype are simulated.
+This is a student concept, not a PNC product. The Wilson family, Alex Lee and all figures are fictional. AI responses in the prototype are simulated.

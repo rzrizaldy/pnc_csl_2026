@@ -8,12 +8,12 @@ const BASE = process.argv[2] || "http://localhost:4311/prototype/";
 const OUT = path.join(__dirname, "../../prototype/shots");
 const DESKTOP = [
   "", "advisor", "advisor/align", "advisor/docs", "advisor/plan",
-  "me/walt", "me/dale", "me/kyle", "me/sloane", "me/sloane/checkin", "me/dale/options", "me/walt/plan",
+  "me/margaret", "me/margaret/plan", "me/tom", "me/ben", "me/claire", "me/claire/checkin", "me/sam", "me/sam/options",
   "story/hook", "story/cast", "story/problem", "story/sauce", "story/close",
 ];
-const MOBILE = ["", "advisor", "advisor/align", "me/dale", "me/sloane/checkin", "me/dale/options"];
+const MOBILE = ["", "advisor", "advisor/align", "me/margaret", "me/sam", "me/claire/checkin", "me/sam/options"];
 // Each "ask" shot opens the assistant on a route and runs one suggested question.
-const ASKS = [{ route: "me/dale", q: 1, name: "ask_dale_clause" }, { route: "advisor", q: 0, name: "ask_alex_prep" }];
+const ASKS = [{ route: "me/claire", q: 0, name: "ask_claire_privacy" }, { route: "advisor", q: 0, name: "ask_alex_prep" }];
 
 async function shoot(browser, viewport, routes, suffix, errors) {
   const page = await browser.newPage({ viewport, deviceScaleFactor: suffix === "m" ? 2 : 1 });

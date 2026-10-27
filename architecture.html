@@ -19,7 +19,7 @@
 <header class="hero"><div class="wrap">
   <div class="eyebrow">Solution architecture</div>
   <h1>AI reads and explains. Formulas do the money. People decide.</h1>
-  <p class="sub">Six layers, from the screens families use down to the PNC systems that already hold the signal. Every AI output passes a consent check, a schema check and, where it matters, an advisor.</p>
+  <p class="sub">Six layers, from the screens Margaret's family and Alex use down to the PNC systems that already hold the signal. Every AI output passes a consent check, a schema check and, where it matters, an advisor.</p>
 </div></header>
 
 <section class="block"><div class="wrap">
@@ -27,8 +27,8 @@
   <p class="lead">Read top to bottom: a request starts on a screen and only reaches data it is allowed to see.</p>
   <div class="layers">
     <div class="layer" style="--c:#1A2B5C"><div class="name">Channels<small>Where people use it</small></div><div class="boxes">
-      <div class="box"><b>Family app</b><span>Mobile-first web app; one login per family member.</span></div>
-      <div class="box"><b>Advisor workbench</b><span>Inside the advisor's existing desktop; signals, gaps, documents, plan.</span></div>
+      <div class="box"><b>Family app</b><span>Mobile-first web app; one login per family member. The family side.</span></div>
+      <div class="box"><b>Advisor workbench</b><span>Inside the advisor's existing desktop; signals, the family summary, documents, plan. The advisor side.</span></div>
       <div class="box"><b>Nudges</b><span>Email and SMS reminders; never contain private answers.</span></div></div></div>
     <div class="layer" style="--c:#2F6DB5"><div class="name">Experience<small>What each person sees</small></div><div class="boxes">
       <div class="box hl"><b>Adaptive UI engine</b><span>Screens are built from cards ordered per person by role, the themes they raised and the deal stage. Rules in the prototype; a learned ranking only if it tests better. Each screen explains its order.</span></div>
@@ -59,27 +59,44 @@
 </div></section>
 
 <section class="block"><div class="wrap">
+  <h2>Service blueprint</h2>
+  <p class="lead">Read across for the journey, down for who does what. The AI layer sits in the middle and never acts on its own: the consent filter guards what goes in, and the review queue guards what comes out.</p>
+  <div class="table-scroll"><table class="t bp">
+    <thead><tr><th></th><th>Signal</th><th>Join</th><th>Align</th><th>Allocate</th><th>Activate</th><th>Continue</th></tr></thead>
+    <tbody>
+      <tr class="fam"><th scope="row">Family</th><td>The sale is still private</td><td>Margaret invites the family</td><td>Claire answers in private and shares one answer</td><td>Each child compares splits and asks questions</td><td>One next step each; agree in principle</td><td>Margaret starts her next chapter</td></tr>
+      <tr class="line "><td colspan="7">Line of interaction: the family acts, the app responds</td></tr>
+      <tr class="app"><th scope="row">Family app</th><td>Nothing yet</td><td>A private check-in for each person</td><td>Live themes; a share switch per answer</td><td>Their own number, a split slider, Ask</td><td>Their plan and next step</td><td>A yearly check-in</td></tr>
+      <tr class="line ok"><td colspan="7">Consent filter: words never pass unless a member shares them</td></tr>
+      <tr class="ai"><th scope="row">AI layer</th><td>ML scores business-account activity</td><td>Rules order each home screen</td><td>LLM tags themes; formula scores gaps; LLM drafts the brief</td><td>Calculator does the numbers; Claude or GPT explains</td><td>Document AI flags the will and the policy</td><td>Keeps the plan and log current</td></tr>
+      <tr class="line rv"><td colspan="7">Review queue: nothing reaches the family until Alex approves</td></tr>
+      <tr class="app"><th scope="row">Advisor workbench</th><td>Watchlist: Wilson Transport at 81</td><td>Who has checked in: 4 of 5</td><td>Family summary and a draft brief</td><td>Options for the Nov 12 meeting</td><td>Findings, specialist tasks, heirs</td><td>Decision log</td></tr>
+      <tr class="adv"><th scope="row">Alex and PNC</th><td>Reviews the signal; calls Margaret</td><td>Reminds Tom to check in</td><td>Approves the brief; books Hawthorn IFS</td><td>A facilitator leads the family meeting</td><td>Routes the will; meets the heirs</td><td>A yearly review with all five</td></tr>
+    </tbody></table></div>
+</div></section>
+
+<section class="block"><div class="wrap">
   <h2>One request, end to end</h2>
-  <p class="lead">Dale opens the app on his phone and asks: <b>“Can Dad sell without us?”</b></p>
+  <p class="lead">Sam opens the app on his phone and asks: <b>“When will I receive my share?”</b></p>
   <ol class="flow">
-    <li><b>Sign-in and scope.</b> The gateway knows it's Dale, a child of the owner. His scope: his own vault, family-shared documents and the deal timeline.</li>
-    <li class="gate"><b>Consent filter.</b> Other members' answers are removed before anything reaches a model. Only documents Alex has released to the children are in scope.</li>
-    <li><b>Plan.</b> The agent picks tools: <code>docs.search("consent AND sale")</code> and <code>policy.check(legal_advice=false)</code>.</li>
-    <li><b>Retrieve.</b> Clause 7.2 of the 1998 agreement comes back with its page and a 93% extraction confidence.</li>
-    <li><b>Draft.</b> Claude or GPT writes a short answer in the required schema (below), citing the clause.</li>
-    <li class="gate"><b>Check.</b> The schema is validated; the policy layer adds “this is a legal question” and points to the attorney's review.</li>
-    <li><b>Render.</b> The adaptive UI shows the answer with a document card and the list of tools used.</li>
-    <li><b>Log.</b> Model, version, tools, inputs and output go to the audit log. Alex can see that Dale asked, not the conversation.</li>
+    <li><b>Sign-in and scope.</b> The gateway knows it's Sam, a child of the owner. His scope: his own vault, the split options Margaret released to the family, and the deal timeline.</li>
+    <li class="gate"><b>Consent filter.</b> Other members' answers and themes are removed before anything reaches a model. Ben's buyer equity is in scope only because it's part of the options the family was shown.</li>
+    <li><b>Plan.</b> The agent picks tools: <code>deal.timeline()</code> and <code>calc.gift_options(child="sam")</code>.</li>
+    <li><b>Calculate.</b> The fixed calculator returns $4.0M with an equal split and $4.5M with equity counted. Closing is expected next fall.</li>
+    <li><b>Draft.</b> Claude or GPT writes a short answer in the required schema (below), using only the calculator's numbers.</li>
+    <li class="gate"><b>Check.</b> The schema is validated, and every number in the answer must match the calculator's output. The policy layer adds that this isn't tax advice.</li>
+    <li><b>Render.</b> The adaptive UI shows the answer with a share card and the list of tools used.</li>
+    <li><b>Log.</b> Model, version, tools, inputs and output go to the audit log. Alex can see that Sam asked, not the conversation.</li>
   </ol>
   <h3 style="margin-top:22px;color:var(--navy);font-size:20px">The contract every model must meet</h3>
   <p class="lead" style="font-size:16px">Because both models must return this structure, PNC can swap or compare them without touching the app.</p>
 <pre class="json">{
-  <span class="k">"answer"</span>: <span class="s">"Possibly not. A 1998 agreement says a sale needs written consent from all four children…"</span>,
-  <span class="k">"card"</span>: { <span class="k">"type"</span>: <span class="s">"document_finding"</span>, <span class="k">"doc_id"</span>: <span class="s">"divorce-1998"</span>, <span class="k">"clause"</span>: <span class="s">"7.2"</span>, <span class="k">"confidence"</span>: 0.93 },
-  <span class="k">"citations"</span>: [ { <span class="k">"doc_id"</span>: <span class="s">"divorce-1998"</span>, <span class="k">"page"</span>: 31 } ],
-  <span class="k">"numbers_from"</span>: <span class="s">"none"</span>,
-  <span class="k">"advice_flags"</span>: [ <span class="s">"legal"</span> ],
-  <span class="k">"needs_human"</span>: <span class="s">"family_attorney"</span>
+  <span class="k">"answer"</span>: <span class="s">"At closing, expected next fall. Your share is $4.0M with an equal split, and up to $4.5M if Ben's buyer equity is counted."</span>,
+  <span class="k">"card"</span>: { <span class="k">"type"</span>: <span class="s">"gift_range"</span>, <span class="k">"child"</span>: <span class="s">"sam"</span>, <span class="k">"low"</span>: 4.0, <span class="k">"high"</span>: 4.5 },
+  <span class="k">"citations"</span>: [ { <span class="k">"tool"</span>: <span class="s">"calc.gift_options"</span>, <span class="k">"version"</span>: <span class="s">"v3"</span> }, { <span class="k">"tool"</span>: <span class="s">"deal.timeline"</span> } ],
+  <span class="k">"numbers_from"</span>: <span class="s">"calc.gift_options"</span>,
+  <span class="k">"advice_flags"</span>: [ <span class="s">"tax"</span> ],
+  <span class="k">"needs_human"</span>: <span class="s">"none"</span>
 }</pre>
 </div></section>
 
@@ -90,9 +107,9 @@
     <thead><tr><th>Component</th><th>Reads</th><th>Produces</th><th>Human check</th></tr></thead>
     <tbody>
       <tr style="--c:var(--blue)"><td style="--c:var(--blue)">Sale-likelihood model<small>Machine learning</small></td><td>Business-account events: adviser payments, statement requests, early paydowns.</td><td>0–100 score, timing, top reasons.</td><td>Advisor decides whether to call. Never shown to clients.</td></tr>
-      <tr><td style="--c:var(--purple)">Document AI<small>OCR + language model</small></td><td>Divorce agreements, buy-sell agreements, wills, handwritten notes.</td><td>Findings with clause, page, risk and confidence.</td><td>Advisor approves; attorney or specialist confirms; then the family is told.</td></tr>
-      <tr><td style="--c:var(--purple)">Theme extraction<small>Language model, inside the vault</small></td><td>One person's free-text answers.</td><td>Stances on six themes; flags like “private promise”.</td><td>The member sees and can fix their own themes.</td></tr>
-      <tr><td style="--c:var(--slate)">Gap score<small>Fixed formula</small></td><td>Everyone's stances.</td><td>Gap per theme, 0 to 1; leadership collisions.</td><td>Transparent; no model.</td></tr>
+      <tr><td style="--c:var(--purple)">Document AI<small>OCR + language model</small></td><td>Wills, buy-sell agreements, insurance policies, trust deeds.</td><td>Findings with clause, page, risk and confidence.</td><td>Advisor approves; attorney or specialist confirms; then the family is told.</td></tr>
+      <tr><td style="--c:var(--purple)">Theme extraction<small>Language model, inside the vault</small></td><td>One person's free-text answers.</td><td>Stances on five themes; flags like “unspoken concern”.</td><td>The member sees and can fix their own themes.</td></tr>
+      <tr><td style="--c:var(--slate)">Gap score<small>Fixed formula</small></td><td>Everyone's stances.</td><td>Gap per theme, 0 to 1; a facilitator flag at 0.75 or more.</td><td>Transparent; no model.</td></tr>
       <tr><td style="--c:var(--slate)">Proceeds and split calculator<small>Fixed formula</small></td><td>Verified deal terms, tax rules, the family's choices.</td><td>Waterfall; each person's share under each option.</td><td>Tax and trust specialists own the rules.</td></tr>
       <tr><td style="--c:var(--green)">Card ranking<small>Rules, model later if it tests better</small></td><td>Role, themes the person raised, deal stage.</td><td>Order of cards on each home screen, with a reason.</td><td>Always shows why; never hides required notices.</td></tr>
       <tr><td style="--c:var(--purple)">Assistant<small>Claude or GPT via gateway</small></td><td>Only what the asker may see.</td><td>Plain answer + card + tools used, in the schema above.</td><td>No legal or tax advice; decisions go to Alex.</td></tr>

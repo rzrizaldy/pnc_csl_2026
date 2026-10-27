@@ -9,37 +9,22 @@ Canva deck: https://www.canva.com/design/DAHY7Vfs02I (currently 24 pages; pages 
 
 ---
 
-## 0. What changed in round 2 (Rz, Oct 26 night)
+## 0. What changed (Rz, Oct 27): back to Margaret and Alex
 
-The concept now runs on a **Succession case study**. Read https://rzrizaldy.github.io/pnc_csl_2026/case.html (5 minutes).
+The prototype, site, slides and script now use **our own personas from the Canva deck**: Margaret Wilson (founder) and Alex Lee (PNC advisor). The Succession framing and the Hale family are gone. Read `docs/TWO_WAY_JOURNEY.md` (5 minutes).
 
-- **New case family: the Hales.** Hale Freight, a $48M offer, a mid-market version of the Roy family. Personas: Walt (Logan), Marisa (Marcia), Dale (Connor), Kyle (Kendall), Ross (Roman), Sloane (Shiv). The advisor is still Alex Lee. This replaces the Wilson family in the prototype.
-- **Simpler journey:** 4 steps (Spot → Listen → Align → Act) instead of 6. Each step says what the family sees, what the advisor sees, what AI does, and who decides.
-- **Six Succession failure patterns,** each checked against the PNC papers and mapped to a feature:
-  - the private promise
-  - the founder who won't step back
-  - the forgotten clause
-  - the heir who needs cash
-  - death mid-deal
-  - the note in the safe
-- **Prototype rebuilt:**
-  - mobile-first
-  - plain-words / detailed toggle
-  - adaptive home screens per person, with "why you see this"
-  - live AI theme tagging in the check-in
-  - Document AI findings
-  - a split slider
-  - an Ask assistant with a Claude/GPT switch (simulated)
-- **Solution architecture page:** https://rzrizaldy.github.io/pnc_csl_2026/architecture.html. It shows the 6 layers, the privacy boundary, one request end to end, and the model output contract.
-- **New stats** (cited):
-  - only 13% of heirs keep their parents' advisor (Cerulli 2019)
-  - 37% of wealth-transfer talks are informal (Julius Baer 2024)
-- **Video script v2** is in `video/RECORDING_SCRIPT.md` (226 words).
+- **The family:** Margaret (63, founder of Wilson Transport, $48M offer), Tom (husband), Ben (COO, stays with the buyer), Claire and Sam (not in the business, bank elsewhere).
+- **The core insight is fairness, not leadership.** Margaret tells Alex "the kids are on the same page" and plans an equal split. The family's private answers show fairness is the widest gap.
+- **Two sides, every screen:** each of Margaret's three goals and Alex's three goals maps to a prototype screen (overview page, "Two sides of one sale").
+- **Journey uses the deck's 6 stages:** Signal, Join, Align, Allocate, Activate, Continue, in two lanes with the handoff between them.
+- **The tour alternates sides** in 6 steps: Alex calls, Margaret invites, Claire shares, Alex approves, Sam compares, Alex introduces PNC.
+- **Slides (Claude Slides, 9):** cover, two sides, journey, service blueprint, family app, advisor workbench, secret sauce, architecture, privacy.
+- **Video script v3** is in `video/RECORDING_SCRIPT.md`, about 240 words.
 
 **Needs the team:**
-1. Agree to lead with Succession.
-2. Nindy: update the persona slide (p5) from Margaret Wilson to Walt and Sloane Hale, or keep Margaret and drop the Hales. Say which.
-3. Adit: the journey slides (p6–8) can collapse to the 4 steps.
+1. Nindy: the persona slide (p5) already matches. Keep it.
+2. Adit: the journey slides (p6–8) can use the two-lane version or the service blueprint.
+3. Everyone: read script v3 before Nindy records.
 
 ## 1. Decisions we need today (Mon night)
 
@@ -74,7 +59,7 @@ Roadmap can merge into slide 10 to stay within 10 slides, or it can replace slid
 |---|---|---|
 | Clickable prototype, 8 screens (4 advisor + 4 family), fictional Wilson family, PNC Private Bank design system | https://rzrizaldy.github.io/pnc_csl_2026/prototype/?reset | ✅ v1 live |
 | Showcase page (architecture, AI components, prototype links) for GitHub Pages | https://rzrizaldy.github.io/pnc_csl_2026/ | ✅ live |
-| Slides: Succession case, family app, advisor workbench, secret sauce, architecture, privacy backup (consulting style, Hale case) | Claude Slides: https://claude.ai/artifact/B7bV9cQnWU4FCvbQWLHYf2 (source in `slides/claude_deck/`) | ✅ refreshed; Rz shares the link |
+| Slides: two sides, journey, service blueprint, family app, advisor workbench, secret sauce, architecture, privacy backup (consulting style, Wilson case) | Claude Slides: https://claude.ai/artifact/B7bV9cQnWU4FCvbQWLHYf2 (source in `slides/claude_deck/`) | ✅ refreshed; Rz shares the link |
 | Secret Sauce slide as editable PPTX (Canva drag-and-drop import) | `slides/secret_sauce.pptx` | ✅ alternative |
 | Video plan + recording script for Nindy | `video/VIDEO_PLAN.md`, `video/RECORDING_SCRIPT.md` | ✅ **please review by Tue noon** |
 | Draft video (robot voice), then final with Nindy's voice and face bubble | `video/` → Drive link | Tue after script lock |

@@ -6,7 +6,7 @@ const BIN = path.join(process.env.HOME, "Library/Caches/ms-playwright/chromium_h
 const BASE = process.argv[2] || "http://localhost:4311/";
 const PAGES = ["index.html", "case.html", "architecture.html"];
 const ROUTES = ["", "advisor", "advisor/align", "advisor/docs", "advisor/plan",
-  ...["walt", "marisa", "dale", "kyle", "ross", "sloane"].flatMap(p => [`me/${p}`, `me/${p}/checkin`, `me/${p}/options`, `me/${p}/plan`])];
+  ...["margaret", "tom", "ben", "claire", "sam"].flatMap(p => [`me/${p}`, `me/${p}/checkin`, `me/${p}/options`, `me/${p}/plan`])];
 const WIDTHS = [360, 390, 768, 1024, 1440];
 const out = { links: [], errors: [], overflow: [], clipped: [], dead: [], noAlt: [], smallTaps: [], tour: [], ask: [] };
 
@@ -66,7 +66,7 @@ const out = { links: [], errors: [], overflow: [], clipped: [], dead: [], noAlt:
     const p = await ctx.newPage(); await p.setViewportSize({ width: 390, height: 844 }); await p.emulateMedia({ reducedMotion: "reduce" });
     p.on("pageerror", e => out.errors.push("tour: " + e.message));
     await p.goto(BASE + "prototype/?tour", { waitUntil: "networkidle" });
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 6; i++) {
       await p.waitForTimeout(500);
       const step = await p.evaluate(() => ({ route: location.hash, title: document.querySelector(".tour b")?.textContent, target: !!document.querySelector(".tour-target") }));
       if (!step.target) { out.tour.push(`step ${i + 1} ${step.title}: no highlighted target`); }
@@ -86,7 +86,7 @@ const out = { links: [], errors: [], overflow: [], clipped: [], dead: [], noAlt:
     const p = await ctx.newPage(); await p.setViewportSize({ width: 1440, height: 900 });
     p.on("pageerror", e => out.errors.push("ask: " + e.message));
     await p.goto(BASE + "prototype/?reset#/", { waitUntil: "networkidle" });
-    const viewers = { alex: "advisor", walt: "me/walt", marisa: "me/marisa", dale: "me/dale", kyle: "me/kyle", ross: "me/ross", sloane: "me/sloane" };
+    const viewers = { alex: "advisor", margaret: "me/margaret", tom: "me/tom", ben: "me/ben", claire: "me/claire", sam: "me/sam" };
     for (const [v, r] of Object.entries(viewers)) for (const model of ["claude", "gpt"]) {
       await p.evaluate(h => { location.hash = "#/" + h; }, r); await p.waitForTimeout(200);
       const count = await p.evaluate(v => (window.SEED.ask[v] || []).length, v);
