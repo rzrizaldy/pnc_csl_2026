@@ -67,7 +67,7 @@ Why only PNC? / It **sees** the sale coming, / **hears** what families won't say
 ## Tone
 - **Calm and warm** on line 1, like telling a friend about someone you know. Then confident, like talking to one person.
 - **Slow down** on "fair", "thirteen percent", "a year ahead" and "four voices".
-- **Land the ending:** a short beat after "Family Table.", then three even phrases.
+- **Land the ending:** a short beat after "Family Table.", then the last line, slowly.
 
 **Pronunciation:** Wilson **WIL-sun** · Hawthorn **HAW-thorn**
 
