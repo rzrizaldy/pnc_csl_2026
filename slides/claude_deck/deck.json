@@ -3,10 +3,11 @@
   "createdOnFiles": { "v": 1, "at": "2026-10-26T22:20:00Z" },
   "lists": "css",
   "title": "Family Table — product and secret sauce",
-  "order": ["cover", "family", "advisor", "sauce", "privacy"],
+  "order": ["cover", "case", "family", "advisor", "sauce", "architecture", "privacy"],
   "sections": {
-    "s1": { "description": "Rizaldy’s section of the team deck: the two product experiences and the secret sauce.", "start": "cover" },
-    "s2": { "description": "The dual-sided product: family portal and advisor workbench, shown in the prototype.", "start": "family" },
+    "s1": { "description": "Rizaldy’s section of the team deck: the Succession case, the two product experiences and the secret sauce.", "start": "cover" },
+    "s4": { "description": "The Succession case: six failure patterns mapped to features.", "start": "case" },
+    "s2": { "description": "The dual-sided product: family app and advisor workbench, shown in the prototype.", "start": "family" },
     "s3": { "description": "Why only PNC can build this, and how privacy works.", "start": "sauce" }
   },
   "faces": {

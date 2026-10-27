@@ -23,7 +23,7 @@ Updated 2026-10-26, late ET (round 2 rework). This file is overwritten, not appe
   - 17 desktop (1920×1080) and 6 mobile (`*_m.png`, 390×844 @2x)
   - 2 Ask-sheet runs
   - Regenerate with `cd video/src && node shots.js`, using a local server on 4311 serving the repo root.
-- **Slides:** the Claude Slides artifact https://claude.ai/artifact/B7bV9cQnWU4FCvbQWLHYf2 is **outdated**: it still shows the Wilson family. It needs a refresh to the Hales if the team adopts round 2.
+- **Slides:** Claude Slides artifact https://claude.ai/artifact/B7bV9cQnWU4FCvbQWLHYf2, refreshed to the Hale case. 7 slides: cover, case (Succession patterns table), family (two phone shots), advisor (watchlist and alignment), sauce, architecture (6 bands), privacy (backup). The source is copied to `slides/claude_deck/`. The artifact is private until shared.
 - **Video:** plan and script v2 only (`video/VIDEO_PLAN.md`, `video/RECORDING_SCRIPT.md`, 226 words). Don't build the pipeline until the script is locked.
 
 ## Conventions
@@ -62,6 +62,6 @@ Updated 2026-10-26, late ET (round 2 rework). This file is overwritten, not appe
 
 ## Next steps
 1. Team reads `case.html` and agrees on Succession (TEAM_NOTES §0).
-2. Refresh the Claude slides to the Hale case, and the persona and journey slides in Canva (Nindy and Adit).
+2. Canva persona and journey slides to the Hale case and the 4 steps (Nindy and Adit). The Claude slides are already refreshed.
 3. Lock script v2 → build the video pipeline (VIDEO_PLAN §5) → TTS draft → Nindy records.
 4. Interviews remain the biggest scoring gap (TEAM_NOTES §4).

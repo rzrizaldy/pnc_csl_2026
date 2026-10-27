@@ -74,7 +74,7 @@ Roadmap can merge into slide 10 to stay within 10 slides, or it can replace slid
 |---|---|---|
 | Clickable prototype, 8 screens (4 advisor + 4 family), fictional Wilson family, PNC Private Bank design system | https://rzrizaldy.github.io/pnc_csl_2026/prototype/?reset | ✅ v1 live |
 | Showcase page (architecture, AI components, prototype links) for GitHub Pages | https://rzrizaldy.github.io/pnc_csl_2026/ | ✅ live |
-| Slides 7, 8, 9 + privacy backup, consulting style | Claude Slides: https://claude.ai/artifact/B7bV9cQnWU4FCvbQWLHYf2 (source in `slides/claude_deck/`) | ✅ draft; Rz shares the link |
+| Slides: Succession case, family app, advisor workbench, secret sauce, architecture, privacy backup (consulting style, Hale case) | Claude Slides: https://claude.ai/artifact/B7bV9cQnWU4FCvbQWLHYf2 (source in `slides/claude_deck/`) | ✅ refreshed; Rz shares the link |
 | Secret Sauce slide as editable PPTX (Canva drag-and-drop import) | `slides/secret_sauce.pptx` | ✅ alternative |
 | Video plan + recording script for Nindy | `video/VIDEO_PLAN.md`, `video/RECORDING_SCRIPT.md` | ✅ **please review by Tue noon** |
 | Draft video (robot voice), then final with Nindy's voice and face bubble | `video/` → Drive link | Tue after script lock |
