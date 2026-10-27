@@ -18,6 +18,8 @@
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; }
+html.embedded { scrollbar-width: none; }
+html.embedded::-webkit-scrollbar { display: none; }
 body { background: var(--bg); color: var(--text); font: 16px/1.45 var(--sans); -webkit-font-smoothing: antialiased; font-feature-settings: "tnum" 1; }
 a { color: var(--link); text-decoration: none; }
 button { font: inherit; cursor: pointer; color: inherit; background: none; border: 0; padding: 0; }
@@ -42,7 +44,7 @@ h1, h2, h3, p { margin: 0; }
 .section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 4px; }
 .section-head h2 { font-size: 19px; font-weight: 600; color: var(--navy); }
 .section-head .aside { font-size: 14px; color: var(--sub); }
-.section-head button.aside { color: var(--link); font-weight: 500; }
+.section-head button.aside { color: var(--link); font-weight: 500; display: inline-flex; align-items: center; gap: 4px; min-height: 40px; padding: 0 2px; margin: -10px 0; }
 .muted { color: var(--sub); }
 .faint { color: var(--faint); }
 .small { font-size: 14px; }
@@ -181,8 +183,9 @@ a.row:hover, button.row:hover { background: linear-gradient(90deg, transparent, 
 .switch-row .tx { flex: 1; }
 .switch-row .tx b { display: block; font-weight: 600; font-size: 15px; }
 .switch-row .tx span { display: block; font-size: 13.5px; color: var(--sub); }
-.switch { position: relative; width: 50px; height: 30px; border-radius: 15px; background: var(--line-2); flex: none; transition: background .2s; }
-.switch::after { content: ""; position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.25); transition: transform .2s; }
+.switch { position: relative; width: 52px; height: 32px; border-radius: 16px; background: var(--line-2); flex: none; transition: background .2s; }
+.switch::before { content: ""; position: absolute; inset: -8px; }
+.switch::after { content: ""; position: absolute; top: 3px; left: 3px; width: 26px; height: 26px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.25); transition: transform .2s; }
 .switch[aria-checked="true"] { background: var(--pos); }
 .switch[aria-checked="true"]::after { transform: translateX(20px); }
 .quote { margin-top: 10px; padding: 12px 14px; background: var(--pos-50); border-radius: var(--r-sm); font-size: 15.5px; animation: fade .3s; }

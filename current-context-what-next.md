@@ -49,6 +49,19 @@ Updated 2026-10-26, late ET (round 2 rework). This file is overwritten, not appe
   - `shots.js` emulates reduced motion so stills show final states; `video/src/motion_check.js` captures frames and checks privacy and escaping
 - **Pages** is back to branch deploy (legacy, `main` /). Agent B's Actions workflow was removed.
 
+## QA
+- `cd video/src && node qa.js http://localhost:4311/` (or the live URL) checks:
+  - links and assets
+  - console errors
+  - overflow and clipped text at 360/390/768/1024/1440
+  - dead buttons, alt text and tap targets
+  - the tour end to end
+  - all 24 Ask answers on both models
+- Last run (Oct 27) was clean. The only flags are the font preconnect hints (false positives).
+- Phone mockup on `index.html`:
+  - a fixed 300×626 frame, with the iframe scaled 0.718
+  - inside the iframe, the prototype adds `html.embedded`, which hides the scrollbar and the tour bar
+
 ## Conventions
 - **Design system:** PNC Private Bank. Tokens are at the top of `prototype/styles.css` and `site.css`:
   - navy `#10214D` / `#1A2B5C`, orange `#EF6A00` (`#B84F00` for small text)

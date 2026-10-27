@@ -6,6 +6,8 @@
   const PRESETS = [["Equal", 0], ["Balanced", 50], ["Equity counted", 100]];
   const app = document.getElementById("app");
   const sheetRoot = document.getElementById("sheet-root");
+  const embedded = window.self !== window.top; // shown inside the phone mockup on the project site
+  if (embedded) document.documentElement.classList.add("embedded");
 
   // ---------- state ----------
   const KEY = "family-table-v5";
@@ -171,11 +173,11 @@
     { route: "me/dale/options", title: "Dale sees his number", hint: "Switch to Equity counted and watch every share move.", target: '[data-act="preset"][data-id="100"]', done: () => state.weight === 100 },
   ];
   function tourBar() {
-    if (state.tour < 0 || route.startsWith("story/")) return "";
+    if (embedded || state.tour < 0 || route.startsWith("story/")) return "";
     const t = TOUR[state.tour], last = state.tour === TOUR.length - 1, here = route === t.route, ok = t.done();
     return `<div class="tour" role="region" aria-label="Guided tour">
       <div class="tour-top"><span>Step ${state.tour + 1} of ${TOUR.length}</span><div class="tour-dots">${TOUR.map((_, i) => `<i class="${i < state.tour ? "past" : i === state.tour ? "cur" : ""}"></i>`).join("")}</div><button class="tour-x" data-act="tour-end" aria-label="End tour">${ic("x", 16)}</button></div>
-      <b>${t.title}</b><p>${here ? (ok ? "Done. On to the next step." : t.hint) : "Open this step to continue."}</p>
+      <b>${t.title}</b><p>${here ? (ok ? (last ? "Done. That's the whole story in five steps." : "Done. On to the next step.") : t.hint) : "Open this step to continue."}</p>
       <div class="tour-actions">${state.tour > 0 ? `<button class="btn ghost sm" data-act="tour-back">Back</button>` : ""}
         ${here ? `<button class="btn sm ${ok ? "" : "quiet"}" data-act="tour-next">${last ? "Finish" : ok ? "Next" : "Skip"}</button>` : `<button class="btn sm" data-act="tour-go">Go to step ${state.tour + 1}</button>`}</div></div>`;
   }
