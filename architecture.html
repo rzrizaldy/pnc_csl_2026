@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Solution architecture — Family Table</title>
+  <title>Solution architecture, Family Table</title>
   <meta name="description" content="Family Table solution architecture: channels, adaptive UI, AI orchestration with a model gateway for Claude and GPT, deterministic services, consented data and PNC systems.">
   <meta name="theme-color" content="#1A2B5C">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -31,7 +31,7 @@
       <div class="box"><b>Advisor workbench</b><span>Inside the advisor's existing desktop; signals, the family summary, documents, plan. The advisor side.</span></div>
       <div class="box"><b>Nudges</b><span>Email and SMS reminders; never contain private answers.</span></div></div></div>
     <div class="layer" style="--c:#2F6DB5"><div class="name">Experience<small>What each person sees</small></div><div class="boxes">
-      <div class="box hl"><b>Adaptive UI engine</b><span>Screens are built from cards ordered per person by role, the themes they raised and the deal stage. Rules in the prototype; a learned ranking only if it tests better. Each screen explains its order.</span></div>
+      <div class="box hl"><b>Adaptive UI engine</b><span>Cards are ordered per person by role, the themes they raised and the deal stage. Rules in the prototype; a learned ranking only if it tests better. Each screen explains its order.</span></div>
       <div class="box"><b>“Sorted for you” explainer</b><span>One tap shows which signals ordered a person's screen. Private answers rank only their own screen.</span></div>
       <div class="box"><b>Ask Family Table</b><span>Assistant that answers with a card, shows the tools it used, and states its limits.</span></div></div></div>
     <div class="layer" style="--c:#6D4AA0"><div class="name">AI orchestration<small>How models are used safely</small></div><div class="boxes">
@@ -41,12 +41,12 @@
       <div class="box"><b>Review queue</b><span>Briefs, document findings and anything sent to the family wait for advisor approval.</span></div></div></div>
     <div class="layer" style="--c:#424B5A"><div class="name">Deterministic services<small>Numbers PNC can audit</small></div><div class="boxes">
       <div class="box"><b>Sale-likelihood model</b><span>Gradient-boosted classifier on business-account events; nightly batch; reasons per score.</span></div>
-      <div class="box"><b>Proceeds and split calculator</b><span>Offer → net waterfall; equal, equitable and trust options. Rules owned by tax and trust specialists.</span></div>
+      <div class="box"><b>Proceeds and split calculator</b><span>Offer to net waterfall, then equal, equitable and trust options. Rules owned by tax and trust specialists.</span></div>
       <div class="box"><b>Gap score</b><span>(highest − lowest stance) ÷ 4 per theme. Transparent, no model.</span></div>
       <div class="box"><b>Document parsing</b><span>OCR and layout extraction before the language model reads a file.</span></div></div></div>
     <div class="layer" style="--c:#6F9A4B"><div class="name">Data and trust<small>What is stored, and who can see it</small></div><div class="boxes">
       <div class="box hl"><b>Member vaults</b><span>Each person's raw answers, encrypted with their own key. Only they, and anyone they share an answer with, can read them.</span></div>
-      <div class="box"><b>Household graph</b><span>Business ↔ owners ↔ spouse ↔ heirs ↔ trusts ↔ accounts.</span></div>
+      <div class="box"><b>Household graph</b><span>Business, owners, spouse, heirs, trusts and accounts, and how they connect.</span></div>
       <div class="box"><b>Consent ledger</b><span>Every share and withdrawal, timestamped.</span></div>
       <div class="box"><b>Decision log and audit</b><span>Signed decisions; every model call with version, inputs and approver.</span></div></div></div>
     <div class="layer" style="--c:#B84F00"><div class="name">PNC systems<small>What already exists</small></div><div class="boxes">
@@ -107,12 +107,12 @@
     <thead><tr><th>Component</th><th>Reads</th><th>Produces</th><th>Human check</th></tr></thead>
     <tbody>
       <tr style="--c:var(--blue)"><td style="--c:var(--blue)">Sale-likelihood model<small>Machine learning</small></td><td>Business-account events: adviser payments, statement requests, early paydowns.</td><td>0–100 score, timing, top reasons.</td><td>Advisor decides whether to call. Never shown to clients.</td></tr>
-      <tr><td style="--c:var(--purple)">Document AI<small>OCR + language model</small></td><td>Wills, buy-sell agreements, insurance policies, trust deeds.</td><td>Findings with clause, page, risk and confidence.</td><td>Advisor approves; attorney or specialist confirms; then the family is told.</td></tr>
+      <tr><td style="--c:var(--purple)">Document AI<small>OCR and language model</small></td><td>Wills, buy-sell agreements, insurance policies, trust deeds.</td><td>Findings with clause, page, risk and confidence.</td><td>Advisor approves; attorney or specialist confirms; then the family is told.</td></tr>
       <tr><td style="--c:var(--purple)">Theme extraction<small>Language model, inside the vault</small></td><td>One person's free-text answers.</td><td>Stances on five themes; flags like “unspoken concern”.</td><td>The member sees and can fix their own themes.</td></tr>
       <tr><td style="--c:var(--slate)">Gap score<small>Fixed formula</small></td><td>Everyone's stances.</td><td>Gap per theme, 0 to 1; a facilitator flag at 0.75 or more.</td><td>Transparent; no model.</td></tr>
       <tr><td style="--c:var(--slate)">Proceeds and split calculator<small>Fixed formula</small></td><td>Verified deal terms, tax rules, the family's choices.</td><td>Waterfall; each person's share under each option.</td><td>Tax and trust specialists own the rules.</td></tr>
       <tr><td style="--c:var(--green)">Card ranking<small>Rules, model later if it tests better</small></td><td>Role, themes the person raised, deal stage.</td><td>Order of cards on each home screen, with a reason.</td><td>Always shows why; never hides required notices.</td></tr>
-      <tr><td style="--c:var(--purple)">Assistant<small>Claude or GPT via gateway</small></td><td>Only what the asker may see.</td><td>Plain answer + card + tools used, in the schema above.</td><td>No legal or tax advice; decisions go to Alex.</td></tr>
+      <tr><td style="--c:var(--purple)">Assistant<small>Claude or GPT via gateway</small></td><td>Only what the asker may see.</td><td>Plain answer, card and tools used, in the schema above.</td><td>No legal or tax advice; decisions go to Alex.</td></tr>
       <tr><td style="--c:var(--purple)">Brief writer<small>Language model</small></td><td>Gap scores, shared answers, findings.</td><td>Draft family-meeting brief for the advisor.</td><td>Advisor edits and approves; logged.</td></tr>
     </tbody></table></div>
 </div></section>
