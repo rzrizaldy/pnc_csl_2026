@@ -227,11 +227,59 @@
         <p class="onb-opp"><b>The PNC opportunity</b> Retaining post-sale assets and building relationships with the next generation. Building toward wealth management through deposits, custody, trust, lending and brokerage.</p>
         <p class="small muted">Sources: Cerulli Associates, The Cerulli Report: U.S. High-Net-Worth and Ultra-High-Net-Worth Markets 2024; PNC Private Bank, Business Owner Wealth Insights 2026, Ipsos survey of 300 U.S. middle-market business owners; Natixis Investment Managers, 2026 Wealth Transfer Report, survey of 3,477 spouses and next-generation heirs.</p>
       </div></section>
+      ${stackHtml()}
       <section class="onb-cast"><div class="in"><h2>Meet the Wilsons</h2>
         <p class="muted">Margaret built Wilson Transport over 35 years. Now she's selling it for $48.0M, sure her children agree on what's fair.</p>
         <div class="cast-row">${cast.map(([id, n, r, w]) => `<div><img class="face" src="faces/${id}.jpg" alt="" width="56" height="56" loading="lazy"><span class="tx"><b>${n}</b><span>${r}</span><em>${w}</em></span></div>`).join("")}</div>
         <p class="micro faint" style="margin-top:22px">All people, firms and figures are fictional, and the portraits are AI-generated. AI steps are simulated; the formulas are real. <a href="?reset#/">Reset the demo</a> or <a href="../">read about the project</a>.</p>
       </div></section>`;
+  }
+
+
+  // ---------- the stack (deck slide 8): five layers, three proprietary assets ----------
+  // Bottom to top, as drawn. Each layer carries the deck's line and who it works with.
+  const STACK = [
+    { label: "PNC systems", title: "PNC systems", tag: "Proprietary early signal", line: "Permissioned commercial relationship signals may indicate that an advisor conversation is timely. Advisor reviews every signal before outreach.", works: "Business Banking, Private Bank, wealth and Hawthorn IFS", top: "#3B55A0", left: "#2A3D74", right: "#334A8C", ink: "#fff" },
+    { label: "Data and consent", title: "Data and consent", tag: "Proprietary household graph", line: "Member vaults, consent ledger and a graph of business, owners and heirs.", works: "Each member controls sharing; compliance audits the ledger", top: "#F4F1FA", left: "#D9D2EC", right: "#E8E3F4", ink: "#10214D" },
+    { label: "Formulas", title: "Deterministic formulas", line: "Proceeds calculator, gap score and decision tree; every number auditable.", works: "Tax and trust specialists own the rules", top: "#F4F1FA", left: "#D9D2EC", right: "#E8E3F4", ink: "#10214D" },
+    { label: "AI layer", title: "AI-infused services", tag: "Proprietary family intelligence", line: "NLP themes, Document AI and drafts behind one gateway, with review.", works: "Alex reviews every output before it reaches the client", top: "#F4F1FA", left: "#D9D2EC", right: "#E8E3F4", ink: "#10214D" },
+    { label: "Experience", title: "Experience", line: "One plan, two views: a family app and an advisor workbench.", works: "Margaret’s family and Alex", top: "#EF6A00", left: "#B84F00", right: "#D45E00", ink: "#fff" },
+  ];
+  // Isometric box: top face 240×120, 28 deep; layers 36 apart. Three nested groups so position, entrance and lift don't fight.
+  function stackSvg() {
+    const n = STACK.length, mark = `<g transform="translate(120,60) scale(2.4,1.2) translate(-16,-16)" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="#fff" stroke-width="2"/><circle cx="16" cy="16" r="5" fill="#10214D"/><circle cx="16" cy="5" r="2.6" fill="#fff"/><circle cx="26" cy="20" r="2.6" fill="#fff"/><circle cx="6" cy="20" r="2.6" fill="#fff"/></g>`;
+    const layers = STACK.map((l, i) => `<g transform="translate(30,${160 - i * 36})"><g class="stack-in" style="--i:${i}"><g class="stack-l" data-act="stack" data-id="${i}" role="button" tabindex="0" aria-label="${l.title}">
+        <polygon class="face" points="0,60 120,120 120,148 0,88" fill="${l.left}" stroke="rgba(255,255,255,.22)" stroke-width=".8"/><polygon class="face" points="120,120 240,60 240,88 120,148" fill="${l.right}" stroke="rgba(255,255,255,.22)" stroke-width=".8"/>
+        <polygon class="face top" points="0,60 120,0 240,60 120,120" fill="${l.top}" stroke="rgba(255,255,255,.3)" stroke-width=".8"/>${i === n - 1 ? mark : ""}
+        <text transform="translate(12,84) rotate(26.565)" font-size="13" font-weight="600" fill="${l.ink}">${l.label}</text></g></g></g>`).join("");
+    return `<svg class="stack-svg" viewBox="0 0 300 330" role="img" aria-label="Five layers: PNC systems, data and consent, formulas, AI layer, experience">${layers}</svg>`;
+  }
+  function stackHtml() {
+    const rows = [...STACK].reverse().map((l, k) => { const i = STACK.length - 1 - k;
+      return `<button class="stack-row" data-act="stack" data-id="${i}" aria-pressed="false"><b>${l.title}${l.tag ? ` <span class="stack-tag">${l.tag}</span>` : ""}</b><span>${l.line}</span><small><em>Works with:</em> ${l.works}</small></button>`; }).join("");
+    return `<section class="onb-stack" data-sel="-1"><div class="in"><div class="label">The secret sauce</div><h2>Three proprietary assets inside one consented, AI-infused stack</h2>
+      <div class="stack-wrap"><div class="stack-fig">${stackSvg()}</div><div class="stack-rows">${rows}</div></div></div></section>`;
+  }
+  let stackTimer = 0, stackOff = null, stackHeld = false;
+  const stopStack = () => { clearInterval(stackTimer); stackTimer = 0; if (stackOff) { stackOff(); stackOff = null; } stackHeld = false; };
+  function selectStack(i, byUser) {
+    const sec = app.querySelector(".onb-stack"); if (!sec) return;
+    sec.dataset.sel = i;
+    sec.querySelectorAll("[data-act=stack]").forEach(el => { const on = +el.dataset.id === i; el.classList.toggle("on", on); if (el.tagName === "BUTTON") el.setAttribute("aria-pressed", on); });
+    if (byUser) stackHeld = true;
+  }
+  // Builds the stack when it scrolls into view, then walks the layers until the person picks one.
+  function mountStack() {
+    stopStack();
+    const sec = app.querySelector(".onb-stack"); if (!sec) return;
+    const start = () => { sec.classList.add("in");
+      if (!motionOK) { selectStack(STACK.length - 1); return; }
+      let i = STACK.length - 1; setTimeout(() => selectStack(i), STACK.length * 150 + 500);
+      stackTimer = setInterval(() => { if (stackHeld || document.hidden) return; i = (i - 1 + STACK.length) % STACK.length; selectStack(i); }, 2600); };
+    // A plain rect check on scroll: it fires the moment the section shows, with no observer latency.
+    const check = () => { const r = sec.getBoundingClientRect(); if (r.top < innerHeight * 0.8 && r.bottom > 0) { stackOff(); stackOff = null; start(); } };
+    stackOff = () => { removeEventListener("scroll", check); removeEventListener("resize", check); };
+    addEventListener("scroll", check, { passive: true }); addEventListener("resize", check); check();
   }
 
   // ---------- guided story: alternates the two sides ----------
@@ -978,6 +1026,7 @@
     if (arrive && motionOK) enter();
     numbers(arrive);
     if (arrive) playTrace();
+    if (route === "") mountStack(); else stopStack();
     renderSheet();
   }
 
@@ -1035,11 +1084,14 @@
     else if (a === "tour-next") { if (state.tour >= TOUR.length - 1) set({ tour: -1 }); else goStep(state.tour + 1); }
     else if (a === "tour-back") goStep(Math.max(0, state.tour - 1));
     else if (a === "tour-end") set({ tour: -1 });
+    else if (a === "stack") selectStack(+id, true);
     else if (a === "switch") { sheet = { kind: "switch" }; renderSheet(); }
     else if (a === "breakdown") { sheet = { kind: "breakdown" }; renderSheet(); }
     else if (a === "why") { sheet = { kind: "why" }; renderSheet(); }
     else if (a === "close") { sheet.kind = null; renderSheet(); }
   });
+  document.addEventListener("pointerover", e => { const el = e.target.closest && e.target.closest("[data-act=stack]"); if (el) selectStack(+el.dataset.id, true); });
+  document.addEventListener("keydown", e => { const el = e.target.closest && e.target.closest("g[data-act=stack]"); if (el && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); selectStack(+el.dataset.id, true); } });
   document.addEventListener("input", e => {
     const el = e.target;
     if (el.dataset.draft) { state.drafts[el.dataset.draft] = el.value; save(); }
