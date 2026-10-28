@@ -1,0 +1,8 @@
+node_modules/
+preview/stills/
+preview/*.png
+preview/*.json
+preview/*.log
+preview/*.mp4
+!preview/contact_sheet_1.png
+!preview/contact_sheet_2.png

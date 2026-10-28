@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Family Table video stage</title>
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  html, body { width: 1920px; height: 1080px; overflow: hidden; background: #000; }
+  #stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: #000; }
+  .slot { position: absolute; inset: 0; opacity: 0; }
+  .bg { position: absolute; inset: 0; background: #fff; }
+  .bg.navy { background: #10214D url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56' viewBox='0 0 56 56'%3E%3Cg fill='none' stroke='%233A4C82' stroke-opacity='.55'%3E%3Cpath d='M0 0 L28 0 L28 28 Z'/%3E%3Cpath d='M28 28 L56 28 L56 56 Z'/%3E%3Cpath d='M28 0 L56 28'/%3E%3Cpath d='M0 28 L28 56 L0 56 Z'/%3E%3C/g%3E%3C/svg%3E"); }
+  /* Never display:none an iframe: it stops fonts and images. Hide with opacity. */
+  /* One prototype iframe per slot. Reparenting an iframe reloads it, so the same wrapper is styled as a desktop or a phone. */
+  .appwrap { position: absolute; left: 0; top: 0; transform-origin: 0 0; opacity: 0; }
+  .appwrap iframe { display: block; border: 0; background: #fff; position: absolute; left: 0; top: 0; }
+  .appwrap.desk { width: 1440px; height: 2400px; }
+  .appwrap.phone { width: 418px; height: 872px; }
+  .appwrap.phone iframe { left: 14px; top: 14px; border-radius: 34px; }
+  .bezel { position: absolute; inset: 0; border-radius: 48px; background: #14161C; box-shadow: 0 30px 80px rgba(0,0,0,.45), inset 0 0 0 2px #2A2E38; opacity: 0; }
+  .appwrap.phone .bezel { opacity: 1; }
+  .cards { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; border: 0; opacity: 0; }
+  #cursor { position: absolute; left: 0; top: 0; width: 28px; height: 36px; opacity: 0; pointer-events: none; z-index: 50; }
+  #ring { position: absolute; width: 44px; height: 44px; border: 2px solid rgba(31,36,48,.55); border-radius: 50%; opacity: 0; pointer-events: none; z-index: 49; transform-origin: 50% 50%; }
+  #tap { position: absolute; width: 56px; height: 56px; border-radius: 50%; background: rgba(40,44,54,.28); opacity: 0; pointer-events: none; z-index: 49; transform-origin: 50% 50%; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div class="slot" id="slot0">
+    <div class="bg"></div>
+    <div class="appwrap desk"><div class="bezel"></div><iframe class="app" src="/prototype/?reset#/" width="1440" height="2400"></iframe></div>
+    <iframe class="cards" src="/video/src/cards.html" width="1920" height="1080"></iframe>
+  </div>
+  <div class="slot" id="slot1">
+    <div class="bg"></div>
+    <div class="appwrap desk"><div class="bezel"></div><iframe class="app" src="/prototype/?reset#/" width="1440" height="2400"></iframe></div>
+    <iframe class="cards" src="/video/src/cards.html" width="1920" height="1080"></iframe>
+  </div>
+  <div id="ring"></div>
+  <div id="tap"></div>
+  <svg id="cursor" viewBox="0 0 28 36" aria-hidden="true"><path d="M3 2 L3 29 L10 22.5 L15 33 L19.5 31 L14.5 20.5 L24 20.5 Z" fill="#fff" stroke="#1F2430" stroke-width="1.6" stroke-linejoin="round"/></svg>
+</div>
+<script>
+(function () {
+  const BASE = 1920 / 1440;            // desktop iframe scale at zoom 1
+  const PHONE_SCALE = 1.12;
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const io = k => k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+  const out = k => 1 - Math.pow(1 - k, 3);
+  const lerp = (a, b, k) => a + (b - a) * k;
+
+  let plan = null;               // { fps, dissolve, shots: [...] } built by setPlan
+  const slots = [0, 1].map(i => {
+    const s = document.getElementById("slot" + i);
+    return { el: s, bg: s.querySelector(".bg"), wrap: s.querySelector(".appwrap"), app: s.querySelector(".app"), cards: s.querySelector(".cards"), shot: null };
+  });
+  const cursor = document.getElementById("cursor"), ring = document.getElementById("ring"), tap = document.getElementById("tap");
+
+  // ---------- plan ----------
+  // Flattens scenes into shots with absolute start times. Shots in a scene split the scene's dur by `share`.
+  window.setPlan = function (json) {
+    const shots = []; let t = 0, idx = 0;
+    json.scenes.forEach((sc, si) => {
+      const total = sc.shots.reduce((s, x) => s + (x.share || 1), 0), sceneStart = t;
+      sc.shots.forEach((sh, k) => {
+        const dur = sc.dur * (sh.share || 1) / total;
+        shots.push(Object.assign({}, sh, { scene: sc.id, sceneIdx: si, sceneStart, sceneDur: sc.dur, start: t, dur, idx: idx++, first: k === 0 }));
+        t += dur;
+      });
+    });
+    plan = { fps: json.fps || 60, dissolve: json.dissolve || .5, shots, total: t };
+    return { total: t, shots: shots.map(s => ({ scene: s.scene, start: s.start, dur: s.dur, kind: s.kind, route: s.route, card: s.card })) };
+  };
+
+  // ---------- readiness ----------
+  const settle = async doc => {
+    try { await doc.fonts.ready; } catch (e) {}
+    await Promise.all([...doc.images].map(i => i.decode().catch(() => {})));
+    // SVG <image> (the family table) decode via a probe
+    await Promise.all([...doc.querySelectorAll("image")].map(im => new Promise(r => { const p = new Image(); p.onload = p.onerror = r; p.src = new URL(im.getAttribute("href"), doc.baseURI).href; })));
+  };
+  window.stageReady = async function () {
+    await Promise.all(slots.map(async s => {
+      await new Promise(r => s.app.contentDocument && s.app.contentDocument.readyState === "complete" && s.app.contentWindow.FT ? r() : s.app.addEventListener("load", r, { once: true }));
+      await new Promise(r => s.cards.contentWindow && s.cards.contentWindow.render ? r() : s.cards.addEventListener("load", r, { once: true }));
+      await settle(s.app.contentDocument); await s.cards.contentWindow.ready();
+    }));
+    await document.fonts.ready;
+  };
+
+  // ---------- helpers on the app iframe ----------
+  const find = (doc, spec, anc) => {
+    let el;
+    if (spec.includes("|")) { const [sel, text] = spec.split("|"); el = [...doc.querySelectorAll(sel)].find(e => e.textContent.trim().includes(text)); }
+    else el = doc.querySelector(spec);
+    for (let i = 0; el && i < (anc || 0); i++) el = el.parentElement;
+    return el || null;
+  };
+  // Freeze every CSS animation and transition at the shot's own time.
+  const driveAnimations = (doc, tMs) => {
+    for (const a of doc.getAnimations()) {
+      if (a.__t0 === undefined) { a.__t0 = tMs; try { a.pause(); } catch (e) {} }
+      try { a.currentTime = Math.max(0, tMs - a.__t0); } catch (e) {}
+    }
+  };
+
+  // ---------- prepare a shot in its slot ----------
+  async function prepare(shot) {
+    const s = slots[shot.idx % 2];
+    s.shot = shot; shot.slot = s;
+    shot.fired = new Set(); shot.scrollState = null; shot.typed = -1; shot.cam = null;
+    s.bg.className = "bg" + (shot.kind === "phone" ? " navy" : "");
+    s.wrap.style.opacity = s.cards.style.opacity = 0;
+    if (shot.kind === "card") {
+      s.cards.contentWindow.render(shot.card, 0, shot.dur);
+      await s.cards.contentWindow.ready();
+      s.cards.style.opacity = 1;
+      return;
+    }
+    const w = s.app.contentWindow, doc = s.app.contentDocument;
+    if (shot.kind === "desktop") { s.app.width = 1440; s.app.height = 2400; s.wrap.className = "appwrap desk"; }
+    else { s.app.width = 390; s.app.height = 844; s.wrap.className = "appwrap phone"; }
+    // resizing the iframe reloads nothing, and the route change below re-renders the app for the new width
+    w.FT.reset();
+    if (shot.state && Object.keys(shot.state).length) w.FT.set(shot.state);
+    const hashChanged = () => new Promise(r => w.addEventListener("hashchange", r, { once: true }));
+    if (w.location.hash === "#/" + shot.route) { const p = hashChanged(); w.location.hash = "#/"; await p; }
+    const p2 = hashChanged(); w.location.hash = "#/" + shot.route; await p2;
+    // the app's own hashchange listener ran first (registered earlier) and rendered with entrance animation
+    if (shot.css) { const st = doc.createElement("style"); st.textContent = shot.css; doc.head.appendChild(st); shot.styleEl = st; }
+    doc.scrollingElement.scrollTop = 0;
+    w.scrollTo(0, 0);
+    await settle(doc);
+    driveAnimations(doc, 0);
+    s.wrap.style.opacity = 1;
+  }
+
+  // ---------- camera ----------
+  function frameFor(doc, k, tl) {
+    // camera target {cx, cy, s} for keyframe k, measured live
+    const s = BASE * k.zoom;
+    const el = k.focus ? find(doc, k.focus, k.anc) : null;
+    let cx = k.x != null ? k.x : 720, cy = 540 / s;
+    if (el) { const r = el.getBoundingClientRect(); if (k.x == null) cx = r.left + r.width / 2; cy = r.top + r.height / 2 + doc.scrollingElement.scrollTop; }
+    cx += k.dx || 0; cy += k.dy || 0;
+    const hw = 960 / s, hh = 540 / s;
+    if (k.minX != null) cx = Math.max(cx, k.minX + hw);
+    if (k.maxX != null) cx = Math.min(cx, k.maxX - hw);
+    if (k.minY != null) cy = Math.max(cy, k.minY + hh);
+    cx = clamp(cx, hw - 100, 1440 - hw + 100); cy = Math.max(cy, hh);   // 100 px of white margin beyond the page is allowed
+    return { cx, cy, s };
+  }
+  function camera(shot, tl) {
+    const doc = shot.slot.app.contentDocument, ks = shot.camera;
+    let cur = frameFor(doc, ks[0], tl);
+    for (let i = 1; i < ks.length; i++) {
+      const k = ks[i]; if (tl < k.at) break;
+      if (!k.__from) k.__from = cur;                            // snapshot where the camera was when the move began
+      const target = frameFor(doc, k, tl), e = io(clamp(k.dur ? (tl - k.at) / k.dur : 1, 0, 1));
+      cur = { cx: lerp(k.__from.cx, target.cx, e), cy: lerp(k.__from.cy, target.cy, e), s: lerp(k.__from.s, target.s, e) };
+    }
+    const drift = 1 + .03 * clamp(tl / shot.dur, 0, 1);      // slow push-in over the shot
+    const s = cur.s * drift;
+    const tx = 960 - cur.cx * s, ty = 540 - cur.cy * s;
+    shot.slot.wrap.style.transform = `translate(${tx.toFixed(3)}px, ${ty.toFixed(3)}px) scale(${s.toFixed(5)})`;
+    shot.map = (px, py) => [tx + px * s, ty + py * s];
+  }
+  function phoneLayout(shot, tl, tScene, sceneDur) {
+    const rise = shot.first ? (1 - out(clamp(tl / .5, 0, 1))) * 40 : 0;
+    const scale = PHONE_SCALE * (1 + .02 * clamp(tScene / sceneDur, 0, 1));
+    const w = 418 * scale, h = 872 * scale, x = 960 - w / 2, y = 540 - h / 2 + rise;
+    shot.slot.wrap.style.transform = `translate(${x.toFixed(3)}px, ${y.toFixed(3)}px) scale(${scale.toFixed(5)})`;
+    const doc = shot.slot.app.contentDocument;
+    shot.map = (vx, vy) => [x + (14 + vx) * scale, y + (14 + vy) * scale];   // viewport coords inside the phone
+  }
+
+  // ---------- interactions ----------
+  const center = el => { const r = el.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; };
+  async function clicks(shot, tl) {
+    const doc = shot.slot.app.contentDocument;
+    for (const c of (shot.clicks || []).concat(shot.taps || [])) {
+      if (tl >= c.at && !shot.fired.has(c)) {
+        shot.fired.add(c);
+        const el = doc.querySelector(c.sel);
+        if (el) { c.__pt = center(el); c.__page = [c.__pt[0], c.__pt[1] + doc.scrollingElement.scrollTop]; el.click(); await settle(doc); }
+        else console.warn("click target missing", c.sel, shot.route, tl);
+      }
+    }
+  }
+  function cursorFor(shot, tl) {
+    // desktop: white arrow glides in on a curve and arrives 0.3 s before the click; a ring fades out on the click
+    cursor.style.opacity = 0; ring.style.opacity = 0;
+    if (shot.kind !== "desktop" || !shot.clicks) return;
+    const doc = shot.slot.app.contentDocument;
+    for (const c of shot.clicks) {
+      const show0 = c.at - 1.3, show1 = c.at + .6;
+      if (tl < show0 || tl > show1) continue;
+      let pt = c.__page;
+      if (!pt) { const el = doc.querySelector(c.sel); if (!el) return; const [x, y] = center(el); pt = [x, y + doc.scrollingElement.scrollTop]; }
+      const [ex, ey] = pt;                       // page coords of the target
+      const sx = ex + 260, sy = ey + 190;        // start lower right of the target
+      const k = io(clamp((tl - show0) / (c.at - .3 - show0), 0, 1));
+      const mx = sx + (ex - sx) * k - 90 * Math.sin(Math.PI * k), my = sy + (ey - sy) * k;   // gentle curve
+      const [X, Y] = shot.map(mx, my);
+      cursor.style.transform = `translate(${(X - 3).toFixed(2)}px, ${(Y - 2).toFixed(2)}px)`;
+      cursor.style.opacity = clamp((tl - show0) / .25, 0, 1) * clamp((show1 - tl) / .3, 0, 1);
+      if (tl >= c.at) { const r = clamp((tl - c.at) / .45, 0, 1); ring.style.opacity = 1 - r; ring.style.transform = `translate(${(X - 22).toFixed(2)}px, ${(Y - 22).toFixed(2)}px) scale(${(.5 + r).toFixed(3)})`; }
+    }
+  }
+  function tapFor(shot, tl) {
+    tap.style.opacity = 0;
+    if (shot.kind !== "phone" || !shot.taps) return;
+    for (const c of shot.taps) {
+      if (tl < c.at - .25 || tl > c.at + .45 || !c.__pt && tl < c.at) continue;
+      const doc = shot.slot.app.contentDocument;
+      let pt = c.__pt; if (!pt) { const el = doc.querySelector(c.sel); if (!el) continue; pt = center(el); }
+      const [X, Y] = shot.map(pt[0], pt[1]);
+      const k = tl < c.at ? clamp((tl - (c.at - .25)) / .25, 0, 1) : 1 - clamp((tl - c.at) / .45, 0, 1);
+      tap.style.opacity = .9 * k; tap.style.transform = `translate(${(X - 28).toFixed(2)}px, ${(Y - 28).toFixed(2)}px) scale(${(.7 + .3 * k).toFixed(3)})`;
+    }
+  }
+  function scrolls(shot, tl) {
+    const doc = shot.slot.app.contentDocument, se = doc.scrollingElement;
+    for (const sc of shot.scrolls || []) {
+      if (tl < sc.at) continue;
+      if (sc.__from === undefined) {
+        sc.__from = se.scrollTop;
+        if (sc.to === "bottom") sc.__to = se.scrollHeight - se.clientHeight;
+        else { const el = find(doc, sc.to); sc.__to = el ? se.scrollTop + el.getBoundingClientRect().top - (sc.offset || 0) : se.scrollTop; }
+        sc.__to = clamp(sc.__to, 0, se.scrollHeight - se.clientHeight);
+      }
+      const e = io(clamp((tl - sc.at) / sc.dur, 0, 1));
+      se.scrollTop = lerp(sc.__from, sc.__to, e);
+    }
+  }
+  function typing(shot, tl) {
+    const T = shot.type; if (!T || tl < T.at) return;
+    const doc = shot.slot.app.contentDocument, el = doc.querySelector(T.sel); if (!el) return;
+    let t = T.at, text = "";
+    for (const s of T.sentences) {
+      const d = s.length / T.cps;
+      if (tl >= t + d) text += s; else { text += s.slice(0, Math.floor((tl - t) * T.cps)); break; }
+      t += d + T.gap;
+    }
+    if (el.value !== text) { el.value = text; el.dispatchEvent(new Event("input", { bubbles: true })); }
+  }
+  function trace(shot, tl) {
+    const T = shot.trace; if (!T) return;
+    const doc = shot.slot.app.contentDocument, box = doc.querySelector(".trace"); if (!box) return;
+    const steps = [...box.querySelectorAll(".tr-step")]; let allDone = true;
+    steps.forEach((el, k) => {
+      const t0 = T.start + T.gap * k, t1 = t0 + T.run;
+      el.classList.toggle("run", tl >= t0 && tl < t1); el.classList.toggle("on", tl >= t1);
+      if (tl < t1) allDone = false;
+    });
+    box.classList.toggle("playing", !allDone);
+  }
+
+  // ---------- one frame ----------
+  window.frame = async function (t) {
+    // a shot stays on screen for one dissolve after its end, underneath the incoming shot
+    const active = plan.shots.filter(sh => t >= sh.start && t < sh.start + sh.dur + plan.dissolve - 1e-6);
+    for (const sh of active) if (!sh.slot) await prepare(sh);
+    // slot visibility: incoming dissolves in over the outgoing
+    slots.forEach(s => { s.el.style.opacity = 0; });
+    active.sort((a, b) => a.start - b.start);
+    active.forEach((sh, i) => {
+      const tl = t - sh.start;
+      const op = sh.idx === 0 ? 1 : clamp(tl / plan.dissolve, 0, 1);
+      sh.slot.el.style.opacity = op; sh.slot.el.style.zIndex = 10 + i;
+    });
+    cursor.style.opacity = 0; ring.style.opacity = 0; tap.style.opacity = 0;
+    const top = active[active.length - 1];
+    for (const sh of active) {
+      const tl = t - sh.start, tMs = tl * 1000;
+      if (sh.kind === "card") { sh.slot.cards.contentWindow.render(sh.card, tl, sh.dur); continue; }
+      const doc = sh.slot.app.contentDocument;
+      typing(sh, tl);
+      await clicks(sh, tl);
+      scrolls(sh, tl);
+      trace(sh, tl);
+      driveAnimations(doc, tMs);
+      if (sh.kind === "desktop") camera(sh, tl); else phoneLayout(sh, tl, t - sh.sceneStart, sh.sceneDur);
+      if (sh === top) { cursorFor(sh, tl); tapFor(sh, tl); }
+    }
+  };
+})();
+</script>
+</body>
+</html>

@@ -1,1 +1,1 @@
-{"name":"family-table-video","private":true,"dependencies":{"playwright-core":"^1.48.2"}}
+{"name":"family-table-video","private":true,"dependencies":{"@fontsource/barlow":"^5.3.0","@fontsource/jetbrains-mono":"^5.3.0","playwright-core":"^1.64.1"}}

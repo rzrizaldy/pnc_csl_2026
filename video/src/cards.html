@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Family Table story cards</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #10214D; --orange: #EF6A00; --orange-lt: #F7A766;
+    --pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56' viewBox='0 0 56 56'%3E%3Cg fill='none' stroke='%233A4C82' stroke-opacity='.55'%3E%3Cpath d='M0 0 L28 0 L28 28 Z'/%3E%3Cpath d='M28 28 L56 28 L56 56 Z'/%3E%3Cpath d='M28 0 L56 28'/%3E%3Cpath d='M0 28 L28 56 L0 56 Z'/%3E%3C/g%3E%3C/svg%3E");
+  }
+  * { box-sizing: border-box; margin: 0; }
+  html, body { width: 1920px; height: 1080px; overflow: hidden; background: #000; }
+  body { font-family: "Barlow", "Helvetica Neue", Arial, sans-serif; color: #fff; -webkit-font-smoothing: antialiased; }
+  .card { position: absolute; inset: 0; background: var(--navy) var(--pattern); opacity: 0; transform-origin: 50% 50%; }
+  .el { position: absolute; opacity: 0; will-change: opacity, transform; }
+  .face { border-radius: 50%; object-fit: cover; display: block; border: 3px solid rgba(255,255,255,.9); background: #2A3D74; }
+  .name { font-weight: 600; letter-spacing: -0.005em; text-align: center; }
+  .role { font-weight: 300; color: rgba(255,255,255,.82); text-align: center; }
+  .big { font-weight: 400; letter-spacing: -0.015em; line-height: 1.08; text-align: center; }
+  .num { font-weight: 500; letter-spacing: -0.03em; line-height: 1; font-variant-numeric: tabular-nums; }
+  .source { font-weight: 300; color: rgba(255,255,255,.62); font-size: 22px; }
+  .seat { display: grid; justify-items: center; gap: 10px; }
+  .seat .name { font-size: 24px; font-weight: 500; }
+  .mark svg { display: block; }
+  .credits { font-size: 24px; font-weight: 400; color: rgba(255,255,255,.78); text-align: center; line-height: 1.4; }
+  .fine { font-size: 18px; font-weight: 300; color: rgba(255,255,255,.55); text-align: center; }
+  .icon svg { display: block; width: 72px; height: 72px; }
+  .why-row { display: grid; grid-template-columns: 96px 1fr; align-items: center; gap: 28px; width: 760px; }
+  .why-row .line { font-size: 46px; font-weight: 400; letter-spacing: -0.01em; }
+</style>
+</head>
+<body>
+<script>
+  // Nothing here animates on its own. render(id, t, dur) sets every style from the time t, so each frame is exact.
+  const FACE = id => `/prototype/faces/${id}.jpg`;
+  const MARK = s => `<svg viewBox="0 0 32 32" width="${s}" height="${s}" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="16" cy="16" r="5" fill="#EF6A00"/><circle cx="16" cy="5" r="2.4" fill="#fff"/><circle cx="26" cy="20" r="2.4" fill="#fff"/><circle cx="6" cy="20" r="2.4" fill="#fff"/></svg>`;
+  const ICON = {
+    pulse: 'M3 12h4l3-7 4 14 3-7h4',
+    lock: 'M6 11h12v10H6zM8.5 11V8a3.5 3.5 0 0 1 7 0v3',
+    users: 'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21a7 7 0 0 1 14 0M16 3.5a4 4 0 0 1 0 7.5M22 21a7 7 0 0 0-4-6.3',
+  };
+  const ic = k => `<svg viewBox="0 0 24 24" fill="none" stroke="#F7A766" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${ICON[k]}"/></svg>`;
+
+  const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+  const io = k => k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;           // cubic in-out
+  const out = k => 1 - Math.pow(1 - k, 3);                                           // cubic out
+  // progress of an entrance that starts at t0 and lasts d
+  const P = (t, t0, d) => clamp((t - t0) / d);
+  // fade + 14px rise
+  const rise = (el, t, t0, d = .7, dy = 14) => { const k = out(P(t, t0, d)); el.style.opacity = k; el.style.transform = `translateY(${(1 - k) * dy}px)`; };
+  const pop = (el, t, t0, d = .6) => { const k = out(P(t, t0, d)); el.style.opacity = k; el.style.transform = `scale(${.86 + .14 * k})`; };
+
+  const el = (cls, style, html) => { const d = document.createElement("div"); d.className = "el " + cls; d.setAttribute("style", style); d.innerHTML = html; return d; };
+  const face = (id, s) => `<img class="face" src="${FACE(id)}" width="${s}" height="${s}" style="width:${s}px;height:${s}px">`;
+
+  const CARDS = {};
+
+  // 1. Hook: Margaret, then the family around her like seats at a table, then "What's fair?"
+  CARDS.hook = {
+    build(root) {
+      const cx = 960, cy = 470;
+      root.append(el("margaret seat", `left:${cx - 120}px; top:${cy - 190}px; width:240px`,
+        `${face("margaret", 220)}<div class="name" style="font-size:34px">Margaret Wilson</div><div class="role" style="font-size:24px">Founder, Wilson Transport</div>`));
+      const seats = [["tom", -400, -140], ["ben", 400, -140], ["claire", -400, 130], ["sam", 400, 130]];
+      seats.forEach(([id, dx, dy]) => root.append(el(`seat seat-${id}`, `left:${cx + dx - 70}px; top:${cy + dy - 80}px; width:140px`,
+        `${face(id, 120)}<div class="name">${id[0].toUpperCase() + id.slice(1)}</div>`)));
+      root.append(el("fair big", "left:0; right:0; top:800px; font-size:88px", "What's fair?"));
+    },
+    render(root, t, dur) {
+      root.style.opacity = P(t, 0, .8);                 // navy fades up
+      rise(root.querySelector(".margaret"), t, 1.0, 1.0, 18);
+      ["tom", "ben", "claire", "sam"].forEach((id, i) => pop(root.querySelector(".seat-" + id), t, 3.0 + i * .8, .7));
+      rise(root.querySelector(".fair"), t, 7.2, .9, 16);
+    }
+  };
+
+  // 2. Problem: one statistic from PROJECT_CONTEXT.md (Natixis 2026), counted up from 0. No other numbers.
+  CARDS.problem = {
+    build(root) {
+      root.append(el("num", "left:0; right:0; top:300px; text-align:center; font-size:300px", "0%"));
+      root.append(el("big line", "left:0; right:0; top:640px; font-size:60px; font-weight:300", "of spouses and heirs leave the benefactor's advisor"));
+      root.append(el("source", "left:0; right:0; top:790px; text-align:center", "Say they will not, or did not, retain their benefactor's advisor. Natixis Investment Managers, Wealth Transfer Report 2026"));
+    },
+    render(root, t, dur) {
+      root.style.opacity = 1;
+      const n = root.querySelector(".num"), k = out(P(t, .6, 2.0));
+      n.style.opacity = P(t, .4, .5); n.textContent = Math.round(55 * k) + "%";
+      rise(root.querySelector(".line"), t, 2.9, .9);
+      rise(root.querySelector(".source"), t, 3.6, .9, 8);
+    }
+  };
+
+  // 3. Two sides: the family on the left, Alex on the right, the mark settles between them.
+  CARDS.sides = {
+    build(root) {
+      const fam = ["margaret", "tom", "ben", "claire", "sam"];
+      const cluster = fam.map((id, i) => { const a = -Math.PI / 2 + i * 2 * Math.PI / 5, x = 150 + 118 * Math.cos(a), y = 150 + 118 * Math.sin(a); return `<img class="face" src="${FACE(id)}" style="position:absolute;left:${x - 46}px;top:${y - 46}px;width:92px;height:92px">`; }).join("");
+      root.append(el("family", "left:330px; top:300px; width:300px; height:300px", cluster));
+      root.append(el("famlabel role", "left:230px; top:640px; width:500px; font-size:40px; color:#fff; font-weight:400", "The family"));
+      root.append(el("alex", "left:1340px; top:330px; width:240px", `${face("alex", 240)}`));
+      root.append(el("alexlabel role", "left:1210px; top:640px; width:500px; font-size:40px; color:#fff; font-weight:400", "Alex, PNC advisor"));
+      root.append(el("mark", "left:880px; top:390px; width:160px; display:grid; justify-items:center; gap:18px", `${MARK(160)}<div class="name" style="font-size:40px; white-space:nowrap">Family Table</div>`));
+    },
+    render(root, t, dur) {
+      root.style.opacity = 1;
+      rise(root.querySelector(".family"), t, .4, .8); rise(root.querySelector(".famlabel"), t, .9, .7);
+      rise(root.querySelector(".alex"), t, 1.4, .8); rise(root.querySelector(".alexlabel"), t, 1.9, .7);
+      const m = root.querySelector(".mark"), k = out(P(t, 3.0, 1.2));
+      m.style.opacity = k; m.style.transform = `translateY(${(1 - k) * 40}px) scale(${.9 + .1 * k})`;
+    }
+  };
+
+  // 11a. Why PNC: three icons, one line each.
+  CARDS.why = {
+    build(root) {
+      const rows = [["pulse", "A signal PNC already holds"], ["lock", "Private by default"], ["users", "One household graph"]];
+      rows.forEach(([k, line], i) => root.append(el(`row row-${i} why-row`, `left:580px; top:${330 + i * 150}px`, `<div class="icon">${ic(k)}</div><div class="line">${line}</div>`)));
+    },
+    render(root, t, dur) {
+      root.style.opacity = 1;
+      [0, 1, 2].forEach(i => rise(root.querySelector(".row-" + i), t, .8 + i * 1.8, .8, 18));
+    }
+  };
+
+  // 11b. End card: mark, name, line, credits.
+  CARDS.end = {
+    build(root) {
+      root.append(el("mark", "left:0; right:0; top:250px; display:grid; justify-items:center; gap:22px", `${MARK(150)}<div class="name" style="font-size:72px; font-weight:500">Family Table</div>`));
+      root.append(el("tag big", "left:0; right:0; top:560px; font-size:50px; font-weight:300", "A plan the family trusts."));
+      root.append(el("credits", "left:0; right:0; top:780px", "Alen Ilmi, Rizaldy Utomo, Nindy Aditya Dewi and Aditya Mulya Pratama, Carnegie Mellon University"));
+      root.append(el("fine", "left:0; right:0; top:860px", "All people, firms and figures are fictional, and the portraits are AI-generated."));
+    },
+    render(root, t, dur) {
+      root.style.opacity = 1;
+      rise(root.querySelector(".mark"), t, .2, .9, 12);
+      rise(root.querySelector(".tag"), t, 1.2, .9);
+      rise(root.querySelector(".credits"), t, 2.4, .9, 8);
+      rise(root.querySelector(".fine"), t, 3.0, .9, 6);
+    }
+  };
+
+  // Drift: cards grow 3% over the card; the end card slows to a stop over 0.6 s, then holds still for its last 2 s.
+  function growth(id, t, dur) {
+    if (id !== "end") return 1 + .03 * clamp(t / dur);
+    const still = dur - 2, T1 = still - .6;
+    if (t <= T1) return 1 + .03 * (t / still);
+    if (t >= still) return 1 + .03;
+    const base = 1 + .03 * (T1 / still), k = out((t - T1) / .6);
+    return base + (1.03 - base) * k;
+  }
+
+  const roots = {};
+  for (const id in CARDS) { const r = document.createElement("div"); r.className = "card card-" + id; r.dataset.id = id; CARDS[id].build(r); document.body.append(r); roots[id] = r; }
+  let shown = null;
+  window.render = function (id, t, dur) {
+    for (const k in roots) { roots[k].style.visibility = k === id ? "visible" : "hidden"; }
+    if (shown !== id) { shown = id; }
+    const r = roots[id];
+    CARDS[id].render(r, t, dur);
+    r.style.transform = `scale(${growth(id, t, dur).toFixed(5)})`;
+  };
+  window.ready = () => Promise.all([document.fonts.ready, ...[...document.images].map(i => i.decode().catch(() => {}))]);
+</script>
+</body>
+</html>

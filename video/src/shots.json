@@ -1,0 +1,148 @@
+{
+  "_readme": [
+    "Shot list for video/family_table_silent.mp4. One `dur` (seconds) per scene; `line` is the voice-over line number in video/RECORDING_SCRIPT.md.",
+    "If the voice-over runs long or short, change a scene's `dur` and run `node render.js` again. Scenes with several shots split `dur` by `share`.",
+    "Times inside a shot (`at`, click times, scroll times) are seconds from that shot's start. Camera keyframes: focus = CSS selector (optional `|text` to match by text, `anc` = climb n ancestors).",
+    "zoom 1 shows the whole 1440 px desktop width. maxX/minX/minY keep the frame's edges out of text (page pixels at 1440 wide)."
+  ],
+  "fps": 60,
+  "dissolve": 0.5,
+  "scenes": [
+    {
+      "id": "hook", "line": 1, "dur": 10,
+      "shots": [{ "kind": "card", "card": "hook" }]
+    },
+    {
+      "id": "problem", "line": 2, "dur": 10,
+      "shots": [{ "kind": "card", "card": "problem" }]
+    },
+    {
+      "id": "two-sides", "line": 3, "dur": 8,
+      "shots": [{ "kind": "card", "card": "sides" }]
+    },
+    {
+      "id": "signal", "line": 4, "dur": 10,
+      "shots": [{
+        "kind": "desktop", "route": "advisor", "state": {},
+        "camera": [
+          { "at": 0, "dur": 0, "focus": ".hero", "zoom": 1.62, "maxX": 884, "minY": 58, "dy": -10 },
+          { "at": 3.6, "dur": 1.3, "focus": "h2|Why it moved", "anc": 2, "zoom": 1.7, "maxX": 884, "dy": 10 },
+          { "at": 7.4, "dur": 1.5, "focus": ".btn.done", "zoom": 1.12, "x": 720, "minY": 58, "dy": -60 }
+        ],
+        "clicks": [{ "at": 6.6, "sel": "[data-act=\"start\"]" }]
+      }]
+    },
+    {
+      "id": "join", "line": 5, "dur": 8,
+      "shots": [
+        {
+          "kind": "desktop", "route": "preview", "state": { "started": true }, "share": 1,
+          "camera": [
+            { "at": 0, "dur": 0, "focus": ".pv-drop", "zoom": 1.7, "maxX": 884, "minY": 58 },
+            { "at": 1.2, "dur": 1.6, "focus": "h2|Likely to reach your family at closing", "anc": 2, "zoom": 1.7, "maxX": 884, "dy": -10 }
+          ],
+          "clicks": [{ "at": 1.15, "sel": "[data-act=\"pv-sample\"]" }]
+        },
+        {
+          "kind": "desktop", "route": "me/margaret/setup", "state": { "started": true, "previewed": true }, "share": 1,
+          "camera": [
+            { "at": 0, "dur": 0, "focus": ".col-side .panel", "zoom": 2.1, "minX": 828, "minY": 58, "dy": 0 }
+          ],
+          "clicks": [{ "at": 2.4, "sel": "[data-act=\"invite\"]" }]
+        }
+      ]
+    },
+    {
+      "id": "align-family", "line": 6, "dur": 9,
+      "shots": [{
+        "kind": "phone", "route": "me/claire/checkin", "state": { "started": true, "invited": true, "answers": { "q1": "" } },
+        "scrolls": [{ "at": 0.4, "dur": 0.9, "to": ".q[data-q=\"q1\"]", "offset": 64 }],
+        "type": { "at": 1.4, "sel": ".q[data-q=\"q1\"] textarea", "cps": 44, "gap": 0.5,
+          "sentences": ["Equal.", " Ben already gets a salary and stock from the buyer.", " Sam and I only get what's in the split.", " I've never said that to Mom."] },
+        "taps": [{ "at": 6.8, "sel": "[data-act=\"toggle-share\"][data-id=\"q1\"]" }]
+      }]
+    },
+    {
+      "id": "align-advisor", "line": 7, "dur": 12,
+      "shots": [{
+        "kind": "desktop", "route": "advisor/align",
+        "state": { "started": true, "invited": true, "shared": ["q1"], "fairMeans": "balanced", "chapter": ["foundation"] },
+        "camera": [
+          { "at": 0, "dur": 0, "focus": ".col-side.sticky .hero", "zoom": 1.25, "x": 720, "minY": 58 },
+          { "at": 2.6, "dur": 1.4, "focus": ".tr-step[data-k=\"0\"]", "zoom": 1.75, "minX": 556, "minY": 58 },
+          { "at": 4.2, "dur": 1.0, "focus": ".tr-step[data-k=\"1\"]", "zoom": 1.75, "minX": 556 },
+          { "at": 5.4, "dur": 1.0, "focus": ".tr-step[data-k=\"2\"]", "zoom": 1.75, "minX": 556 },
+          { "at": 6.6, "dur": 1.0, "focus": ".tr-step[data-k=\"3\"]", "zoom": 1.75, "minX": 556 },
+          { "at": 7.8, "dur": 1.0, "focus": ".tr-step[data-k=\"4\"]", "zoom": 1.75, "minX": 556 },
+          { "at": 9.0, "dur": 1.0, "focus": ".tr-step[data-k=\"5\"]", "zoom": 1.75, "minX": 556 }
+        ],
+        "trace": { "start": 3.0, "gap": 1.2, "run": 0.6 },
+        "clicks": [{ "at": 10.4, "sel": "[data-act=\"approve\"]" }]
+      }]
+    },
+    {
+      "id": "allocate", "line": 8, "dur": 9,
+      "shots": [
+        {
+          "kind": "phone", "route": "me/sam/options", "share": 4,
+          "state": { "started": true, "invited": true, "shared": ["q1"], "approved": true },
+          "taps": [
+            { "at": 0.8, "sel": ".opt[data-id=\"balanced\"]" },
+            { "at": 2.3, "sel": "[data-act=\"vote\"]" }
+          ],
+          "scrolls": [
+            { "at": 0.0, "dur": 0.6, "to": ".opts", "offset": 70 },
+            { "at": 1.3, "dur": 0.8, "to": ".vote-cta", "offset": 470 },
+            { "at": 2.5, "dur": 1.1, "to": ".tally-panel", "offset": 120 }
+          ]
+        },
+        {
+          "kind": "phone", "route": "me/sam/decide", "share": 5,
+          "state": { "started": true, "invited": true, "shared": ["q1"], "approved": true, "votes": { "sam": "balanced" } },
+          "taps": [
+            { "at": 2.0, "sel": "[data-act=\"tree\"][data-k=\"pay\"][data-id=\"close\"]" },
+            { "at": 2.9, "sel": "[data-act=\"tree\"][data-k=\"earn\"][data-id=\"parents\"]" }
+          ],
+          "scrolls": [
+            { "at": 0.5, "dur": 1.1, "to": ".dt-node.open", "offset": 90 },
+            { "at": 2.1, "dur": 0.7, "to": ".dt-node.open", "offset": 90 },
+            { "at": 3.0, "dur": 1.3, "to": ".outcome", "offset": 90 }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "activate", "line": 9, "dur": 8,
+      "shots": [{
+        "kind": "desktop", "route": "advisor/inbox",
+        "state": { "started": true, "invited": true, "shared": ["q1"], "approved": true, "votes": { "sam": "balanced" },
+          "msgs": [{ "id": "sam-demo", "from": "sam", "qi": 0, "at": "Just now" }],
+          "replies": { "seed-claire": "Thursday, November 12, with a Hawthorn facilitator. We'll open with your mother's next chapter, then fairness. Your private answers stay private." } },
+        "camera": [
+          { "at": 0, "dur": 0, "focus": ".inmsg header", "zoom": 1.6, "maxX": 884, "minY": 58, "dy": 190 },
+          { "at": 2.0, "dur": 1.4, "focus": ".draft", "zoom": 1.85, "maxX": 884, "dy": 20 },
+          { "at": 5.0, "dur": 1.3, "focus": ".empty-state", "zoom": 1.12, "x": 720, "minY": 58, "dy": -140 }
+        ],
+        "clicks": [{ "at": 5.0, "sel": "[data-act=\"send\"][data-from=\"sam\"]" }]
+      }]
+    },
+    {
+      "id": "year-one", "line": 10, "dur": 9,
+      "shots": [{
+        "kind": "desktop", "route": "year-one",
+        "state": { "started": true, "invited": true, "shared": ["q1"], "approved": true, "votes": { "sam": "balanced" }, "chapter": ["foundation"] },
+        "css": ".appbar, main > :not(.y1), .bnav { display: none !important } html, body { background: var(--navy) var(--pattern) !important } .y1 { padding: 72px 0 90px }",
+        "camera": [
+          { "at": 0, "dur": 0, "focus": ".y1 .in", "zoom": 1.18, "x": 720, "minY": 0, "dy": -70 }
+        ]
+      }]
+    },
+    {
+      "id": "why-pnc", "line": 11, "dur": 15,
+      "shots": [
+        { "kind": "card", "card": "why", "share": 7 },
+        { "kind": "card", "card": "end", "share": 8 }
+      ]
+    }
+  ]
+}
