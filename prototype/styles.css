@@ -376,13 +376,6 @@ body.onboarding { background: var(--navy); }
 .onb-end .in, .onb-cast .in, .y1 .in { max-width: 1200px; margin: 0 auto; padding: 0 16px; }
 .onb-end h2, .onb-cast h2 { font-size: 24px; font-weight: 600; color: var(--navy); }
 .ends { display: grid; gap: 22px; margin: 22px 0 18px; }
-.why { max-width: 72ch; }
-.why p { font-size: 15.5px; line-height: 1.55; color: var(--navy); }
-.why p + p { margin-top: 14px; }
-.why .refs-t { margin-top: 14px; font-weight: 600; }
-.why .refs { list-style: none; margin: 6px 0 0; padding: 0 0 0 20px; }
-.why .refs li { font-size: 14px; line-height: 1.5; color: var(--sub); margin-top: 6px; }
-.why .refs li b { color: var(--navy); font-weight: 600; }
 .ends b { display: block; font-size: 52px; line-height: 1; font-weight: 600; letter-spacing: -0.02em; color: var(--navy); }
 .ends span { display: block; font-size: 15.5px; color: var(--sub); margin-top: 8px; max-width: 34ch; }
 .onb-cast { background: var(--surface); padding: 40px 0 56px; }

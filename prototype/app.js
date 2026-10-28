@@ -214,16 +214,14 @@
           <div class="onb-how"><h2>How it works</h2>
             <ol class="stages">${STAGES.map((s, i) => `<li style="--i:${i}"><span class="st-ic">${ic(s.icon, 18)}</span><span class="st-tx"><b>${s.label}</b></span></li>`).join("")}</ol></div>
         </div></div></section>
-      <section class="onb-end"><div class="in why">
-        <p>Roughly $124 trillion in wealth will transfer in the United States by 2048, yet many families are unprepared to discuss or manage the transition. Three in four Americans have no will, and even wealthy parents who do have a plan rarely tell their children what is in it. So the transfer arrives as a surprise: families fight, heirs feel unready, and most walk away from the advisor their parents trusted. We believe this is a relationship moment, not simply a financial transaction. A privacy-first, advisor-led AI platform can help families prepare for decisions and conversations while enabling PNC to engage heirs earlier, retain family relationships and assets, and capture net-new assets across generations.</p>
-        <p>Combining U.S. Census Bureau data [1] with Family Enterprise USA research [2] shows that while there are around 30 million family-owned U.S. businesses, only about 2% reach a 10-50M enterprise valuation. As a result, lower-middle-market M&amp;A databases like PitchBook and GF Data [3], alongside IBBA transaction surveys [4], report that only 1,800 to 3,500 of these family businesses are actually sold each year.</p>
-        <p class="refs-t">References:</p>
-        <ol class="refs">
-          <li><b>[1] U.S. Census Bureau:</b> Statistics of U.S. Businesses (SUSB) &amp; Nonemployer Statistics (NES) &mdash; National business distribution data by employee counts and firm size classes.</li>
-          <li><b>[2] Family Enterprise USA (FEUSA) &amp; Family Firm Institute (FFI):</b> Annual Family Business Surveys &mdash; Benchmark data establishing that family-controlled firms represent ~80&ndash;87% of all U.S. enterprises.</li>
-          <li><b>[3] PitchBook Data &amp; GF Data:</b> Lower Middle Market M&amp;A Reports &mdash; Aggregate annual transaction volume, valuation multiples, and deal counts for 10M&ndash;50M enterprise value transactions.</li>
-          <li><b>[4] IBBA &amp; M&amp;A Source:</b> Market Pulse Report &mdash; Quarterly market data measuring seller profiles, showing founder and family-owned businesses account for ~60&ndash;70% of lower-middle-market sales.</li>
-        </ol>
+      <section class="onb-end"><div class="in">
+        <h2>Why now</h2>
+        <div class="ends">
+          <div><b data-count="124" data-fmt="t">$124T</b><span>in wealth transfers in the United States by 2048</span></div>
+          <div><b>3 in 4</b><span>Americans have no will, and most heirs leave their parents' advisor</span></div>
+          <div><b data-count="2" data-fmt="p">2%</b><span>of 30 million family-owned U.S. businesses reach a $10&ndash;50M valuation</span></div>
+        </div>
+        <p class="small muted">Only 1,800 to 3,500 of these family businesses sell each year. Sources: U.S. Census Bureau, Family Enterprise USA, PitchBook &amp; GF Data, IBBA Market Pulse.</p>
       </div></section>
       <section class="onb-cast"><div class="in"><h2>Meet the Wilsons</h2>
         <p class="muted">Margaret built Wilson Transport over 35 years. Now she's selling it for $48.0M, sure her children agree on what's fair.</p>
@@ -935,7 +933,7 @@
   const motionOK = !(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
   let animTimer = 0;
   const lastVals = {};
-  const fmtNum = (v, f) => f === "m" ? money(Math.round(v * 100) / 100) : f === "g" ? v.toFixed(2) : String(Math.round(v));
+  const fmtNum = (v, f) => f === "m" ? money(Math.round(v * 100) / 100) : f === "g" ? v.toFixed(2) : f === "t" ? `$${Math.round(v)}T` : f === "p" ? `${Math.round(v)}%` : String(Math.round(v));
   function tween(el, from, to, f, dur = 800) {
     if (!motionOK || from === to) { el.textContent = fmtNum(to, f); return; }
     const t0 = performance.now(); el._to = to;
