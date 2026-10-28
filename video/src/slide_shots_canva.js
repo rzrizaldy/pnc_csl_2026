@@ -5,8 +5,9 @@ const fs = require("fs");
 const path = require("path");
 const BIN = path.join(process.env.HOME, "Library/Caches/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-mac-arm64/chrome-headless-shell");
 const BASE = (process.argv[2] && !process.argv[2].startsWith("--") && process.argv[2]) || "http://localhost:4311/prototype/";
-const TABLET = process.argv.includes("--tablet"); // tablet mockups for the three-slide Claude deck
-const OUT = path.join(__dirname, TABLET ? "../../slides/claude_three/raw" : "../../slides/canva/raw");
+const TABLET = process.argv.includes("--tablet") || process.argv.includes("--landscape"); // tablet mockups for the three-slide Claude deck
+const LAND = process.argv.includes("--landscape"); // 1024 x 768, the three core-journey screens only
+const OUT = path.join(__dirname, LAND ? "../../slides/claude_three/raw_land" : TABLET ? "../../slides/claude_three/raw" : "../../slides/canva/raw");
 const MID = { started: true, invited: true, shared: ["q1"], approved: true };
 const PHONE = [
   ["preview", "p1_preview", { pv: { preset: "wilson", value: 48, kids: 3, inBiz: 1 } }, null],
@@ -26,13 +27,13 @@ const DESK = [
   const b = await chromium.launch({ executablePath: BIN, args: ["--hide-scrollbars"] });
   const errs = [];
   const go = async (p, r, st) => { await p.evaluate(([r, st]) => { window.FT.reset(); window.FT.set(st); location.hash = "#/" + r; }, [r, st]); await p.waitForTimeout(450); };
-  const p = await b.newPage({ viewport: TABLET ? { width: 768, height: 1024 } : { width: 390, height: 844 }, deviceScaleFactor: 2 });
+  const p = await b.newPage({ viewport: LAND ? { width: 1024, height: 768 } : TABLET ? { width: 768, height: 1024 } : { width: 390, height: 844 }, deviceScaleFactor: 2 });
   p.on("pageerror", e => errs.push(e.message));
   await p.emulateMedia({ reducedMotion: "reduce" });
   await p.goto(BASE + "?reset#/", { waitUntil: "networkidle" });
-  for (const [r, n, st, to] of PHONE) {
+  for (const [r, n, st, to] of (LAND ? PHONE.filter(([, n]) => /checkin|decide|ask/.test(n)) : PHONE)) {
     await go(p, r, st);
-    if (to) await p.evaluate(s => { const el = document.querySelector(s); scrollTo(0, el.getBoundingClientRect().top + scrollY - 64); }, to);
+    if (to && !LAND) await p.evaluate(s => { const el = document.querySelector(s); scrollTo(0, el.getBoundingClientRect().top + scrollY - 64); }, to);
     await p.evaluate(() => Promise.all([...document.images].map(i => i.complete || new Promise(r => { i.onload = i.onerror = r; }))));
     await p.waitForTimeout(250);
     await p.screenshot({ path: path.join(OUT, n + ".png") });
