@@ -362,7 +362,6 @@ body.onboarding { background: var(--navy); }
 .onb-copy h1 { font-size: 42px; line-height: 1.06; font-weight: 500; letter-spacing: -0.015em; max-width: 13ch; }
 .onb-copy > p { font-size: 18px; color: rgba(255,255,255,.82); margin-top: 16px; max-width: 44ch; }
 .onb-copy .btn { margin-top: 28px; width: 100%; }
-.onb-note { font-size: 14px; color: rgba(255,255,255,.62); margin-top: 12px; text-align: center; }
 .onb-how { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); border-radius: 18px; padding: 18px 18px 14px; }
 .onb-how h2 { font-size: 16px; font-weight: 500; color: rgba(255,255,255,.7); }
 .stages { list-style: none; padding: 0; margin-top: 8px; }
@@ -470,7 +469,6 @@ body.touring main { padding-bottom: 230px; }
 /* ---------- larger screens ---------- */
 @media (min-width: 520px) {
   .onb-copy .btn { width: auto; }
-  .onb-note { text-align: left; }
   .inmsg-actions .btn { width: auto; }
 }
 @media (min-width: 720px) {
