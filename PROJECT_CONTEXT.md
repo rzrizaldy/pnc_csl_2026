@@ -267,7 +267,7 @@ A gap of 0.75 or more recommends a facilitator.
 11. architecture
 12. privacy (backup)
 
-Two versions of Rz's three core slides exist: these in our PNC navy theme, and `slides/canva/family_table_3_slides.pptx` in the team Canva deck's look (see `slides/canva/README.md`). Slide images are artifact assets; `video/src/slide_shots_v2.js` and `slide_crops.js` regenerate them, and `slides_check.js` maps them for local render checks.
+Rz's three core slides (AI Client & Family Experience, AI Advisor Workbench, Added Value: The Secret Sauce & Core Innovation) also exist as a standalone three-slide Claude Slides deck in the PNC navy theme, with the same content as the PPTX: https://claude.ai/artifact/4i1gadSusfcxXqzgcHbiaz (source in `slides/claude_three/`). Versions: these in the full deck, that standalone deck, and `slides/canva/family_table_3_slides.pptx` in the team Canva deck's look (see `slides/canva/README.md`). Slide images are artifact assets; `video/src/slide_shots_v2.js` and `slide_crops.js` regenerate them, and `slides_check.js` maps them for local render checks.
 
 ## 8. Design system and voice
 

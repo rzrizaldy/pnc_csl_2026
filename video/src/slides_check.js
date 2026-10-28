@@ -9,6 +9,14 @@ const BIN = path.join(process.env.HOME, "Library/Caches/ms-playwright/chromium_h
 const [root, out] = process.argv.slice(2);
 const SHOTS = path.join(__dirname, "../../prototype/shots");
 const BLOBS = {
+  "00b10a6fb555babc2955d568ad271aaf": "../../slides/canva/raw/p1_preview.png",
+  "4a78d2396571c3d174f4b8ff7ef2cca7": "../../slides/canva/raw/p2_setup.png",
+  "ea944ac49113e8d4e2d86c84a008eea0": "../../slides/canva/raw/p3_checkin.png",
+  "0c9eaf352033a2506c833691f6614387": "../../slides/canva/raw/p4_decide.png",
+  "877f83e937a54a086c837e3a5dad7cc2": "../../slides/canva/raw/p5_ask.png",
+  "e28ff431a61dd2cc888fb85e2d6329ba": "../../slides/canva/raw/d2_brief.png",
+  "f6f8d993b93b82da60e607184f52e4e6": "../../slides/canva/raw/d3_guide.png",
+  "ad241fcbe874903a1f894ac64e3080b7": "../../slides/canva/raw/d4_inbox.png",
   "c3df44f46f8730bb04ac591f3e265f61": "../../slides/canva/raw/p1_preview.png",
   "8bcedb65332eed8909956d0bf86083ab": "../../slides/canva/raw/p2_setup.png",
   "4dd6b1639d2acee6f039ef34a53d56f8": "../../slides/canva/raw/p3_checkin.png",
