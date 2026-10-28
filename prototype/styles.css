@@ -762,3 +762,16 @@ ul.pz-list { list-style: none; padding: 0; }
 .pv-fixbox .pv-in { margin-top: 0; }
 .pv-empty { padding: 18px; border-radius: var(--r); background: var(--surface); font-size: 15px; color: var(--sub); }
 .pv-files .linkbtn { min-height: 40px; padding: 0 6px; }
+
+/* ---------- setup: AI-recommended goals ---------- */
+.rec-list { display: grid; gap: 10px; margin-top: 8px; }
+.rec { padding: 14px 16px; border-radius: var(--r-lg); border: 1.5px solid var(--line); background: var(--bg); }
+.rec-h { display: flex; align-items: center; gap: 10px; }
+.rec-h b { flex: 1; font-size: 17px; font-weight: 600; color: var(--navy); }
+.rec-h .linkbtn { min-height: 40px; padding: 0 6px; }
+.rec-v { font-size: 16px; font-weight: 600; color: var(--text); margin-top: 8px; }
+.rec-why { font-size: 14.5px; color: var(--sub); margin-top: 4px; }
+.rec-edit { margin-top: 12px; padding: 12px 14px; border-radius: var(--r); background: var(--surface); }
+.rec-edit .linkbtn.small { display: block; margin-top: 10px; font-size: 13.5px; min-height: 40px; }
+.rec-edit .seg { margin-top: 10px; background: var(--bg); }
+.rec-edit .seg button.on { background: var(--navy); color: #fff; box-shadow: none; }
