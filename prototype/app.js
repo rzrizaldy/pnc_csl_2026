@@ -16,7 +16,8 @@
   const fresh = () => ({ shared: [], optOut: false, approved: false, started: false, routed: {}, pick: "balanced", picked: {}, votes: {},
     answers: {}, intro: {}, invited: false, chapter: [], agreed: {}, msgs: [], replies: {}, drafts: {}, calls: {}, confirmed: {},
     shareReply: {}, tour: -1, pv: { value: 48, kids: 3, inBiz: 1 }, pvDocs: null, pvRead: false, pvFix: false, previewed: false, goals: ["fair", "live", "chapter"],
-    fairMeans: null, goalFix: {}, spend: 300, foundation: 2, keepName: false, tree: {}, pathSent: {}, presented: false });
+    fairMeans: null, goalFix: {}, spend: 300, foundation: 2, keepName: false, tree: {}, pathSent: {}, presented: false,
+    docsDone: false, docsNames: null, docsOwn: false });
   let state = fresh();
   try {
     const qp = new URLSearchParams(location.search);
@@ -29,7 +30,7 @@
   const set = patch => { Object.assign(state, patch); save(); render(); };
   // Preview: the documents are "read" (simulated) and the facts fill the screen; the person can fix any number.
   const readDocs = (names, own) => { Object.assign(state, { pvDocs: { names, own }, pvRead: true, previewed: true, pvFix: false, pv: Object.assign({}, S.preview.found) }); save(); render(true); };
-  const ui = { callOpen: false, slide: 0 };
+  const ui = { callOpen: false, slide: 0, intake: null };
   let sheet = { kind: null };
 
   // ---------- helpers ----------
@@ -179,7 +180,7 @@
       ? [["advisor", "Signal", "pulse"], ["advisor/align", "AI brief", "brief"], ["advisor/guide", "Guide", "guide"], ["advisor/inbox", "Inbox", "chat", n], ["advisor/plan", "Plan", "flag"]]
       : v ? [[`me/${v}`, "Home", "home"], [`me/${v}/checkin`, "Check-in", "lock"], [`me/${v}/options`, "Vote", "scale"], [`me/${v}/decide`, "Decide", "branch"], [`me/${v}/ask`, "Ask Alex", "chat"]] : [];
   }
-  const tabOf = r => r === "advisor/docs" ? "advisor/align" : r.replace(/\/vote$/, "/options").replace(/^(me\/\w+)\/(plan|setup)$/, "$1");
+  const tabOf = r => r === "advisor/docs" ? "advisor/align" : r.replace(/\/vote$/, "/options").replace(/^(me\/\w+)\/(plan|setup|docs)$/, "$1");
   function appbar() {
     const v = viewer(), who = v === "alex" ? `Alex Lee${avAlex(28)}` : v ? `${P[v].short}${av(P[v], 28)}` : `View as${ic("person", 18)}`;
     const cur = tabOf(route);
@@ -214,13 +215,13 @@
             <ol class="stages">${STAGES.map((s, i) => `<li style="--i:${i}"><span class="st-ic">${ic(s.icon, 18)}</span><span class="st-tx"><b>${s.label}</b></span></li>`).join("")}</ol></div>
         </div></div></section>
       <section class="onb-end"><div class="in">
-        <h2>Where it ends, a year after the sale</h2>
+        <h2>Why now</h2>
         <div class="ends">
-          <div><b data-count="27" data-fmt="m">$27.0M</b><span>placed by a plan the whole family agreed on</span></div>
-          <div><b>5 of 5</b><span>family members working with PNC, up from 3</span></div>
-          <div><b data-count="8.5" data-fmt="m">$8.5M</b><span>reached the two children who banked elsewhere</span></div>
+          <div><b data-count="124" data-fmt="t">$124T</b><span>in wealth transfers in the United States by 2048</span></div>
+          <div><b>3 in 4</b><span>Americans have no will, and most heirs leave their parents' advisor</span></div>
+          <div><b data-count="2" data-fmt="p">2%</b><span>of 30 million family-owned U.S. businesses reach a $10&ndash;50M valuation</span></div>
         </div>
-        <p class="small muted">Today, only 13% of adult children use their parents' financial advisor (Cerulli, 2019).</p>
+        <p class="small muted">Only 1,800 to 3,500 of these family businesses sell each year. Sources: U.S. Census Bureau, Family Enterprise USA, PitchBook &amp; GF Data, IBBA Market Pulse.</p>
       </div></section>
       <section class="onb-cast"><div class="in"><h2>Meet the Wilsons</h2>
         <p class="muted">Margaret built Wilson Transport over 35 years. Now she's selling it for $48.0M, sure her children agree on what's fair.</p>
@@ -235,6 +236,8 @@
       hint: "PNC's own account data puts Wilson Transport at 81 out of 100, a year before closing. Tap Call Margaret.", target: '[data-act="start"]', done: () => state.started },
     { side: "Family", stage: "Align", route: "preview", title: "Margaret previews what's possible",
       hint: "Before she talks to anyone, she adds what she has and AI reads it. Tap Use the Wilsons' documents.", target: '[data-act="pv-sample"]', done: () => state.pvRead },
+    { side: "Family", stage: "Align", route: "me/margaret/docs", title: "Her documents go in. AI reads them.",
+      hint: "Eight documents, one upload. AI reads each one and connects it to a goal before she answers a single question. Tap Use the Wilsons' documents.", target: '[data-act="docs-go"]', done: () => state.docsDone },
     { side: "Family", stage: "Align", route: "me/margaret/setup", title: "Margaret sets her goals",
       hint: "AI ranked three goals from her documents and pre-filled each one. Margaret checks them and invites the family.", target: '[data-act="invite"]', done: () => state.invited },
     { side: "Family", stage: "Align", route: "me/claire/checkin", title: "Claire says what she's never said",
@@ -303,8 +306,11 @@
       <div class="caption">${pid === "ben" ? "In cash, plus your $1.5M of NorthPeak equity. " : ""}It depends on the split the family chooses. Closing is expected next fall.</div>`;
   }
   function invitePanel() {
-    if (!state.invited) return `<section class="panel invite"><span class="ic p">${ic("users")}</span><div><b>Set your goals, then bring your family in</b><p>Tom, Ben, Claire and Sam each get a private check-in. You'll see who has answered, never what they said.</p>
-      <a class="btn" href="#/me/margaret/setup">Set up your plan</a></div></section>`;
+    if (!state.invited) return state.docsDone
+      ? `<section class="panel invite"><span class="ic p">${ic("users")}</span><div><b>Your documents are read. Now set your goals</b><p>AI ranked three goals from them and pre-filled each one. Check them, then Tom, Ben, Claire and Sam each get a private check-in.</p>
+      <a class="btn" href="#/me/margaret/setup">Set up your plan</a></div></section>`
+      : `<section class="panel invite"><span class="ic p">${ic("doc")}</span><div><b>Add your documents, then set your goals</b><p>AI reads your statements, the offer, the register and your will, and fills in the plan. Then your family gets private check-ins.</p>
+      <a class="btn" href="#/me/margaret/docs">Add your documents</a></div></section>`;
     return `<section class="panel invite on"><div><b>Your family is taking part</b><p>${checkedIn()} of ${S.people.length} have checked in. Their answers stay private, even from you.</p>${voices()}</div></section>`;
   }
   function memberHome(pid) {
@@ -528,16 +534,54 @@
   }
 
   // ---------- advisor: plan ----------
+  // Alex's plan follows the three steps on the landing page: Align (what the family agreed), Allocate (the split, and
+  // what each share could buy at closing), Activate (introductions and specialists that make it happen).
   function advPlan() {
     const log = [...S.ledger,
       ...(state.approved ? [{ t: "Today", who: "Alex Lee", what: "Approved the brief for Nov 12." }] : []),
       ...(sentPath() ? [{ t: "Today", who: "Plan builder", what: `Drafted specialist tasks from ${sentPath().who}'s plan. Alex reviews each one.` }] : []),
       ...messages().filter(m => state.replies[m.id] != null).map(m => ({ t: "Today", who: "Alex Lee", what: `Replied to ${P[m.from].short}, AI draft reviewed.` })),
       ...Object.keys(state.agreed).map(id => ({ t: "Today", who: P[id].name, what: "Agreed to the plan in principle." }))];
+    const hs = heirs(), sent = sentPath(), path = sent ? sent.path : {}, tasks = tasksFor();
+    const nv = Object.keys(votes()).length, t = tally(), lead = S.options.reduce((a, o) => t[o.id] > t[a.id] ? o : a, S.options[0]);
+    const split = path.count ? OPT[path.count] : nv >= MIN_GROUP ? lead : null;
+    const intros = hs.filter(h => state.intro[h.id]).length;
+    // Three steps, each with where it stands. The first step not done is the current one.
+    const steps = [
+      ["Align", state.approved ? "Brief approved. Facilitator booked for Nov 12." : `${checkedIn()} of 5 checked in. Brief waiting for Alex.`, state.approved],
+      ["Allocate", split ? `${split.label} split${path.count ? `, sent by ${sent.who}` : " leads the vote"}. Each share has a home.` : `${nv} of 5 voted. The family decides on Nov 12.`, !!split],
+      ["Activate", `${intros} of ${hs.length} introduced. ${tasks.length} specialists on one plan.`, intros === hs.length],
+    ];
+    let curFound = false;
+    const stepsHtml = `<ol class="plan-steps">${steps.map(([l, line, done], i) => { const cur = !done && !curFound; if (cur) curFound = true;
+      return `<li class="${done ? "done" : cur ? "cur" : ""}"><span class="ps-n">${done ? ic("check", 14, 2.8) : i + 1}</span><span class="ps-tx"><b>${l}</b><span>${line}</span></span></li>`; }).join("")}</ol>`;
+    const head = (n, title, aside) => `<div class="section-head"><h2><span class="stp">${n}</span>${title}</h2><span class="aside">${aside}</span></div>`;
+    // Allocate: what each share could buy at closing. Shares of the gift, so the mix follows the split.
+    const who = ui.allocWho || "both", sel = who === "both" ? hs : hs.filter(h => h.id === who);
+    const lo = sel.reduce((s, h) => s + gifts(0)[h.id], 0), hi = sel.reduce((s, h) => s + gifts(1)[h.id], 0);
+    const r2 = x => Math.round(x * 100 + 1e-9) / 100, amt = pct => split ? money(r2(pct * sel.reduce((s, h) => s + gifts(split.w)[h.id], 0))) : range(r2(pct * lo), r2(pct * hi));
+    const total = split ? money(sel.reduce((s, h) => s + gifts(split.w)[h.id], 0)) : range(lo, hi);
+    const trust = path.pay === "trust";
+    const seg = `<div class="seg alloc-seg" role="group" aria-label="Whose share">${[["both", "Claire and Sam"], ...hs.map(h => [h.id, h.short])].map(([id, l]) => `<button class="${id === who ? "on" : ""}" data-act="alloc-who" data-id="${id}" aria-pressed="${id === who}">${l}</button>`).join("")}</div>`;
+    const allocate = `<section class="section">${head(2, "Allocate", "What each share could buy at closing")}
+      <div class="alloc-top"><div><span class="lab">${who === "both" ? "Their share" : `${P[who].short}'s share`}</span><b>${total}</b></div>
+        <div><span class="lab">Split</span><b>${split ? split.label : "Decided Nov 12"}</b></div>
+        <div><span class="lab">Paid</span><b>${trust ? "By trust, over 10 years" : "At closing, next fall"}</b></div></div>
+      ${seg}
+      <div class="alloc" role="img" aria-label="${S.allocate.map(a => `${a.label} ${amt(a.pct)}`).join(", ")}">${S.allocate.map(a => `<i style="flex:${a.pct};background:${a.color}"></i>`).join("")}</div>
+      <div class="rows alloc-rows">${S.allocate.map(a => `<div class="row"><span class="dot" style="background:${a.color}"></span><span class="tx"><b>${a.label} <small>${Math.round(a.pct * 100)}%</small></b><span>${a.line} <em>${a.via}</em></span></span><span class="rt"${split ? ` data-count="${amt(a.pct).replace(/[$M]/g, "")}" data-fmt="m" data-key="alloc-${a.id}-${who}"` : ""}>${amt(a.pct)}</span></div>`).join("")}</div>
+      <p class="micro faint" style="margin-top:10px">AI suggests the mix from the family's choices and each person's answers. Alex adjusts it with ${who === "both" ? "Claire and Sam" : P[who].short} after the introduction. Nothing is bought until they say so.${trust ? " Through the trust the mix fills in a tenth a year." : ""}</p></section>`;
     return `<div class="page"><div class="cols"><div class="col-main">
-      <section class="hero"><div class="label">Heading to heirs who bank elsewhere</div><div class="value huge">${range(heirSum(0), heirSum(1))}</div><div class="caption">${heirs().map(h => h.short).join(" and ")} could receive this at closing. Neither banks with PNC today.</div></section>
-      <section class="section"><div class="section-head"><h2>Introduce PNC</h2><span class="aside">With Margaret's agreement</span></div><div class="rows">${heirs().map(h => `<div class="row">${av(h)}<span class="tx"><b>${h.name}</b><span>${range(gifts(0)[h.id], gifts(1)[h.id])} at closing</span></span>${state.intro[h.id] ? `<span class="badge g">Intro requested</span>` : `<button class="btn ghost sm" data-act="intro" data-id="${h.id}">Introduce</button>`}</div>`).join("")}</div></section>
-      <section class="section"><div class="section-head"><h2>Specialists</h2><span class="aside">${sentPath() ? `Updated from ${sentPath().who}'s plan` : `${S.tasks.length} teams, one plan`}</span></div><div class="rows">${tasksFor().map(t => `<div class="row"><span class="tx"><b>${t.what}</b><span>${t.who}, due ${t.due}${t.from ? `. Added from ${t.from}'s plan` : ""}</span></span><span class="badge ${t.status === "Booked" ? "g" : t.status.startsWith("Waiting") ? "p" : "n"}">${t.status}</span></div>`).join("")}</div></section>
+      <section class="hero"><div class="label">Heading to heirs who bank elsewhere</div><div class="value huge">${range(heirSum(0), heirSum(1))}</div><div class="caption">${hs.map(h => h.short).join(" and ")} could receive this at closing. Neither banks with PNC today.</div>${stepsHtml}</section>
+      <section class="section">${head(1, "Align", "Done before any number moved")}<div class="rows">
+        <div class="row"><span class="ic p">${ic("lock")}</span><span class="tx"><b>Fairness is the widest gap</b><span>Four private check-ins, one finding. Nobody's answer is on the table.</span></span><span class="badge ${state.approved ? "g" : "n"}">${state.approved ? "Brief approved" : "Brief drafted"}</span></div>
+        <div class="row"><span class="ic o">${ic("cal")}</span><span class="tx"><b>Family meeting, Nov 12</b><span>Hawthorn IFS facilitator leads the fairness question.</span></span><span class="badge g">Booked</span></div></div></section>
+      ${allocate}
+      <section class="section">${head(3, "Activate", "Introductions and specialists")}
+        <div class="sub-lab">Introduce PNC <span>with Margaret's agreement</span></div>
+        <div class="rows">${hs.map(h => `<div class="row">${av(h)}<span class="tx"><b>${h.name}</b><span>${range(gifts(0)[h.id], gifts(1)[h.id])} at closing. ${h.role}.</span></span>${state.intro[h.id] ? `<span class="badge g">Intro requested</span>` : `<button class="btn ghost sm" data-act="intro" data-id="${h.id}">Introduce</button>`}</div>`).join("")}</div>
+        <div class="sub-lab">Specialists <span>${sent ? `updated from ${sent.who}'s plan` : `${tasks.length} teams, one plan`}</span></div>
+        <div class="rows">${tasks.map(t => `<div class="row"><span class="tx"><b>${t.what}</b><span>${t.who}, due ${t.due}${t.from ? `. Added from ${t.from}'s plan` : ""}</span></span><span class="badge ${t.status === "Booked" ? "g" : t.status.startsWith("Waiting") ? "p" : "n"}">${t.status}</span></div>`).join("")}</div></section>
       </div><aside class="col-side">${tallyPanel(true)}
         <div class="panel"><div class="section-head"><h2>Decision log</h2></div><div class="rows">${log.map(l => `<div class="row"><span class="tx"><b>${l.who}</b><span>${l.what}</span></span><span class="rt micro faint">${l.t}</span></div>`).join("")}</div></div>
         ${nextLink("year-one", "One year on")}
@@ -625,9 +669,80 @@
         <section class="panel"><div class="section-head"><h2>What changes with Family Table</h2></div>
           <div class="cmp"><div class="cmp-h"><span></span><span>Without a plan</span><span>With Family Table</span></div>${X.compare.map(([k, a, b]) => `<div class="cmp-r"><b>${k}</b><span>${a}</span><span>${b}</span></div>`).join("")}</div></section>
         <section class="panel"><div class="section-head"><h2>Your first month</h2></div><ol class="recap">${X.month.map(([w, t]) => `<li><span class="rc-ic">${ic("check", 14, 2.6)}</span><span class="tx"><b>${w}</b><span>${t}</span></span></li>`).join("")}</ol>
-          <a class="btn block" style="margin-top:14px" href="#/me/margaret/setup">Start with a PNC advisor</a></section>
+          <a class="btn block" style="margin-top:14px" href="#/me/margaret/docs">Start with a PNC advisor</a></section>
         <p class="micro faint">Illustrative ranges from a deal like the Wilsons'. A PNC tax specialist confirms real figures.</p>
       </aside></div></div>`;
+  }
+
+  // ---------- onboarding, step 0: documents in, AI reads, everything lands in the plan ----------
+  // Three states: nothing added yet; a timed run (ui.intake) that marks each document and each AI step in the DOM
+  // without re-rendering; and done (state.docsDone), which draws the same page with every mark already on.
+  let intakeTimers = [];
+  const stopIntake = () => { intakeTimers.forEach(clearTimeout); intakeTimers = []; ui.intake = null; };
+  const DOC_ROUTE = "me/margaret/docs";
+  function intakePage() {
+    const X = S.intake, run = ui.intake, done = state.docsDone, active = run || done;
+    const names = done ? state.docsNames : run ? run.names : null, own = done ? state.docsOwn : run ? run.own : false;
+    const docs = X.docs.map((d, i) => Object.assign({}, d, { name: names && names[i] ? names[i] : d.name }));
+    const readCount = done ? docs.length : 0;
+    const row = (d, i) => `<div class="dk-row ${done ? "up read" : ""} ${d.risk ? "flag" : ""}" data-doc="${i}" data-step="${d.step}" data-feeds="${d.feeds.join(" ")}">
+        <span class="file ${d.type.toLowerCase()}">${d.type}</span>
+        <span class="tx"><b>${esc(d.name)}</b><span class="dk-st">${done ? "Read" : d.src || "Waiting"}${d.pages ? ` · ${d.pages} pages` : ""}</span>
+          <span class="dk-bar" aria-hidden="true"><i></i></span>
+          <span class="dk-find">${d.finding}${d.risk ? ` <span class="badge r">${d.risk}</span>` : ""}</span></span>
+        <span class="dk-ic">${ic("check", 16, 2.6)}<span class="spin"></span></span></div>`;
+    const feedRow = f => { const mine = docs.filter(d => d.feeds.includes(f.id)).length;
+      return `<div class="row ${done ? "on" : ""}" data-feed="${f.id}" data-n="${mine}"><span class="ic">${ic(f.icon)}</span><span class="tx"><b>${f.label}</b><span>${f.line}</span></span><span class="rt">${done ? "Ready" : `0 of ${mine}`}</span></div>`; };
+    const dropzone = `<div class="pv-drop">
+          <label class="pv-drop-in" for="dk-files">${ic("doc", 26)}<b>Add what you have</b><span>Statements, the buyer's letter, the shareholder register, your will, any policy. Drop them all at once; AI sorts them.</span></label>
+          <input type="file" id="dk-files" multiple data-act="docs-files" class="visually-hidden">
+          <button class="btn block" data-act="docs-go">Use the Wilsons' documents</button></div>`;
+    return `<div class="page"><div class="cols"><div class="col-main">
+      <section class="hero"><div class="label">Before you set your goals</div><h1 class="title">${done ? "Your documents are read" : active ? "AI is reading your documents" : "Add your financial documents"}</h1>
+        <div class="caption">${done ? `${docs.length} documents, ${docs.reduce((s, d) => s + d.pages, 0)} pages. Every number below has a source. Check them, then set your goals.` : "AI reads them, pulls out the facts, and connects each one to your plan before you answer a single question. You check the result; nothing is decided for you."}</div>
+        ${!active ? dropzone : `${own ? `<p class="micro faint" style="margin-top:8px">Your files stayed on this device. In the prototype, AI reads the Wilsons' sample set instead.</p>` : ""}
+          ${done ? `<button class="linkbtn" data-act="docs-reset">Start over with other documents</button>` : ""}`}</section>
+      ${!active ? `<section class="section"><div class="pv-empty">Add your documents, or use the Wilsons', and watch AI read them: what each one says, and which goal it feeds.</div></section>` : `
+      <section class="section"><div class="section-head"><h2>Your documents</h2><span class="aside" data-dk-count>${readCount} of ${docs.length} read</span></div>
+        <div class="dk-list">${docs.map(row).join("")}</div></section>
+      <section class="section trace-wrap"><div class="section-head"><h2>What AI is doing</h2><span class="aside">Simulated AI, real formulas</span></div>
+        <ol class="trace dk-trace ${done ? "" : "playing"}">${X.steps.map(([t, b], k) => step(k, t, `<p>${b}</p>`, done ? "on" : "")).join("")}</ol></section>
+      ${done ? `<section class="section"><div class="section-head"><h2>What reached your plan</h2><span class="aside">From the documents</span></div>
+        <div class="rows">${[["What you keep at closing", money(net()), "Offer, less earnout, debt, fees and estimated tax"], ["Could go to the children", money(12), "Your plan's gift bucket, before the family decides the split"], ["Ben's buyer equity", money(1.5), "Shareholder register. The will doesn't say if it counts"], ["What you spend a year", "$300K", "Personal tax returns. Your $9.0M live-on bucket covers 30 years"]].map(([k, v, src]) => `<div class="row"><span class="ic g">${ic("check", 18, 2.4)}</span><span class="tx"><b>${k}</b><span>${src}</span></span><span class="rt">${v}</span></div>`).join("")}</div>
+        <div class="docrow"><span class="file">PDF</span><span class="tx"><b>3 documents need a specialist</b><span>The 2012 will, the key-person policy and the 2009 buy-sell agreement. Alex routes them; you'll see each one's finding in the AI brief.</span></span><span class="badge r">Flagged</span></div>
+        <a class="btn block dk-cta" href="#/me/margaret/setup">Continue to your goals</a>
+        <p class="micro faint" style="margin-top:10px">AI ranked three goals from these documents and pre-filled each one. The next screen is where you check them.</p></section>` : ""}`}
+      </div><aside class="col-side">
+        <section class="panel dk-feeds"><div class="section-head"><h2>Where each document goes</h2></div><div class="rows">${X.feeds.map(feedRow).join("")}</div>
+          <p class="micro faint" style="margin-top:8px">Your documents go to Alex at PNC, and only Alex. Your family sees the options they lead to, never the documents.</p></section>
+        ${!active ? `<section class="panel"><div class="section-head"><h2>Why documents first</h2></div><ol class="recap">${[["Fewer questions", "AI fills in what the paperwork already says. You confirm, instead of typing it twice."], ["Goals with numbers", "Each goal arrives pre-filled from your own figures, not a guess."], ["Problems found early", "An old will or a lapsed policy surfaces now, not at closing."]].map(([t, b]) => `<li><span class="rc-ic">${ic("check", 14, 2.6)}</span><span class="tx"><b>${t}</b><span>${b}</span></span></li>`).join("")}</ol></section>` : ""}
+      </aside></div></div>`;
+  }
+  // Timed run: uploads land one by one, then each AI step reads its documents and fills the goals it feeds.
+  function runIntake(names, own) {
+    stopIntake();
+    const X = S.intake; ui.intake = { names: X.docs.map((d, i) => names && names[i] ? names[i] : d.name), own };
+    render(); window.scrollTo({ top: 0, behavior: motionOK ? "smooth" : "auto" });
+    const T = ms => motionOK ? ms : 0, at = (ms, fn) => intakeTimers.push(setTimeout(() => { if (ui.intake && route === DOC_ROUTE) fn(); }, T(ms)));
+    const rows = () => [...app.querySelectorAll(".dk-row")], steps = () => [...app.querySelectorAll(".dk-trace .tr-step")];
+    const upGap = 320, upLen = 760, stepGap = 1500, stepLen = 1100, t1 = 300 + X.docs.length * upGap + upLen;
+    let readN = 0;
+    const markRead = el => { el.classList.add("read"); el.querySelector(".dk-st").textContent = "Read" + el.querySelector(".dk-st").textContent.replace(/^[^·]*/, "");
+      readN++;
+      const c = app.querySelector("[data-dk-count]"); if (c) c.textContent = `${readN} of ${X.docs.length} read`;
+      el.dataset.feeds.split(" ").forEach(f => { const fr = app.querySelector(`[data-feed="${f}"]`); if (!fr) return;
+        const got = rows().filter(r => r.classList.contains("read") && r.dataset.feeds.split(" ").includes(f)).length, all = +fr.dataset.n;
+        fr.querySelector(".rt").textContent = got >= all ? "Ready" : `${got} of ${all}`; fr.classList.toggle("on", got >= all); }); };
+    X.docs.forEach((d, i) => {
+      at(300 + i * upGap, () => { const el = rows()[i]; if (!el) return; el.classList.add("up"); el.querySelector(".dk-st").textContent = (d.src ? "Pulling from PNC" : "Uploading") + (d.pages ? ` · ${d.pages} pages` : ""); });
+      at(300 + i * upGap + upLen, () => { const el = rows()[i]; if (el) el.querySelector(".dk-st").textContent = (d.src ? "In from PNC" : "Uploaded, encrypted") + (d.pages ? ` · ${d.pages} pages` : ""); });
+    });
+    X.steps.forEach((s, k) => {
+      at(t1 + k * stepGap, () => { const el = steps()[k]; if (!el) return; el.classList.add("run"); if (k > 0 && el.getBoundingClientRect().bottom > innerHeight - 160) el.scrollIntoView({ block: "center", behavior: "smooth" }); });
+      at(t1 + k * stepGap + stepLen, () => { const el = steps()[k]; if (!el) return; el.classList.remove("run"); el.classList.add("on");
+        rows().forEach(r => { if (+r.dataset.step === k && !r.classList.contains("read")) markRead(r); }); });
+    });
+    at(t1 + X.steps.length * stepGap + 400, () => { const names = ui.intake.names, o = ui.intake.own; stopIntake(); set({ docsDone: true, docsNames: names, docsOwn: o }); setTimeout(() => { const c = app.querySelector(".dk-cta"); if (c) c.scrollIntoView({ block: "center", behavior: "smooth" }); }, 80); });
   }
 
   // ---------- onboarding: confirm the facts, choose and sharpen goals ----------
@@ -670,7 +785,7 @@
           ["Read your documents and the preview", `Three years of statements, the shareholder register and NorthPeak's letter. ${money(net())} at closing; ${money(12)} of it could go to the children.`],
           ["Ranked your goals", "Fairness first: one child stays with the buyer and two don't. Then what you live on, then what comes after 35 years of running the company."],
           ["Pre-filled each one", "From the numbers, not from guesses. Change any of them below."],
-        ].map(([t, b], k) => step(k, t, `<p>${b}</p>`)).join("")}</ol></section>
+        ].map(([t, b], k) => step(k, t, `<p>${b}${k === 0 ? ` <a href="#/me/margaret/docs">See what it read</a>` : ""}</p>`)).join("")}</ol></section>
       <section class="section recs"><div class="section-head"><h2>What AI recommends</h2><span class="aside">${sel.length} goals, in order</span></div>
         <div class="rec-list">${cards}</div>
         ${others.length ? `<p class="rf-q" style="margin-top:14px">Also considered. Tap one to add it; with three already picked, it takes third place.</p><div class="goals">${others.map(x => `<button class="goal" data-act="goal" data-id="${x.id}" aria-pressed="false"><span class="g-n">${ic(x.icon, 18)}</span><b>${x.label}</b></button>`).join("")}</div>` : ""}</section>
@@ -818,7 +933,7 @@
   const motionOK = !(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
   let animTimer = 0;
   const lastVals = {};
-  const fmtNum = (v, f) => f === "m" ? money(Math.round(v * 100) / 100) : f === "g" ? v.toFixed(2) : String(Math.round(v));
+  const fmtNum = (v, f) => f === "m" ? money(Math.round(v * 100) / 100) : f === "g" ? v.toFixed(2) : f === "t" ? `$${Math.round(v)}T` : f === "p" ? `${Math.round(v)}%` : String(Math.round(v));
   function tween(el, from, to, f, dur = 800) {
     if (!motionOK || from === to) { el.textContent = fmtNum(to, f); return; }
     const t0 = performance.now(); el._to = to;
@@ -827,7 +942,7 @@
   }
   // Entrance choreography on arrival only; in-page changes only tween the numbers that changed.
   function enter() {
-    app.querySelectorAll(".rows, .stages, .ends, .voices, .col-side, .opts, .cast-row, .gaps, .recap, .tally, .chips, .goals, .guide, .pv-cards, .dtree").forEach(c => [...c.children].forEach((el, i) => el.style.setProperty("--i", i)));
+    app.querySelectorAll(".rows, .stages, .plan-steps, .ends, .voices, .col-side, .opts, .cast-row, .gaps, .recap, .tally, .chips, .goals, .guide, .pv-cards, .dtree").forEach(c => [...c.children].forEach((el, i) => el.style.setProperty("--i", i)));
     app.classList.add("anim"); clearTimeout(animTimer); animTimer = setTimeout(() => app.classList.remove("anim"), 2200);
   }
   function numbers(arrive) {
@@ -846,7 +961,7 @@
     else if (route === "year-one") html = yearOne();
     else if (route === "preview") html = previewPage();
     else if (v === "alex") html = ({ advisor: advSignal, "advisor/align": advAI, "advisor/docs": advAI, "advisor/inbox": advInbox, "advisor/plan": advPlan, "advisor/guide": advGuide }[route] || advSignal)();
-    else if (v) html = sub === "checkin" ? checkin(v) : sub === "options" || sub === "vote" ? options(v) : sub === "ask" ? askAlex(v) : sub === "plan" ? famPlan(v) : sub === "decide" ? decide(v) : sub === "setup" && v === "margaret" ? setupPage() : memberHome(v);
+    else if (v) html = sub === "checkin" ? checkin(v) : sub === "options" || sub === "vote" ? options(v) : sub === "ask" ? askAlex(v) : sub === "plan" ? famPlan(v) : sub === "decide" ? decide(v) : sub === "setup" && v === "margaret" ? setupPage() : sub === "docs" && v === "margaret" ? intakePage() : memberHome(v);
     else { html = splash(); bare = true; route = ""; }
     document.body.classList.toggle("story", route.startsWith("story/"));
     document.body.classList.toggle("onboarding", route === "");
@@ -873,6 +988,7 @@
     else if (a === "goal-fix") set({ goalFix: Object.assign({}, state.goalFix, { [id]: !state.goalFix[id] }), fairMeans: fairNow(), chapter: chapterNow() });
     else if (a === "chapter") set({ chapter: state.chapter.includes(id) ? state.chapter.filter(x => x !== id) : [...state.chapter, id] });
     else if (a === "intro") set({ intro: Object.assign({}, state.intro, { [id]: true }) });
+    else if (a === "alloc-who") { ui.allocWho = id; render(); }
     else if (a === "agree") set({ agreed: Object.assign({}, state.agreed, { [id]: true }) });
     else if (a === "pick" && v) set({ picked: Object.assign({}, state.picked, { [v]: id }) });
     else if (a === "vote" && v && v !== "alex") set({ votes: Object.assign({}, state.votes, { [v]: currentPick(v) }) });
@@ -892,6 +1008,8 @@
     else if (a === "call" && v) { ui.callOpen = false; set({ calls: Object.assign({}, state.calls, { [v]: S.slots[+id] }) }); }
     else if (a === "confirm-call") set({ confirmed: Object.assign({}, state.confirmed, { [id]: true }) });
     else if (a === "pv-sample") readDocs(S.preview.docs, false);
+    else if (a === "docs-go") runIntake(null, false);
+    else if (a === "docs-reset") { stopIntake(); set({ docsDone: false, docsNames: null, docsOwn: false }); }
     else if (a === "pv-fix") set({ pvFix: !state.pvFix });
     else if (a === "pv-reset") set({ pvRead: false, pvDocs: null, pvFix: false });
     else if (a === "pv-kids") { const k = +id; set({ previewed: true, pv: Object.assign({}, state.pv, { preset: null, kids: k, inBiz: Math.min(state.pv.inBiz, k) }) }); }
@@ -932,11 +1050,12 @@
   document.addEventListener("change", e => {
     const el = e.target;
     if (el.dataset.act === "pv-value") { const y = scrollY; state.pv = Object.assign({}, state.pv, { value: +el.value }); state.previewed = true; save(); render(); scrollTo(0, y); }
+    if (el.dataset.act === "docs-files") { const names = [...el.files].map(f => f.name).slice(0, 8); runIntake(names.length ? names : null, names.length > 0); }
     if (el.dataset.act === "pv-files") { const names = [...el.files].map(f => f.name).slice(0, 6); readDocs(names.length ? names : S.preview.docs, names.length > 0); }
   });
   document.addEventListener("keydown", e => { if (e.key === "Escape" && sheet.kind) { sheet.kind = null; renderSheet(); } });
   window.addEventListener("hashchange", () => {
-    sheet.kind = null; ui.callOpen = false;
+    sheet.kind = null; ui.callOpen = false; if (ui.intake) stopIntake();
     const go = () => { render(true); window.scrollTo(0, 0); };
     if (motionOK && document.startViewTransition) document.startViewTransition(go); else go();
   });
