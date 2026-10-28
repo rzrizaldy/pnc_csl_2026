@@ -143,7 +143,7 @@ window.SEED = {
       ["Worked out who owns what", "Three children hold shares. Ben stays with the buyer and keeps $1.5M of its equity. $3.5M of debt comes off the top."],
       ["Checked the older paperwork", "The 2012 will is silent on Ben's buyer equity. The key-person policy ends at closing. The buy-sell formula is out of date."],
       ["Worked out what you keep, and what you live on", "$27.0M at closing after debt, fees and tax. $12.0M of it could go to the children. Your returns show about $300K a year of spending."],
-      ["Connected it to your plan", "Three goals ranked and pre-filled, Alex's brief started, three documents routed to specialists. Nothing is decided yet."],
+      ["Connected it to your plan", "Three goals ranked and pre-filled, Alex's brief started, three documents routed to specialists, all for you to confirm."],
     ],
     // Where the documents go. Each row fills as its documents are read.
     feeds: [
@@ -279,7 +279,7 @@ window.SEED = {
     chosen: "balanced",
     pncBefore: 3, pncAfter: 5,
     events: [
-      { stage: "Align", what: "Alex called a year early. All five checked in. Fairness was settled on Nov 12 with a facilitator." },
+      { stage: "Align", what: "Alex called a year early, all five checked in, and the family settled fairness on Nov 12 with a facilitator." },
       { stage: "Allocate", what: "The family chose the Balanced split." },
       { stage: "Activate", what: "The will was updated for an estate in cash. The first yearly check-in is open." },
     ],
