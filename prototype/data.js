@@ -220,6 +220,15 @@ window.SEED = {
     { bucket: "invest", name: "Long-term portfolio", who: "The family", amt: 4.0, line: "Managed for the next generation" },
     { bucket: "invest", name: "Wilson family foundation", who: "Margaret", amt: 2.0, line: "With PNC's philanthropic advisory" },
   ],
+  // Activate: what each heir's share could buy at closing. Shares of the gift, so the mix scales with the split the
+  // family chooses. AI suggests it; Alex adjusts it with Claire and Sam after the introduction. Nothing is bought until they say so.
+  allocate: [
+    { id: "cash", label: "Cash on hand", pct: 0.10, line: "A year of spending in a money market, liquid from day one", via: "Wealth advisor", color: "#6593C9" },
+    { id: "portfolio", label: "Managed portfolio", pct: 0.50, line: "Diversified and long term, with PNC Wealth Management", via: "Wealth advisor", color: "#10214D" },
+    { id: "home", label: "A home, or paying one off", pct: 0.15, line: "Set aside for a first home or a mortgage, with a PNC mortgage if they buy", via: "Mortgage", color: "#6F9A4B" },
+    { id: "retire", label: "Retirement, tax-advantaged", pct: 0.15, line: "Filled each year, so the gift keeps growing untaxed", via: "Wealth advisor", color: "#424B5A" },
+    { id: "give", label: "Give back", pct: 0.10, line: "A donor-advised fund, in the family's name if they choose", via: "Philanthropic advisory", color: "#6D4AA0" },
+  ],
   services: ["Estate plan and family trust, updated for an estate in cash", "A yearly family meeting with Hawthorn IFS", "Business banking for Ben at NorthPeak"],
 
   // Private votes already cast before the demo starts. In production each vote sits in the member's own vault;
