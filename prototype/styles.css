@@ -377,7 +377,9 @@ body.onboarding { background: var(--navy); }
 .onb-cast { background: var(--surface); padding: 40px 0 56px; }
 .onb-cast h2 + p { margin-top: 6px; max-width: 60ch; }
 .cast-row { display: grid; gap: 10px; margin-top: 20px; }
-.cast-row > div { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: var(--r); background: var(--bg); }
+.cast-row > div { display: flex; align-items: flex-start; gap: 12px; padding: 12px 14px; border-radius: var(--r); background: var(--bg); }
+.cast-row .face { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; flex: none; background: var(--surface); }
+.cast-row .tx em { display: block; font-style: normal; font-size: 14.5px; color: var(--text); margin-top: 5px; line-height: 1.35; }
 .cast-row .tx { min-width: 0; }
 .cast-row .tx b { display: block; font-size: 16px; color: var(--navy); }
 .cast-row .tx span { display: block; font-size: 14px; color: var(--sub); }

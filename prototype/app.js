@@ -185,16 +185,23 @@
 
   // ---------- onboarding splash ----------
   function splash() {
-    const cast = [["MW", "#10214D", "Margaret Wilson", "Founder, selling Wilson Transport"], ["AL", "#EF6A00", "Alex Lee", "Her PNC advisor"],
-      ...S.people.filter(p => p.id !== "margaret").map(p => [ini(p), p.color, p.name, p.role.split(",")[0]])];
+    // Portraits in faces/ are AI-generated; the people are fictional.
+    const cast = [
+      ["margaret", "Margaret Wilson, 63", "Founder, selling Wilson Transport", P.margaret.line],
+      ["alex", "Alex Lee", "PNC advisor", "Wants to hear the whole family before closing."],
+      ["tom", "Tom Wilson, 65", "Margaret's husband", P.tom.line],
+      ["ben", "Ben Wilson, 40", "COO, staying on with the buyer", "Thinks his years should count."],
+      ["claire", "Claire Wilson, 37", "Nurse practitioner in Columbus", "Thinks equal is fair. Has never told her mother."],
+      ["sam", "Sam Wilson, 33", "Software engineer in Austin", "Wants to know how much, and when."],
+    ];
     return `<section class="onb"><div class="onb-in">
         <header class="onb-top"><span class="brand">${mark}Family Table <small>PNC Private Bank</small></span><button class="onb-link" data-act="switch">Explore on your own</button></header>
         <div class="onb-hero">
           <div class="onb-copy">
             <h1>Plan the sale of a family business, together.</h1>
-            <p>Every family member gets a private voice. Their PNC advisor gets the whole picture a year before closing, and nobody's words are shared unless they choose.</p>
+            <p>Everyone in the family has a private say. The PNC advisor sees the whole family a year early. Nothing is shared without consent.</p>
             <div class="onb-ctas"><button class="btn xl" data-act="tour-start">Start the 2-minute demo</button><a class="btn xl ghost-w" href="#/preview">Preview it for your family</a></div>
-            <p class="onb-note">Ten steps, both sides of one sale. The preview works before anyone talks to PNC.</p>
+            <p class="onb-note">Ten steps, both sides. The preview needs no PNC account.</p>
           </div>
           <div class="onb-how"><h2>How it works</h2>
             <ol class="stages">${STAGES.map((s, i) => `<li style="--i:${i}"><span class="st-ic">${ic(s.icon, 18)}</span><span class="st-tx"><b>${s.label}</b><span>${s.line}</span></span></li>`).join("")}</ol></div>
@@ -209,9 +216,9 @@
         <p class="small muted">Today, only 13% of adult children use their parents' financial advisor (Cerulli, 2019).</p>
       </div></section>
       <section class="onb-cast"><div class="in"><h2>Meet the Wilsons</h2>
-        <p class="muted">Margaret is selling the trucking company she built over 35 years for $48.0M. She thinks her children agree on what's fair.</p>
-        <div class="cast-row">${cast.map(([i, c, n, r]) => `<div><span class="av" style="background:${c}">${i}</span><span class="tx"><b>${n}</b><span>${r}</span></span></div>`).join("")}</div>
-        <p class="micro faint" style="margin-top:22px">All people, firms and figures are fictional. AI steps are simulated; the formulas are real. <a href="?reset#/">Reset the demo</a> or <a href="../">read about the project</a>.</p>
+        <p class="muted">Margaret built Wilson Transport over 35 years. Now she's selling it for $48.0M, sure her children agree on what's fair.</p>
+        <div class="cast-row">${cast.map(([id, n, r, w]) => `<div><img class="face" src="faces/${id}.jpg" alt="" width="56" height="56" loading="lazy"><span class="tx"><b>${n}</b><span>${r}</span><em>${w}</em></span></div>`).join("")}</div>
+        <p class="micro faint" style="margin-top:22px">All people, firms and figures are fictional, and the portraits are AI-generated. AI steps are simulated; the formulas are real. <a href="?reset#/">Reset the demo</a> or <a href="../">read about the project</a>.</p>
       </div></section>`;
   }
 
