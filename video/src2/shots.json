@@ -1,0 +1,131 @@
+{
+ "fps": 60,
+ "width": 1920,
+ "height": 1080,
+ "lead": 0.3,
+ "air": 0.8,
+ "xfade": 0.5,
+ "voice": {
+  "say": "Samantha",
+  "rate": 175
+ },
+ "scenes": [
+  {
+   "id": "hook",
+   "min": 5.5,
+   "hold": 0.4,
+   "line": "By 2048, 124 trillion dollars of U.S. wealth will change hands.",
+   "tts": "By twenty forty-eight, one hundred twenty-four trillion dollars of U.S. wealth will change hands.",
+   "speech": 5.23,
+   "dur": 6.433
+  },
+  {
+   "id": "stakes",
+   "min": 6.0,
+   "hold": 0.4,
+   "line": "And 55 percent of spouses and heirs say they won't, or didn't, keep their benefactor's advisor.",
+   "tts": "And fifty-five percent of spouses and heirs say they won't, or didn't, keep their benefactor's advisor.",
+   "speech": 5.86,
+   "dur": 7.067
+  },
+  {
+   "id": "heard",
+   "min": 10.0,
+   "hold": 0.4,
+   "line": "A business sale doesn't just move money. It moves a family. In five interviews, owners told us: letting go is personal, family members need clearer roles, and knowledge needs a handover.",
+   "tts": "A business sale doesn't just move money. It moves a family. In five interviews, owners told us: letting go is personal, family members need clearer roles, and knowledge needs a handover.",
+   "speech": 11.38,
+   "dur": 12.583
+  },
+  {
+   "id": "sides",
+   "min": 6.5,
+   "hold": 0.4,
+   "line": "Meet Margaret Wilson, selling the company she built, and Alex Lee, her PNC advisor. One sale, two sides.",
+   "tts": "Meet Margaret Wilson, selling the company she built, and Alex Lee, her P N C advisor. One sale, two sides.",
+   "speech": 7.67,
+   "dur": 8.867
+  },
+  {
+   "id": "product",
+   "min": 7.0,
+   "hold": 0.5,
+   "line": "Family Table is a consent-based AI coordination layer that guides them through three steps: Align, Allocate, Activate.",
+   "tts": "Family Table is a consent-based A I coordination layer that guides them through three steps: Align, Allocate, Activate.",
+   "speech": 7.57,
+   "dur": 8.867
+  },
+  {
+   "id": "align",
+   "min": 8.5,
+   "hold": 1.0,
+   "line": "First, Align. Claire checks in privately. AI turns her words into themes, and she chooses what Alex sees.",
+   "tts": "First, Align. Claire checks in privately. A I turns her words into themes, and she chooses what Alex sees.",
+   "speech": 6.86,
+   "dur": 8.667
+  },
+  {
+   "id": "brief",
+   "min": 10.0,
+   "hold": 1.0,
+   "line": "Alex sees themes, not words. Margaret thought the kids agreed. The widest gap is fairness. AI prepares the analysis; Alex makes the call.",
+   "tts": "Alex sees themes, not words. Margaret thought the kids agreed. The widest gap is fairness. A I prepares the analysis; Alex makes the call.",
+   "speech": 9.12,
+   "dur": 10.917
+  },
+  {
+   "id": "allocate",
+   "min": 9.5,
+   "hold": 1.0,
+   "line": "Then, Allocate. Sam sees his own number under every split, votes in private, and three choices turn twelve plans into one.",
+   "tts": "Then, Allocate. Sam sees his own number under every split, votes in private, and three choices turn twelve plans into one.",
+   "speech": 7.66,
+   "dur": 9.5
+  },
+  {
+   "id": "activate",
+   "min": 8.5,
+   "hold": 1.0,
+   "line": "Then, Activate. Sam asks a person, not a bot. AI drafts the reply; Alex checks it and sends it.",
+   "tts": "Then, Activate. Sam asks a person, not a bot. A I drafts the reply; Alex checks it and sends it.",
+   "speech": 6.62,
+   "dur": 8.5
+  },
+  {
+   "id": "govern",
+   "min": 6.0,
+   "hold": 0.4,
+   "line": "Nothing reaches the family until the advisor approves it, and every output is logged.",
+   "tts": "Nothing reaches the family until the advisor approves it, and every output is logged.",
+   "speech": 4.62,
+   "dur": 6.0
+  },
+  {
+   "id": "sauce",
+   "min": 9.5,
+   "hold": 0.4,
+   "line": "Why only PNC? Three proprietary assets in one consented stack: relationship signals the advisor reviews, private-by-default family intelligence, and a household graph.",
+   "tts": "Why only P N C? Three proprietary assets in one consented stack: relationship signals the advisor reviews, private by default family intelligence, and a household graph.",
+   "speech": 11.32,
+   "dur": 12.517
+  },
+  {
+   "id": "business",
+   "min": 9.0,
+   "hold": 0.4,
+   "line": "PNC administers 499 billion dollars in client assets. We validate for six weeks, then pilot for 90 days with ten families and three advisors.",
+   "tts": "P N C administers four hundred ninety-nine billion dollars in client assets. We validate for six weeks, then pilot for ninety days with ten families and three advisors.",
+   "speech": 10.12,
+   "dur": 11.317
+  },
+  {
+   "id": "close",
+   "min": 5.5,
+   "hold": 1.2,
+   "line": "Family Table. Crafting the family future, today.",
+   "tts": "Family Table. Crafting the family future, today.",
+   "speech": 3.49,
+   "dur": 5.5
+  }
+ ]
+}

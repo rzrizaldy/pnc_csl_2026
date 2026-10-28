@@ -13,3 +13,9 @@ video/apple/silent.mp4
 video/apple/preview/
 video/apple/node_modules
 video/family_table_film.mp4
+# voice-over film (video/src2): renders, clips and intermediates stay local
+video/build/
+video/src2/node_modules
+video/family_table_silent.mp4
+video/family_table_vo_draft.mp4
+video/family_table_final.mp4

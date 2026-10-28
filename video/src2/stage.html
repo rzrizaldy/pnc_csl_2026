@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Family Table stage</title>
+<!-- The film's stage, 1920×1080. render.js steps it frame by frame with window.frame(t) under a fake clock.
+     Shots alternate between pairs of slots (cardA/B, deskA/B, phoneA/B) and cross-dissolve over `xfade` seconds.
+     Live shots run the real prototype in an iframe: the script clicks, types and scrolls it, and a camera frames
+     one element at a time. Every visual here is a function of t; the app's own CSS animations are paused and
+     seeked to the virtual time each frame, so a render is the same every time. -->
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; }
+  body { font-family: "Barlow", Arial, sans-serif; -webkit-font-smoothing: antialiased; color: #fff;
+    background: #10214D url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56' viewBox='0 0 56 56'%3E%3Cg fill='none' stroke='%233A4C82' stroke-opacity='.55'%3E%3Cpath d='M0 0 L28 0 L28 28 Z'/%3E%3Cpath d='M28 28 L56 28 L56 56 Z'/%3E%3Cpath d='M28 0 L56 28'/%3E%3Cpath d='M0 28 L28 56 L0 56 Z'/%3E%3C/g%3E%3C/svg%3E") 0 0 / 84px 84px; }
+  .slot { position: absolute; inset: 0; opacity: 0; overflow: hidden; }
+  .slot iframe { position: absolute; left: 0; top: 0; border: 0; transform-origin: 0 0; }
+  .card iframe { width: 1920px; height: 1080px; background: transparent; }
+  .desk iframe { width: 1440px; height: 810px; background: #fff; }
+  .grp { position: absolute; left: 0; top: 0; width: 414px; height: 868px; transform-origin: 0 0; border-radius: 60px; background: #0A1430; box-shadow: 0 0 0 2px rgba(255,255,255,.16); }
+  .scr { position: absolute; left: 12px; top: 12px; width: 390px; height: 844px; border-radius: 48px; overflow: hidden; background: #fff; }
+  .scr iframe { width: 390px; height: 844px; }
+  .taps { position: absolute; inset: 0; pointer-events: none; }
+  .tap { position: absolute; width: 48px; height: 48px; margin: -24px 0 0 -24px; border-radius: 50%; background: rgba(16,33,77,.20); border: 2px solid rgba(16,33,77,.38); opacity: 0; }
+  .head { position: absolute; left: 150px; width: 770px; top: 0; bottom: 0; display: flex; flex-direction: column; justify-content: center; }
+  .pills { display: flex; gap: 12px; margin-bottom: 36px; }
+  .pills:empty { display: none; }
+  .pills span { font-size: 26px; font-weight: 600; padding: 6px 22px; border-radius: 30px; border: 2px solid #3A4C82; color: #9AA5C0; }
+  .pills span.on { background: #EF6A00; border-color: #EF6A00; color: #fff; }
+  .head h1 { font-size: 84px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.06; margin: 0; }
+  .head h1.long { font-size: 70px; }
+  .head p { font-size: 40px; font-weight: 500; color: #D3D8E4; line-height: 1.3; margin: 28px 0 0; }
+  .cursor { position: absolute; left: 0; top: 0; width: 36px; height: 50px; opacity: 0; transform-origin: 3px 3px; }
+  .ring { position: absolute; left: 0; top: 0; width: 64px; height: 64px; margin: -32px 0 0 -32px; border-radius: 50%; border: 4px solid #EF6A00; opacity: 0; }
+</style>
+</head>
+<body>
+<div id="slots"></div>
+<script>
+// ---------------------------------------------------------------- helpers
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const io = p => p < .5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;   // cubic in-out
+const outC = p => 1 - Math.pow(1 - p, 3);
+const lerp = (a, b, p) => { const o = {}; for (const k in b) o[k] = a[k] + (b[k] - a[k]) * p; return o; };
+const PROTO = "../../prototype/index.html?reset#/story/hook";
+const P = 1.12, BZ = 12, AX = 1340, AY = 540;   // phone: screen scale, bezel, where the screen's focus lands on stage
+let CFG, XF, SHOTS = [], SLOTS = {};
+
+// A keyframe track. to(t, d, v): from whatever it shows at t, ease to v (an object or a function that measures the
+// page) over d seconds. Values are resolved the first frame they're needed, so they can read the live layout.
+class Track {
+  constructor(init) { this.init = init; this.k = []; }
+  // `from` (optional) replaces the start value, given the resolved end value
+  to(t, d, v, from) { this.k.push({ t, d, v, f: from }); this.k.sort((a, b) => a.t - b.t); return this; }
+  base() { if (typeof this.init === "function") this.init = this.init(); return this.init; }
+  value(t) {
+    let v = this.base();
+    for (const k of this.k) {
+      if (t < k.t) break;
+      if (!k.done) { k.val = typeof k.v === "function" ? k.v() : k.v; k.from = k.f ? k.f(k.val) : v; k.done = true; }
+      v = lerp(k.from, k.val, io(clamp((t - k.t) / k.d)));
+    }
+    return v;
+  }
+  last() { let v = this.base(); for (const k of this.k) if (k.done) v = k.val; return v; }
+}
+
+// ---------------------------------------------------------------- slots
+function el(tag, cls, parent, html) { const e = document.createElement(tag); if (cls) e.className = cls; if (html) e.innerHTML = html; parent.appendChild(e); return e; }
+const CURSOR = `<svg class="cursor" viewBox="0 0 36 50"><path d="M3 3 L3 39 L12 30.5 L18.5 45 L25 42 L18.6 28 L30.5 28 Z" fill="#fff" stroke="#14181F" stroke-width="2.4" stroke-linejoin="round"/></svg>`;
+function makeSlots() {
+  const root = document.getElementById("slots"), loads = [];
+  const frame = (parent, src) => { const f = el("iframe", "", parent); loads.push(new Promise(r => f.addEventListener("load", r, { once: true }))); f.src = src; return f; };
+  for (const L of ["A", "B"]) {
+    const c = el("div", "slot card", root); SLOTS["card" + L] = { el: c, frame: frame(c, "cards.html") };
+    const d = el("div", "slot desk", root); const df = frame(d, PROTO); d.insertAdjacentHTML("beforeend", CURSOR + `<div class="ring"></div>`);
+    SLOTS["desk" + L] = { el: d, frame: df, cursor: d.querySelector(".cursor"), ring: d.querySelector(".ring") };
+    const p = el("div", "slot phone", root), head = el("div", "head", p, `<div class="pills"></div><h1></h1><p></p>`), g = el("div", "grp", p), s = el("div", "scr", g);
+    const pf = frame(s, PROTO), taps = el("div", "taps", s, `<div class="tap"></div><div class="tap"></div>`);
+    SLOTS["phone" + L] = { el: p, frame: pf, head, grp: g, taps: [...taps.children] };
+  }
+  return Promise.all(loads);
+}
+
+// ---------------------------------------------------------------- the live app
+const hashed = win => new Promise(r => win.addEventListener("hashchange", () => r(), { once: true }));
+async function settle(win) {
+  await win.document.fonts.ready;
+  await Promise.all([...win.document.images].map(i => i.decode().catch(() => {})));
+}
+async function go(win, route, st) {
+  win.FT.reset(); if (st) win.FT.set(JSON.parse(JSON.stringify(st)));
+  const target = "#/" + route;
+  if (win.location.hash === target || (route === "" && win.location.hash === "")) { const h = hashed(win); win.location.hash = "#/story/close"; await h; }
+  const h = hashed(win); win.location.hash = target; await h;
+  win.scrollTo(0, 0);
+  await settle(win);
+}
+// The app's own CSS animations and transitions: paused, then seeked to the virtual clock every frame.
+const born = new WeakMap();
+function seekAnims(t) {
+  const ms = t * 1000;
+  for (const k in SLOTS) {
+    if (k.startsWith("card")) continue;
+    const d = SLOTS[k].frame.contentDocument; if (!d) continue;
+    for (const a of d.getAnimations()) {
+      if (!born.has(a)) { born.set(a, ms); a.pause(); }
+      try { a.currentTime = ms - born.get(a); } catch (e) {}
+    }
+  }
+}
+
+// ---------------------------------------------------------------- shots
+// A shot plays in one slot from t0 to t1 (seconds on the film's clock) and owns its camera, scroll and actions.
+function makeShot(kind, opts, scene) {
+  const sh = Object.assign({ kind, scene, acts: [], ticks: [], taps: [], rings: [] }, opts);
+  sh.win = () => sh.slot.frame.contentWindow;
+  sh.doc = () => sh.win().document;
+  sh.q = sel => sh.doc().querySelector(sel);
+  // element box in document coordinates (scroll-independent)
+  sh.R = sel => { const e = sh.q(sel); if (!e) throw new Error(`${scene.id}: no element ${sel}`); const r = e.getBoundingClientRect(), y = sh.win().scrollY; return { x: r.left, y: r.top + y, w: r.width, h: r.height, cx: r.left + r.width / 2, cy: r.top + y + r.height / 2 }; };
+  sh.docH = () => sh.doc().documentElement.scrollHeight;
+  sh.act = (t, fn) => sh.acts.push({ t, fn });
+  sh.tick = (t0, t1, fn) => sh.ticks.push({ t0, t1, fn });
+  if (kind === "desk") {
+    sh.cam = new Track({ x: 0, y: 0, w: 1440 });
+    sh.cur = new Track({ x: 0, y: 0, o: 0 });
+    // camera box of width w around a point (document coordinates), kept inside the page
+    sh.frame = (cx, cy, w) => { const h = w * 9 / 16; return { x: clamp(cx - w / 2, 0, 1440 - w), y: clamp(cy - h / 2, 0, Math.max(0, sh.docH() - h)), w }; };
+    sh.box = (x0, x1, cy) => sh.frame((x0 + x1) / 2, cy, x1 - x0);
+    // move the cursor onto an element, then click it at time t
+    sh.click = (t, sel, travel = .9, arrive = .35) => {
+      const first = sh.cur.k.length === 0;   // the first move glides in from below right, fading up
+      sh.cur.to(t - arrive - travel, travel, () => { const r = sh.R(sel); return { x: r.cx + 4, y: r.cy + 6, o: 1 }; }, first ? v => ({ x: v.x + 300, y: v.y + 240, o: 0 }) : null);
+      sh.act(t, () => { const r = sh.R(sel); sh.rings.push({ t, x: r.cx + 4, y: r.cy + 6 }); sh.q(sel).click(); });
+      // then the cursor eases off the button and fades, so it never sits on the result
+      sh.cur.to(t + .45, .9, () => { const v = sh.cur.last(); return { x: v.x + 70, y: v.y + 60, o: 0 }; });
+    };
+  } else if (kind === "phone") {
+    sh.cam = new Track({ z: 1, fy: 422 });
+    sh.scroll = new Track({ s: 0 });
+    sh.maxScroll = () => Math.max(0, sh.docH() - 844);
+    sh.tap = (t, sel) => {
+      sh.act(t - .28, () => { const r = sh.R(sel); sh.taps.push({ t, x: r.cx, y: r.cy }); });
+      sh.act(t, () => sh.q(sel).click());
+    };
+    // type into a textarea between t0 and t1, firing input events like a person typing
+    sh.type = (t0, t1, sel, text, before = "") => {
+      let n = -1;
+      sh.tick(t0, t1, p => { const k = Math.round(text.length * p); if (k === n) return; n = k; const e = sh.q(sel); e.value = before + text.slice(0, k); e.dispatchEvent(new Event("input", { bubbles: true })); });
+    };
+  }
+  return sh;
+}
+
+// ---------------------------------------------------------------- the film, one builder per voice-over line
+const T1 = "Equal. Ben already gets a salary and stock from the buyer.", T2 = " I've never said that to Mom.";
+const CLAIRE_DRAFT = "Thursday, November 12, with a Hawthorn facilitator. We'll open with your mother's next chapter, then fairness. Your private answers stay private.";
+const SAM_DRAFT = "At closing, expected next fall. Your share is $4.0M with an equal split and up to $4.5M if Ben's buyer equity counts. It can go to any bank. If you'd like an account next to the family's plan, I can introduce you to a PNC wealth advisor, with no obligation.";
+const BASE = { started: true, invited: true };
+const SAM_MSG = { id: "sam-demo", from: "sam", qi: 0, at: "Just now" };
+
+const SCENES = {
+  hook: s => [s.card("hook")],
+  stakes: s => [s.card("stakes")],
+  heard: s => [s.card("heard")],
+  sides: s => [s.card("sides")],
+  // The name lands as a card, then the live splash: push in on "How it works" and pan across the three steps.
+  product: s => [s.card("title"), s.desk(s.w("that guides") - .5, "", {}, null, sh => {
+    // frame bottom stops just above the "Family outcome" line, top just below the intro copy
+    sh.cam.to(s.w("three steps") - .55, 1.2, () => ({ x: 140, y: 411, w: 520 }));
+    sh.cam.to(s.w("Allocate") - .4, .9, () => ({ x: 454, y: 411, w: 520 }));
+    sh.cam.to(s.w("Activate") - .4, .9, () => ({ x: 768, y: 411, w: 520 }));
+  })],
+  // Claire types her first answer; the AI themes appear as she stops; she shares it; the side panel shows what Alex sees.
+  align: s => [s.phone(s.t0, "me/claire/checkin", { answers: { q1: "" } }, { pill: 0, h: "Speak in private.", p: "AI reads the themes. Claire chooses what Alex sees." }, sh => {
+    const q1 = 'textarea[data-live="q1"]', sw = '[data-act="toggle-share"][data-id="q1"]';
+    sh.cam.to(s.a(.45), 1.1, () => ({ z: 1.5, fy: sh.R('.q[data-q="q1"]').cy }));
+    const a0 = s.a(1.0), a1 = a0 + 2.1, b0 = a1 + .55, b1 = b0 + .95;
+    sh.type(a0, a1, q1, T1); sh.type(b0, b1, q1, T2, T1);
+    const tap = Math.max(s.w("chooses") + .1, b1 + .8);
+    sh.tap(tap, sw);
+    sh.scroll.to(tap + .55, 1.2, () => ({ s: sh.maxScroll() }));
+    sh.cam.to(tap + .55, 1.2, () => ({ z: 1.4, fy: sh.R(".col-side .panel").cy - sh.maxScroll() }));
+  })],
+  // The AI brief: wide, then tight on 1.00 and Margaret's quote, across to the gap bars, down the trace, and Alex approves.
+  brief: s => [s.desk(s.t0, "advisor/align", { ...BASE, shared: ["q1"], answers: { q1: T1 + T2 } }, null, sh => {
+    sh.cam.to(s.a(.35), 1.3, () => sh.box(144, 1296, 470));
+    sh.cam.to(s.w("Margaret") - .35, 1.3, () => ({ x: 16, y: 96, w: 600 }));
+    sh.cam.to(s.w("The widest") - .3, 1.3, () => sh.box(584, 1384, sh.R('.tr-step[data-k="1"]').cy));
+    sh.cam.to(s.w("AI prepares") - .3, 1.3, () => sh.box(584, 1384, (sh.R('.tr-step[data-k="4"]').y + sh.R('[data-act="approve"]').y + 48) / 2 + 10));
+    sh.click(Math.max(s.w("makes the call"), s.w("AI prepares") + 1.9), '[data-act="approve"]');
+  })],
+  // Sam picks Balanced and watches his number change, votes, then settles the decision tree from 4 plans to 1.
+  allocate: s => {
+    const cut = s.w("and three") - .3;
+    return [
+      s.phone(s.t0, "me/sam/options", BASE, { pill: 1, h: "See your own number.", p: "Every child’s share under every split. The vote stays private." }, sh => {
+        sh.cam.to(s.a(.9), 1.0, () => ({ z: 1.35, fy: (sh.R(".hero").y + sh.R('.opt[data-id="balanced"]').y + sh.R('.opt[data-id="balanced"]').h) / 2 }));
+        const pick = Math.max(s.a(2.2), s.w("every split") - .45);
+        sh.tap(pick, '.opt[data-id="balanced"]');
+        const sc0 = Math.min(pick + .55, cut - 1.9);
+        sh.scroll.to(sc0, .9, () => ({ s: sh.maxScroll() }));
+        sh.tap(Math.max(sc0 + 1.15, s.w("votes")), '[data-act="vote"]');
+      }),
+      s.phone(cut, "me/sam/decide", { ...BASE, votes: { sam: "balanced" } }, { pill: 1, h: "Twelve plans become one.", p: "Three choices, settled in order. Each shows every share." }, sh => {
+        sh.cam.init = () => SHOTS[sh.index - 1].cam.last();
+        const trust = '[data-act="tree"][data-k="pay"][data-id="trust"]', half = '[data-act="tree"][data-k="earn"][data-id="half"]';
+        const vis = sel => () => ({ s: clamp(sh.R(sel).cy - 470, 0, sh.maxScroll()) });
+        sh.cam.to(cut + .35, .8, () => ({ z: 1.35, fy: 400 }));
+        sh.scroll.to(cut + .45, .65, vis(trust));
+        sh.tap(cut + 1.3, trust);
+        sh.scroll.to(cut + 1.5, .6, vis(half));
+        sh.tap(cut + 2.25, half);
+        sh.scroll.to(cut + 2.5, .75, { s: 0 });
+        sh.cam.to(cut + 2.5, .75, () => ({ z: 1.55, fy: sh.R(".hero").cy }));
+      })];
+  },
+  // Sam asks Alex; the question lands in Alex's inbox with an AI draft; Alex approves and sends it.
+  activate: s => {
+    const cut = s.w("AI drafts") - .45;
+    return [
+      s.phone(s.t0, "me/sam/ask", { ...BASE, votes: { sam: "balanced" } }, { pill: 2, h: "Ask a person, not a bot.", p: "AI drafts the reply. Alex checks it and sends it." }, sh => {
+        sh.cam.to(s.a(.4), 1.0, () => ({ z: 1.45, fy: (sh.R(".ask-hero").y + sh.R(".compose").y + sh.R(".compose").h) / 2 + 40 }));
+        sh.tap(Math.max(s.a(1.5), s.w("Sam asks")), '.chip[data-act="send-q"][data-id="0"]');
+      }),
+      s.desk(cut, "advisor/inbox", { ...BASE, votes: { sam: "balanced" }, msgs: [SAM_MSG], replies: { "seed-claire": CLAIRE_DRAFT } }, null, sh => {
+        const card = '.inmsg[data-msg="sam-demo"]', send = '[data-act="send"][data-id="sam-demo"]';
+        sh.cam.to(cut + .3, 1.1, () => { const c = sh.R(card); return sh.box(100, 856, c.y + c.h - 212); });
+        const click = Math.max(s.w("sends it"), cut + 2.3);
+        sh.click(click, send);
+        sh.cam.to(click + .5, 1.1, () => ({ x: 0, y: 0, w: 1440 }));
+      })];
+  },
+  // The reply reaches Sam, marked as reviewed and sent by Alex.
+  govern: s => [s.phone(s.t0, "me/sam/ask", { ...BASE, votes: { sam: "balanced" }, msgs: [SAM_MSG], replies: { "sam-demo": SAM_DRAFT } }, { pill: -1, h: "Nothing reaches the family until the advisor approves it.", p: "Every output is logged.", long: true }, sh => {
+    sh.cam.to(s.a(.4), 1.2, () => ({ z: 1.5, fy: sh.R(".msg.alex").cy }));
+    sh.cam.to(s.w("every output") - .4, 1.3, () => ({ z: 1.75, fy: sh.R(".msg.alex small").cy - 60 }));
+  })],
+  sauce: s => [s.card("sauce")],
+  business: s => [s.card("business")],
+  close: s => [s.card("close")],
+};
+
+function buildTimeline() {
+  let t = 0;
+  CFG.scenes.forEach((sc, i) => {
+    const s = { ...sc, lead: CFG.lead, t0: t, end: t + sc.dur, index: i };
+    s.a = x => s.t0 + x;
+    s.w = word => { const k = sc.line.toLowerCase().indexOf(word.toLowerCase()); if (k < 0) throw new Error(`${sc.id}: "${word}" isn't in the line`); return s.t0 + CFG.lead + sc.speech * k / sc.line.length; };
+    s.card = (id, at) => makeShot("card", { at: at ?? s.t0, card: id }, s);
+    s.desk = (at, route, state, head, script) => makeShot("desk", { at, route, state, script }, s);
+    s.phone = (at, route, state, head, script) => makeShot("phone", { at, route, state, head, script }, s);
+    const shots = (SCENES[sc.id] || (x => [x.card(sc.id)]))(s);
+    shots.forEach(sh => SHOTS.push(sh));
+    t += sc.dur;
+  });
+  window.TOTAL = t;
+  const next = { card: "A", desk: "A", phone: "A" };
+  SHOTS.forEach((sh, i) => {
+    sh.index = i; sh.t0 = sh.at; sh.t1 = i + 1 < SHOTS.length ? SHOTS[i + 1].at : t;
+    sh.slot = SLOTS[sh.kind + next[sh.kind]]; next[sh.kind] = next[sh.kind] === "A" ? "B" : "A";
+  });
+  SHOTS.forEach(sh => { if (sh.script) sh.script(sh); });
+  return SHOTS.map(sh => ({ scene: sh.scene.id, kind: sh.kind, t0: +sh.t0.toFixed(3), t1: +sh.t1.toFixed(3), route: sh.route }));
+}
+
+// ---------------------------------------------------------------- one frame
+async function setup(sh) {
+  sh.ready = true;
+  if (sh.kind === "card") return;
+  if (sh.kind === "phone") {
+    const H = sh.head || {}, hd = sh.slot.head;
+    hd.querySelector(".pills").innerHTML = H.pill >= 0 ? ["Align", "Allocate", "Activate"].map((n, i) => `<span class="${i === H.pill ? "on" : ""}">${n}</span>`).join("") : "";
+    hd.querySelector("h1").textContent = H.h || ""; hd.querySelector("h1").className = H.long ? "long" : "";
+    hd.querySelector("p").textContent = H.p || "";
+  }
+  await go(sh.win(), sh.route, sh.state);
+}
+function opacity(sh, t) {
+  const h = XF / 2, prev = SHOTS[sh.index - 1], next = SHOTS[sh.index + 1];
+  let o = sh.index === 0 ? 1 : io(clamp((t - (sh.t0 - h)) / XF));
+  // the outgoing shot stays solid under an incoming shot of the same opaque kind, so the dissolve never dips
+  if (next && !(next.kind === sh.kind && sh.kind !== "card")) o *= 1 - io(clamp((t - (sh.t1 - h)) / XF));
+  if (!next) o *= 1 - io(clamp((t - (sh.t1 - .6)) / .6));          // the very end settles to navy
+  return o;
+}
+function drawDesk(sh, t, p) {
+  const S = sh.slot, cam = sh.cam.value(t), k = 1920 / cam.w, h = cam.w * 9 / 16, b = 1 + .016 * p;
+  const sy = clamp(cam.y + h / 2 - 405, 0, Math.max(0, sh.docH() - 810));
+  if (Math.abs(sh.win().scrollY - sy) > .01) sh.win().scrollTo({ top: sy, behavior: "instant" });
+  const sy0 = sh.win().scrollY;
+  S.frame.style.transform = `matrix(${b * k},0,0,${b * k},${-cam.x * k * b + 960 * (1 - b)},${(sy0 - cam.y) * k * b + 540 * (1 - b)})`;
+  const toStage = (x, y) => [(x - cam.x) * k * b + 960 * (1 - b), (y - cam.y) * k * b + 540 * (1 - b)];
+  const c = sh.cur.value(t), [cx, cy] = toStage(c.x, c.y);
+  const lastClick = sh.rings.filter(r => r.t <= t).pop(), press = lastClick ? 1 - .14 * Math.sin(Math.PI * clamp((t - lastClick.t) / .22)) : 1;
+  S.cursor.style.opacity = c.o; S.cursor.style.transform = `translate(${cx - 3}px,${cy - 3}px) scale(${press})`;
+  if (lastClick && t - lastClick.t < .8) { const q = clamp((t - lastClick.t) / .8), [rx, ry] = toStage(lastClick.x, lastClick.y);
+    S.ring.style.opacity = .9 * (1 - outC(q)); S.ring.style.transform = `translate(${rx}px,${ry}px) scale(${.45 + 1.3 * outC(q)})`; }
+  else S.ring.style.opacity = 0;
+}
+function drawPhone(sh, t, p) {
+  const S = sh.slot, cam = sh.cam.value(t), sc = sh.scroll.value(t).s;
+  if (Math.abs(sh.win().scrollY - sc) > .01) sh.win().scrollTo({ top: sc, behavior: "instant" });
+  const sy = sh.win().scrollY, z = P * cam.z * (1 + .02 * p);
+  S.grp.style.transform = `matrix(${z},0,0,${z},${AX - (BZ + 195) * z},${AY - (BZ + cam.fy) * z})`;
+  // the headline: rises in when it's new, fades out under a phone shot that brings a different one
+  const prev = SHOTS[sh.index - 1], next = SHOTS[sh.index + 1], same = (a, b) => a && b && a.kind === "phone" && b.kind === "phone" && a.head.h === b.head.h;
+  const hin = same(prev, sh) ? 1 : outC(clamp((t - sh.t0 + .1) / .7)), hout = next && next.kind === "phone" && !same(sh, next) ? 1 - io(clamp((t - (sh.t1 - XF / 2)) / XF)) : 1;
+  S.head.style.opacity = hin * hout; S.head.style.transform = `translateY(${(1 - hin) * 28}px)`;
+  const live = sh.taps.filter(x => t >= x.t - .28 && t <= x.t + .55).slice(-2);
+  S.taps.forEach((e, i) => { const tp = live[i];
+    if (!tp) { e.style.opacity = 0; return; }
+    const d = t - tp.t, o = d < 0 ? outC(clamp((d + .28) / .2)) : 1 - outC(clamp(d / .55)), s = d < 0 ? .75 + .25 * outC(clamp((d + .28) / .2)) : d < .1 ? 1 - .12 * Math.sin(Math.PI * d / .1) : 1 + .5 * outC(clamp((d - .1) / .45));
+    e.style.opacity = o; e.style.transform = `translate(${tp.x}px,${tp.y - sy}px) scale(${s})`; });
+}
+let busy = false;
+window.frame = async t => {
+  if (busy) throw new Error("frame() re-entered"); busy = true;
+  const h = XF / 2, touched = new Set();
+  for (const sh of SHOTS) if (!sh.ready && t >= sh.t0 - h - .02 && t < sh.t1 + h) await setup(sh);
+  for (const sh of SHOTS) {
+    if (!sh.ready || t >= sh.t1 + h) continue;
+    for (const a of sh.acts) if (!a.done && t >= a.t) { a.done = true; await a.fn(); touched.add(sh); }
+    for (const k of sh.ticks) if (t >= k.t0 && !k.end) { k.fn(clamp((t - k.t0) / (k.t1 - k.t0))); if (t >= k.t1) k.end = true; touched.add(sh); }
+  }
+  for (const sh of touched) await settle(sh.win());
+  for (const name in SLOTS) {
+    const S = SLOTS[name], sh = SHOTS.find(x => x.slot === S && x.ready && t >= x.t0 - h && t < x.t1 + h);
+    if (!sh) { S.el.style.opacity = 0; continue; }
+    const p = clamp((t - sh.t0) / (sh.t1 - sh.t0));
+    S.el.style.opacity = opacity(sh, t); S.el.style.zIndex = sh.index + 1;
+    if (sh.kind === "card") S.frame.contentWindow.show(sh.card, t - sh.scene.t0, sh.scene);
+    else if (sh.kind === "desk") drawDesk(sh, t, p);
+    else drawPhone(sh, t, p);
+  }
+  seekAnims(t);
+  busy = false;
+};
+window.boot = async () => {
+  CFG = await (await fetch("shots.json")).json(); XF = CFG.xfade;
+  await makeSlots();
+  await document.fonts.ready;
+  for (const k in SLOTS) { const w = SLOTS[k].frame.contentWindow; if (w.cardsReady) await w.cardsReady; else await settle(w); }
+  return buildTimeline();
+};
+</script>
+</body>
+</html>

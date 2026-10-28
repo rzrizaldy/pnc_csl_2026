@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Family Table cards</title>
+<!-- Story cards for the voice-over film. Every look is a pure function of time: show(id, t, scene) draws card `id`
+     at t seconds into its scene, so the renderer can step it frame by frame. Open cards.html?id=hook&t=3 to preview one.
+     Navy and the triangle pattern come from the stage behind (this page is transparent). -->
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1920px; height: 1080px; overflow: hidden; background: transparent; }
+  body { font-family: "Barlow", Arial, sans-serif; color: #fff; -webkit-font-smoothing: antialiased; font-feature-settings: "tnum" 1; }
+  body.solo { background: #10214D url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56' viewBox='0 0 56 56'%3E%3Cg fill='none' stroke='%233A4C82' stroke-opacity='.55'%3E%3Cpath d='M0 0 L28 0 L28 28 Z'/%3E%3Cpath d='M28 28 L56 28 L56 56 Z'/%3E%3Cpath d='M28 0 L56 28'/%3E%3Cpath d='M0 28 L28 56 L0 56 Z'/%3E%3C/g%3E%3C/svg%3E") 0 0 / 84px 84px; }
+  .card { position: absolute; inset: 0; display: none; transform-origin: 50% 50%; }
+  .col { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+  .o { color: #EF6A00; }
+  .num { font-size: 300px; font-weight: 800; letter-spacing: -0.04em; line-height: .9; color: #EF6A00; }
+  .h1 { font-size: 104px; font-weight: 700; letter-spacing: -0.025em; line-height: 1.05; }
+  .h2 { font-size: 80px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.08; }
+  .sub { font-size: 46px; font-weight: 500; color: #D3D8E4; line-height: 1.25; }
+  .src { position: absolute; left: 0; right: 0; bottom: 60px; text-align: center; font-size: 24px; color: #9AA5C0; }
+  .lab { font-size: 34px; font-weight: 500; color: #D3D8E4; }
+  .chips { display: flex; gap: 16px; justify-content: center; margin-top: 22px; }
+  .chip { font-size: 28px; font-weight: 500; color: #E7EAF1; border: 2px solid #3A4C82; border-radius: 40px; padding: 8px 26px; background: #10214D; }
+  .ins { font-size: 78px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.1; }
+  .face { width: 300px; height: 300px; border-radius: 50%; object-fit: cover; border: 6px solid #fff; display: block; margin: 0 auto; }
+  .who { font-size: 50px; font-weight: 700; margin-top: 30px; }
+  .role { font-size: 32px; color: #D3D8E4; margin-top: 6px; }
+  .quote { font-size: 30px; color: #B9C1D4; margin: 18px auto 0; max-width: 560px; line-height: 1.3; }
+  .foot { position: absolute; left: 0; right: 0; bottom: 56px; text-align: center; font-size: 22px; color: #9AA5C0; }
+  .lbl { position: absolute; left: 1010px; width: 820px; }
+  .lbl b { display: block; font-size: 42px; line-height: 1.1; font-weight: 700; letter-spacing: -0.01em; }
+  .lbl span { display: block; font-size: 27px; color: #C3CADB; margin-top: 6px; line-height: 1.25; }
+  .lbl em { font-style: normal; display: inline-block; font-size: 24px; font-weight: 600; color: #fff; background: #EF6A00; border-radius: 20px; padding: 3px 16px; margin-left: 16px; vertical-align: 7px; }
+  .road { display: grid; grid-template-columns: 420px 700px 420px; margin-top: 90px; position: relative; text-align: left; }
+  .road .line { position: absolute; left: 12px; right: 400px; top: 11px; height: 3px; background: #3A4C82; transform-origin: 0 50%; }
+  .road .st { position: relative; padding-top: 50px; }
+  .road .st i { position: absolute; left: 0; top: 0; width: 26px; height: 26px; border-radius: 50%; background: #10214D; border: 3px solid #8E9AB8; }
+  .road .st.on i { background: #EF6A00; border-color: #EF6A00; }
+  .road .st span { display: block; font-size: 32px; color: #C3CADB; font-weight: 500; }
+  .road .st b { display: block; font-size: 54px; font-weight: 700; letter-spacing: -0.015em; line-height: 1.1; margin-top: 6px; }
+  .team { font-size: 28px; color: #C3CADB; margin-top: 64px; line-height: 1.5; }
+</style>
+</head>
+<body>
+
+<section class="card" id="hook"><div class="col">
+  <div class="num" id="hook-n">$0T</div>
+  <div class="sub" id="hook-s" style="margin-top:44px">projected to change hands in the U.S. through 2048</div>
+  </div><div class="src" id="hook-src">Cerulli Associates, U.S. High-Net-Worth and Ultra-High-Net-Worth Markets, 2024</div></section>
+
+<section class="card" id="stakes"><div class="col">
+  <div class="num" id="stakes-n">0%</div>
+  <div class="sub" id="stakes-s" style="margin-top:44px;max-width:1340px">of spouses and heirs say they won’t, or didn’t, keep their benefactor’s advisor</div>
+  </div><div class="src" id="stakes-src">Natixis Investment Managers, 2026 Wealth Transfer Report</div></section>
+
+<section class="card" id="heard">
+  <div class="col" id="heard-a"><div class="h1" id="heard-a1">A business sale doesn’t just move money.</div><div class="h1" id="heard-a2" style="margin-top:28px">It moves a <span class="o">family</span>.</div></div>
+  <div class="col" id="heard-b">
+    <div class="lab" id="heard-l">What we heard in five interviews</div>
+    <div class="chips" id="heard-c"><span class="chip">Hospital group</span><span class="chip">Bus operator</span><span class="chip">Two catering businesses</span><span class="chip">Clothing brand</span></div>
+    <div style="margin-top:80px;display:flex;flex-direction:column;gap:26px">
+      <div class="ins" id="heard-i1">Letting go is personal.</div>
+      <div class="ins" id="heard-i2">Family members need clearer roles.</div>
+      <div class="ins" id="heard-i3">Knowledge needs a <span class="o">handover</span>.</div>
+    </div>
+  </div>
+  <div class="src" id="heard-src">Customer discovery: five exploratory interviews with family business owners</div></section>
+
+<section class="card" id="sides"><div class="col">
+  <div class="h2" id="sides-t">One sale. <span class="o">Two sides.</span></div>
+  <div style="display:flex;gap:200px;margin-top:70px;align-items:flex-start">
+    <div id="sides-m" style="width:600px"><img class="face" src="../../prototype/faces/margaret.jpg" alt=""><div class="who">Margaret Wilson</div><div class="role">Founder, Wilson Transport</div><div class="quote">“Help me turn the sale into a plan my family understands and trusts.”</div></div>
+    <div id="sides-a" style="width:600px"><img class="face" src="../../prototype/faces/alex.jpg" alt=""><div class="who">Alex Lee</div><div class="role">PNC Relationship Manager</div><div class="quote">“Help me understand the family early enough to guide the right conversation.”</div></div>
+  </div></div>
+  <div class="foot" id="sides-f">Fictional people. Portraits are AI-generated.</div></section>
+
+<section class="card" id="title"><div class="col">
+  <svg id="title-m" width="200" height="200" viewBox="0 0 32 32"><circle cx="16" cy="16" r="14" fill="none" stroke="#fff" stroke-width="1.6"/><circle cx="16" cy="16" r="5" fill="#EF6A00"/><circle cx="16" cy="5" r="2.4" fill="#fff"/><circle cx="26" cy="20" r="2.4" fill="#fff"/><circle cx="6" cy="20" r="2.4" fill="#fff"/></svg>
+  <div id="title-t" style="font-size:180px;font-weight:800;letter-spacing:-0.04em;margin-top:30px;line-height:1">Family Table</div>
+  <div class="sub" id="title-s" style="margin-top:30px">A consent-based AI coordination layer</div>
+  </div></section>
+
+<section class="card" id="sauce">
+  <div class="h2" id="sauce-t" style="position:absolute;left:150px;top:96px;font-size:72px">Three proprietary assets. <span class="o">One consented stack.</span></div>
+  <svg id="stack" width="620" height="720" viewBox="0 0 620 720" style="position:absolute;left:260px;top:260px;overflow:visible"></svg>
+  <div id="labels"></div></section>
+
+<section class="card" id="business"><div class="col" style="justify-content:flex-start;padding-top:120px">
+  <div class="num" id="biz-n" style="font-size:230px">$0B</div>
+  <div class="sub" id="biz-s" style="margin-top:26px">in PNC client assets under administration</div>
+  <div class="road" id="biz-r"><div class="line" id="biz-line"></div>
+    <div class="st" id="biz-1"><i></i><span>Validate</span><b>Weeks 1 to 6</b></div>
+    <div class="st on" id="biz-2"><i></i><span>Pilot, the next 90 days</span><b>10 families, 3 advisors</b></div>
+    <div class="st" id="biz-3"><i></i><span>Then</span><b>Expand selectively</b></div>
+  </div></div>
+  <div class="src" id="biz-src">PNC 3Q 2026 Financial Supplement, excluding brokerage. Group-wide scale, not a market size.</div></section>
+
+<section class="card" id="close"><div class="col">
+  <svg id="close-m" width="150" height="150" viewBox="0 0 32 32"><circle cx="16" cy="16" r="14" fill="none" stroke="#fff" stroke-width="1.6"/><circle cx="16" cy="16" r="5" fill="#EF6A00"/><circle cx="16" cy="5" r="2.4" fill="#fff"/><circle cx="26" cy="20" r="2.4" fill="#fff"/><circle cx="6" cy="20" r="2.4" fill="#fff"/></svg>
+  <div id="close-t" style="font-size:160px;font-weight:800;letter-spacing:-0.04em;margin-top:28px;line-height:1">Family Table</div>
+  <div class="sub" id="close-s" style="margin-top:28px">Crafting the family future, today.</div>
+  <div class="team" id="close-p">Alen Ilmi, Rizaldy Utomo, Nindy Aditya Dewi and Aditya Mulya Pratama<br>Carnegie Mellon University, CSL 2026. A student concept for PNC Private Bank.</div>
+  </div><div class="foot" id="close-f">The Wilsons, Alex and every figure in the demo are fictional. Portraits are AI-generated.</div></section>
+
+<script>
+const $ = id => document.getElementById(id);
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const outC = p => 1 - Math.pow(1 - p, 3);
+const io = p => p < .5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
+// fade and rise in from t0 over d seconds
+function rise(id, t, t0, d = .7, dy = 34) { const e = outC(clamp((t - t0) / d)), el = $(id); el.style.opacity = e; el.style.transform = `translateY(${(1 - e) * dy}px)`; return e; }
+function out(id, t, t0, d = .45) { const e = io(clamp((t - t0) / d)), el = $(id); el.style.opacity = 1 - e; el.style.transform = `translateY(${-e * 24}px)`; }
+function count(id, t, t0, d, to, fmt) { $(id).textContent = fmt(Math.round(to * outC(clamp((t - t0) / d)))); }
+// When a word of the line is spoken: lead + its share of the line's characters times the measured speech length.
+const wordAt = (sc, word) => { const i = sc.line.toLowerCase().indexOf(word.toLowerCase()); return sc.lead + sc.speech * Math.max(0, i) / sc.line.length; };
+
+// ---- the stack (geometry from video/apple/film.html; colours and lines from the prototype's STACK) ----
+const LAYERS = [ // top to bottom
+  { n: "Experience", d: "One plan, two views: a family app and an advisor workbench.", top: "#EF6A00", l: "#B84F00", r: "#D45E00" },
+  { n: "AI layer", d: "Private-by-default themes, Document AI and drafts, with review.", tag: "Family intelligence", top: "#F4F1FA", l: "#D9D2EC", r: "#E8E3F4" },
+  { n: "Formulas", d: "Proceeds, gap score and decision tree. Every number auditable.", top: "#F4F1FA", l: "#D9D2EC", r: "#E8E3F4" },
+  { n: "Data and consent", d: "Member vaults, a consent ledger and the household graph.", tag: "Household graph", top: "#F4F1FA", l: "#D9D2EC", r: "#E8E3F4" },
+  { n: "PNC systems", d: "Permissioned relationship signals. The advisor reviews each one.", tag: "Relationship signals", top: "#3B55A0", l: "#2A3D74", r: "#334A8C" },
+];
+const G = { cx: 300, a: 250, b: 142, th: 50, step: 92, y0: 6, top: 260 };
+const groups = [], labels = [];
+(function buildStack() {
+  const svg = $("stack"), NS = "http://www.w3.org/2000/svg", P = pts => pts.map(p => p.join(",")).join(" ");
+  for (let i = LAYERS.length - 1; i >= 0; i--) {
+    const L = LAYERS[i], y = G.y0 + i * G.step, T = [G.cx, y], R = [G.cx + G.a, y + G.b], B = [G.cx, y + 2 * G.b], Lf = [G.cx - G.a, y + G.b], d = p => [p[0], p[1] + G.th];
+    const g = document.createElementNS(NS, "g");
+    g.innerHTML = `<polygon points="${P([Lf, B, d(B), d(Lf)])}" fill="${L.l}" stroke="#10214D" stroke-width="2"/><polygon points="${P([B, R, d(R), d(B)])}" fill="${L.r}" stroke="#10214D" stroke-width="2"/><polygon points="${P([T, R, B, Lf])}" fill="${L.top}" stroke="#10214D" stroke-width="2"/>` +
+      (i === 0 ? `<g transform="translate(${G.cx},${y + G.b}) scale(5,2.5)"><circle r="14" fill="none" stroke="#fff" stroke-width="1.4"/><circle r="5" fill="#10214D"/><circle cy="-11" r="2.4" fill="#fff"/><circle cx="10" cy="4" r="2.4" fill="#fff"/><circle cx="-10" cy="4" r="2.4" fill="#fff"/></g>` : "");
+    svg.appendChild(g); groups[i] = g;
+  }
+  LAYERS.forEach((L, i) => {
+    const el = document.createElement("div"); el.className = "lbl"; el.style.top = (G.top + G.y0 + i * G.step + G.b + G.th / 2 - 44) + "px";
+    el.innerHTML = `<b>${L.n}${L.tag ? `<em>${L.tag}</em>` : ""}</b><span>${L.d}</span>`; $("labels").appendChild(el); labels[i] = el;
+  });
+})();
+
+const CARDS = {
+  hook(t, sc) {
+    count("hook-n", t, .15, Math.max(1.4, wordAt(sc, "trillion") + .5), 124, v => "$" + v + "T");
+    rise("hook-n", t, 0, .6, 20); rise("hook-s", t, wordAt(sc, "of U.S.") - .3); rise("hook-src", t, 1.4, .8, 10);
+  },
+  stakes(t, sc) {
+    count("stakes-n", t, .15, Math.max(1.3, wordAt(sc, "percent") + .4), 55, v => v + "%");
+    rise("stakes-n", t, 0, .6, 20); rise("stakes-s", t, wordAt(sc, "of spouses") - .3); rise("stakes-src", t, 1.6, .8, 10);
+  },
+  heard(t, sc) {
+    const tb = wordAt(sc, "In five") - .35;
+    rise("heard-a1", t, .1); rise("heard-a2", t, wordAt(sc, "It moves") - .15);
+    if (t >= tb) out("heard-a", t, tb, .45); else { $("heard-a").style.opacity = 1; $("heard-a").style.transform = ""; }
+    rise("heard-l", t, tb + .3); rise("heard-c", t, tb + .55);
+    rise("heard-i1", t, wordAt(sc, "letting") - .2); rise("heard-i2", t, wordAt(sc, "family members") - .2); rise("heard-i3", t, wordAt(sc, "and knowledge") - .1);
+    rise("heard-src", t, tb + .8, .8, 10);
+  },
+  sides(t, sc) {
+    rise("sides-m", t, Math.max(.1, wordAt(sc, "Margaret") - .3), .8, 50); rise("sides-a", t, wordAt(sc, "and Alex") - .2, .8, 50);
+    rise("sides-t", t, wordAt(sc, "One sale") - .25, .7, 24); rise("sides-f", t, 1.6, .8, 10);
+  },
+  title(t, sc) {
+    const e = outC(clamp(t / 1.1)); $("title-m").style.opacity = e; $("title-m").style.transform = `rotate(${(1 - e) * -90}deg) scale(${.7 + .3 * e})`;
+    rise("title-t", t, .15, .9, 30); rise("title-s", t, Math.min(1.2, wordAt(sc, "consent") - .2), .8, 24);
+  },
+  sauce(t, sc) {
+    // bottom layer lands first, then the labels; then each proprietary asset as the voice names it
+    [4, 3, 2, 1, 0].forEach((i, k) => {
+      const t0 = .15 + k * .32, e = outC(clamp((t - t0) / .7));
+      groups[i].style.opacity = clamp((t - t0) / .35); groups[i].dataset.y = (1 - e) * -260;
+      const le = rise("lbl" + i, t, t0 + .25, .6, 0); labels[i].dataset.e = le;
+    });
+    rise("sauce-t", t, wordAt(sc, "Three proprietary") - .2, .7, 24);
+    const hi = [[4, wordAt(sc, "relationship")], [1, wordAt(sc, "private-by")], [3, wordAt(sc, "household")]];
+    const tEnd = Math.min(wordAt(sc, "household") + 1.8, sc.dur - 1.1);
+    // eased steps: value starts at v0 and glides to each event's value over .45 s
+    const glide = (v0, evs) => { let v = v0, from = v0; for (const [te, to] of evs) { if (t < te) break; from = v; v = from + (to - from) * io(clamp((t - te) / .45)); } return v; };
+    LAYERS.forEach((L, i) => {
+      const lit = glide(1, [...hi.map(([k, ts]) => [ts - .15, k === i ? 1 : 0]), [tEnd, 1]]);
+      const lift = glide(0, [...hi.map(([k, ts]) => [ts - .15, k === i ? 1 : 0]), [tEnd, 0]]);
+      labels[i].style.opacity = Math.min(+labels[i].dataset.e, .3 + .7 * lit);
+      labels[i].style.transform = `translateX(${lift * 16}px)`;
+      groups[i].setAttribute("transform", `translate(0,${+groups[i].dataset.y})`);
+    });
+  },
+  business(t, sc) {
+    count("biz-n", t, .15, Math.max(1.4, wordAt(sc, "billion") + .4), 499, v => "$" + v + "B");
+    rise("biz-n", t, 0, .6, 20); rise("biz-s", t, wordAt(sc, "in client") - .3); rise("biz-src", t, 1.6, .8, 10);
+    const t1 = wordAt(sc, "We validate") - .2, t2 = wordAt(sc, "then pilot") - .2, t3 = wordAt(sc, "three advisors") + .4;
+    rise("biz-1", t, t1, .7, 24); rise("biz-2", t, t2, .7, 24); rise("biz-3", t, t3, .7, 24);
+    const le = io(clamp((t - t1) / ((t3 + .3) - t1))); $("biz-line").style.transform = `scaleX(${le})`; $("biz-line").style.opacity = le > 0 ? 1 : 0;
+  },
+  close(t, sc) {
+    const e = outC(clamp(t / 1.1)); $("close-m").style.opacity = e; $("close-m").style.transform = `rotate(${(1 - e) * -90}deg)`;
+    rise("close-t", t, .1, .9, 30); rise("close-s", t, Math.min(1.4, wordAt(sc, "Crafting") - .2), .8, 24);
+    rise("close-p", t, wordAt(sc, "today") + .3, .9, 14); rise("close-f", t, wordAt(sc, "today") + .7, .9, 10);
+  },
+};
+labels.forEach((l, i) => l.id = "lbl" + i);
+
+let shown = null;
+// Draw card `id` at t seconds into its scene. sc = { line, lead, speech, dur } from shots.json.
+window.show = (id, t, sc) => {
+  if (shown !== id) { document.querySelectorAll(".card").forEach(c => c.style.display = c.id === id ? "block" : "none"); shown = id; }
+  CARDS[id](t, sc);
+  // a slow push for the whole card, so no frame ever sits still
+  $(id).style.transform = `scale(${1 + .03 * io(clamp(t / sc.dur))})`;
+};
+window.cardsReady = document.fonts.ready.then(() => Promise.all([...document.images].map(i => i.decode().catch(() => {}))));
+// Standalone preview: cards.html?id=sides&t=4
+const q = new URLSearchParams(location.search);
+if (q.has("id")) { document.body.classList.add("solo");
+  fetch("shots.json").then(r => r.json()).then(cfg => { const sc = cfg.scenes.find(s => s.id === q.get("id")) || { line: "", speech: 6, dur: 8 };
+    const t = +(q.get("t") || 3); for (let x = 0; x <= t; x += 1 / 60) window.show(q.get("id"), x, Object.assign({ lead: cfg.lead }, sc, { line: sc.line || "" })); }); }
+</script>
+</body>
+</html>

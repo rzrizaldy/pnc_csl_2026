@@ -220,7 +220,8 @@ A gap of 0.75 or more recommends a facilitator.
 | `prototype/shots/` | Screenshots used by the site and slides |
 | `slides/claude_deck/` | Source of the Claude Slides deck (`deck.json` and `slides/*.html`) |
 | `slides/build_secret_sauce.py`, `secret_sauce.pptx` | Editable PPTX of the sauce slide, for Canva |
-| `video/VIDEO_PLAN.md`, `video/RECORDING_SCRIPT.md` | Video plan and narration v3 (11 lines, about 240 words) |
+| `video/VIDEO_PLAN.md`, `video/RECORDING_SCRIPT.md` | Old video plan (v3); voice-over script **v4** (13 lines, about 245 words, deck facts only) |
+| `video/src2/` | **The final voice-over film**: `shots.json`, `stage.html`, `cards.html`, `render.js`, `vo.py`, `ingest.py`; see its README |
 | `video/src/*.js` | Playwright tooling, listed in §9 |
 | `docs/TWO_WAY_JOURNEY.md` | Reassessment: each persona goal mapped to a screen |
 | `docs/DEVILS_ADVOCATE_REVIEW.md` | Scorecard, kill shots, judge Q&A, economics |
@@ -270,7 +271,15 @@ A gap of 0.75 or more recommends a facilitator.
 
 Rz's three core slides (AI Client & Family Experience, AI Advisor Workbench, Added Value: The Secret Sauce & Core Innovation) also exist as a standalone three-slide Claude Slides deck in the PNC navy theme, with the same content as the PPTX: https://claude.ai/artifact/4i1gadSusfcxXqzgcHbiaz (source in `slides/claude_three/`). Versions: these in the full deck, that standalone deck, and `slides/canva/family_table_3_slides.pptx` in the team Canva deck's look (see `slides/canva/README.md`). Slide images are artifact assets; `video/src/slide_shots_v2.js` and `slide_crops.js` regenerate them, and `slides_check.js` maps them for local render checks.
 
-**Film (music-only, Apple-keynote style):** `video/apple/`. `STORYBOARD.md` has the 15 scenes from the Canva deck before the appendix. `capture.js` grabs the screens, `film.html` holds the GSAP timeline, `music.py` writes the synced 96 BPM score, and `node render.js video` renders `video/family_table_film.mp4` (120 s, 1920×1080, −14 LUFS). The MP4 is gitignored; share it by Drive.
+**Final film (voice-over, the one to submit):** `video/src2/`. Thirteen voice-over lines (`video/RECORDING_SCRIPT.md` v4), one scene each:
+- bold cards for the deck facts ($124T, 55%, five interviews, two sides, the five-layer stack, $499B and the pilot)
+- live prototype footage for Align, the AI brief, Allocate, Activate and governance: real clicks, typing and count-ups, with a camera that pushes in on one element at a time
+- no music and no sound effects
+- 60 fps, 0.5 s dissolves, deterministic (fake clock)
+
+`python3 vo.py tts` makes the TTS draft and the timing; `node render.js video` writes `video/family_table_vo_draft.mp4` and `video/family_table_silent.mp4` (about 117 s); `python3 ingest.py <take>` re-times the film to Nindy's recording and writes `video/family_table_final.mp4`. The cues are in `video/family_table_vo_cues.srt`. The MP4s are gitignored.
+
+**Earlier film (music-only, Apple-keynote style, superseded):** `video/apple/`. `STORYBOARD.md` has the 15 scenes from the Canva deck before the appendix. `capture.js` grabs the screens, `film.html` holds the GSAP timeline, `music.py` writes the synced 96 BPM score, and `node render.js video` renders `video/family_table_film.mp4` (120 s, 1920×1080, −14 LUFS). The MP4 is gitignored; share it by Drive.
 
 ## 8. Design system and voice
 
@@ -314,6 +323,8 @@ Serve the repo root first: `python3 -m http.server 4320` (the scripts default to
 | `slide_crops.js` | 1100×518 @2x crops of the advisor screens, for slides |
 | `qa.js [base]` | Links, console errors, overflow and clipped text at 360/390/768/1024/1440 on every route, dead buttons, alt text, tap targets, the 10-step demo from the splash, and the ask-Alex loop for all five members |
 | `motion_check.js [base] [out]` | Entrance and AI-trace frames, the option tween, the vote tally below and above `MIN_GROUP`, privacy opt-out, XSS escaping in check-ins, questions and replies |
+| `../src2/render.js stills\|video` | The voice-over film: contact sheets of every scene, or the 60 fps render and muxes (see `video/src2/README.md`) |
+| `../src2/vo.py tts\|mix`, `../src2/ingest.py <take>` | TTS draft and timing; real recording split on silence (must find exactly 13 lines, or `--cuts`) |
 | `slides_check.js <artifact root> <out>` | Renders each slide at 1920×1080 and flags anything past the 920px line. Its `BLOBS` map ties `/_blob/<id>` images to local shots |
 
 **Environment:**

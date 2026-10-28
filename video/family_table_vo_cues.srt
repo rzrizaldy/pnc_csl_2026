@@ -1,0 +1,51 @@
+1
+00:00:00,300 --> 00:00:06,133
+By 2048, 124 trillion dollars of U.S. wealth will change hands.
+
+2
+00:00:06,733 --> 00:00:13,200
+And 55 percent of spouses and heirs say they won't, or didn't, keep their benefactor's advisor.
+
+3
+00:00:13,800 --> 00:00:25,783
+A business sale doesn't just move money. It moves a family. In five interviews, owners told us: letting go is personal, family members need clearer roles, and knowledge needs a handover.
+
+4
+00:00:26,383 --> 00:00:34,650
+Meet Margaret Wilson, selling the company she built, and Alex Lee, her PNC advisor. One sale, two sides.
+
+5
+00:00:35,250 --> 00:00:43,517
+Family Table is a consent-based AI coordination layer that guides them through three steps: Align, Allocate, Activate.
+
+6
+00:00:44,117 --> 00:00:52,184
+First, Align. Claire checks in privately. AI turns her words into themes, and she chooses what Alex sees.
+
+7
+00:00:52,784 --> 00:01:03,101
+Alex sees themes, not words. Margaret thought the kids agreed. The widest gap is fairness. AI prepares the analysis; Alex makes the call.
+
+8
+00:01:03,701 --> 00:01:12,601
+Then, Allocate. Sam sees his own number under every split, votes in private, and three choices turn twelve plans into one.
+
+9
+00:01:13,201 --> 00:01:21,101
+Then, Activate. Sam asks a person, not a bot. AI drafts the reply; Alex checks it and sends it.
+
+10
+00:01:21,701 --> 00:01:27,101
+Nothing reaches the family until the advisor approves it, and every output is logged.
+
+11
+00:01:27,701 --> 00:01:39,618
+Why only PNC? Three proprietary assets in one consented stack: relationship signals the advisor reviews, private-by-default family intelligence, and a household graph.
+
+12
+00:01:40,218 --> 00:01:50,935
+PNC administers 499 billion dollars in client assets. We validate for six weeks, then pilot for 90 days with ten families and three advisors.
+
+13
+00:01:51,535 --> 00:01:56,435
+Family Table. Crafting the family future, today.

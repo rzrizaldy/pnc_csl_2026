@@ -1,6 +1,6 @@
 # Family Table · 2-minute video plan
 
-**Status:** plan only. Nothing is rendered yet. The build steps in §5 start once the team agrees on the script.
+**Status (Oct 28): superseded.** The film is built in `video/src2/` (see its README) from script v4 in `RECORDING_SCRIPT.md`. It uses a voice-over only, with no music, face bubble or burned-in captions. This plan is kept for history.
 
 ## 1. What the judges need
 
