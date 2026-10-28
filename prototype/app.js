@@ -242,7 +242,7 @@
     { side: "Advisor", stage: "Align", route: "advisor/align", title: "The AI reads. Alex decides.", noScroll: true,
       hint: "Four private check-ins become one finding: the widest gap is fairness. Approve the brief.", target: '[data-act="approve"]', done: () => state.approved },
     { side: "Advisor", stage: "Align", route: "advisor/guide", title: "Alex walks in with a guide",
-      hint: "AI turns the brief into a 90-minute run of show, with what to say, show and ask. Tap Present to the family.", target: '[data-act="present-open"]', done: () => state.presented },
+      hint: "AI turns the brief into a 90-minute run of show, one line per part. Tap Present to the family.", target: '[data-act="present-open"]', done: () => state.presented },
     { side: "Family", stage: "Allocate", route: "me/sam/options", title: "Sam sees his number, then votes",
       hint: "From Sam's check-in, AI suggests Equal. Each option shows every child's share, and votes stay private. Cast Sam's vote, or change it first.", target: '[data-act="vote"]', done: () => !!state.votes.sam },
     { side: "Family", stage: "Allocate", route: "me/sam/decide", title: "Sam firms up the decision",
@@ -728,22 +728,16 @@
 
   // ---------- advisor: meeting guide and presenter mode ----------
   function advGuide() {
-    const total = S.guide.reduce((s, g) => s + g.min, 0), sent = Object.keys(state.pathSent).filter(k => state.pathSent[k]);
-    const G = Object.fromEntries(S.goals.map(g => [g.id, g]));
+    const total = S.guide.reduce((s, g) => s + g.min, 0);
     return `<div class="page"><div class="cols"><div class="col-main">
-      <section class="hero"><div class="label">Your guide for Thursday, Nov 12 ${state.approved ? `<span class="badge g">From the approved brief</span>` : `<span class="badge p">Draft</span>`}</div>
+      <section class="hero"><div class="label">Thursday, Nov 12 ${state.approved ? `<span class="badge g">From the approved brief</span>` : `<span class="badge p">Draft</span>`}</div>
         <div class="value huge">${total}<span class="unit">minutes</span></div>
-        <div class="caption">AI turned the brief into a run of show. You present; the Hawthorn facilitator runs the fairness discussion.</div>
-        <div class="ros" aria-hidden="true">${S.guide.map((g, i) => `<i style="flex:${g.min}" class="${i === 2 ? "hot" : ""}"><span>${g.min}</span></i>`).join("")}</div></section>
-      <section class="section"><ol class="guide">${S.guide.map((g, i) => `<li class="gd"><div class="gd-h"><span class="gd-n">${i + 1}</span><b>${g.title}</b><span class="gd-m">${g.min} min</span></div>
-        <dl><dt>Say</dt><dd>${g.say}</dd><dt>Show</dt><dd>${g.show}</dd><dt>Ask</dt><dd>${g.ask}</dd></dl></li>`).join("")}</ol></section>
+        <div class="caption">You present. The Hawthorn facilitator runs the fairness part.</div></section>
+      <section class="section"><ol class="guide">${S.guide.map((g, i) => `<li class="gd"><div class="gd-h"><span class="gd-n">${i + 1}</span><b>${g.title}</b><span class="gd-m">${g.min} min</span></div><p>${g.say}</p></li>`).join("")}</ol></section>
       </div><aside class="col-side">
-        <section class="panel present-panel"><div class="section-head"><h2>Present to the family</h2></div><p class="small muted">Five screens built from the family's numbers, never anyone's words.</p>
+        <section class="panel present-panel"><div class="section-head"><h2>Present to the family</h2></div><p class="small muted">Five screens from the family's numbers, never anyone's words.</p>
           <button class="btn block" data-act="present-open" style="margin-top:12px">${ic("play", 18)} Present to the family</button></section>
-        <section class="panel"><div class="section-head"><h2>Margaret's goals</h2></div><div class="rows">${state.goals.map((id, i) => `<div class="row"><span class="ic o">${i + 1}</span><span class="tx"><b>${G[id].label}</b><span>${id === "fair" && state.fairMeans ? "Fair means: " + OPT[state.fairMeans].label : id === "live" ? `$${state.spend}K a year` : id === "give" ? money(state.foundation) + " to a foundation" : "Picked"}</span></span></div>`).join("")}</div>
-          ${sent.length ? `<p class="small muted" style="margin-top:8px">Decision paths sent to you: ${sent.map(k => P[k].short).join(", ")}.</p>` : ""}</section>
-        <section class="panel"><div class="section-head"><h2>Guardrails</h2></div><ul class="guard">${S.guardrails.map(g => `<li>${ic("shield", 16)}${g}</li>`).join("")}</ul></section>
-        <section class="panel"><div class="section-head"><h2>Questions they may ask</h2></div>${S.faqs.map(([q, a]) => `<div class="faq"><b>${q}</b><span>${a}</span></div>`).join("")}</section>
+        <section class="panel"><div class="section-head"><h2>Rules</h2></div><ul class="guard">${S.guardrails.map(g => `<li>${ic("shield", 16)}${g}</li>`).join("")}</ul></section>
       </aside></div></div>`;
   }
   function presentDeck() {
