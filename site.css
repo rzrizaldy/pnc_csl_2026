@@ -210,3 +210,30 @@ footer a { color: #fff; }
 }
 
 .card.endcard p { color: rgba(255,255,255,.85); }
+
+/* who at PNC: the team board */
+.team { margin-top: 22px; }
+.team-lead { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; background: var(--navy); color: #fff; border-radius: var(--r); padding: 16px 18px; }
+.team-lead img { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; flex: none; }
+.team-lead > div { flex: 1; min-width: 240px; }
+.team-lead b { display: block; font-size: 18px; }
+.team-lead span { display: block; font-size: 15px; color: rgba(255,255,255,.82); margin-top: 2px; }
+.team-lead .tag { margin: 0; background: rgba(255,255,255,.14); color: #fff; }
+.team-grid { display: grid; gap: 12px; margin-top: 12px; }
+.step-h { display: grid; grid-template-columns: 36px 1fr; column-gap: 10px; align-items: center; padding: 10px 0 0; }
+.step-ic { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: #FFF0E3; color: var(--orange-text); grid-row: 1 / 3; }
+.step-h b { font-size: 19px; color: var(--navy); line-height: 1.2; }
+.step-h > span:last-child { font-size: 14px; color: var(--sub); }
+.unit { background: #fff; border-radius: var(--r); box-shadow: var(--shadow); padding: 14px 16px; display: flex; flex-direction: column; }
+.unit b { color: var(--navy); font-size: 16.5px; line-height: 1.3; }
+.unit small { display: block; font-size: 13.5px; color: var(--faint); margin-top: 2px; }
+.unit p { font-size: 15px; margin-top: 8px; flex: 1; }
+.unit .tag { margin: 10px 0 0; align-self: flex-start; }
+.unit.quiet { background: var(--page); box-shadow: none; border: 1px dashed var(--line); }
+.tag.pb { background: #E6E9F2; color: var(--navy); }
+.tag.cib { background: var(--rec-bg); color: var(--rec); }
+@media (min-width: 720px) {
+  .team-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+  .team-grid > * { grid-area: var(--a); }
+  .step-h { padding-top: 0; }
+}
