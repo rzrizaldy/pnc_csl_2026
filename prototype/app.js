@@ -196,12 +196,12 @@
   function splash() {
     // Portraits in faces/ are AI-generated; the people are fictional.
     const cast = [
-      ["margaret", "Margaret Wilson, 63", "Founder, selling Wilson Transport", P.margaret.line],
-      ["alex", "Alex Lee", "PNC advisor", "Wants to hear the whole family before closing."],
-      ["tom", "Tom Wilson, 65", "Margaret's husband", P.tom.line],
-      ["ben", "Ben Wilson, 40", "COO, staying on with the buyer", "Thinks his years should count."],
-      ["claire", "Claire Wilson, 37", "Nurse practitioner in Columbus", "Thinks equal is fair. Has never told her mother."],
-      ["sam", "Sam Wilson, 33", "Software engineer in Austin", "Wants to know how much, and when."],
+      ["margaret", "Margaret Wilson, 63", "Founder, selling the company", "Wants a plan the family trusts."],
+      ["alex", "Alex Lee", "PNC advisor", "Hears everyone before closing."],
+      ["tom", "Tom Wilson, 65", "Margaret's husband", "Not an owner. Still affected."],
+      ["ben", "Ben Wilson, 40", "COO, staying on", "Thinks his years should count."],
+      ["claire", "Claire Wilson, 37", "Nurse in Columbus", "Thinks equal is fair."],
+      ["sam", "Sam Wilson, 33", "Engineer in Austin", "How much, and when?"],
     ];
     return `<section class="onb"><div class="onb-in">
         <header class="onb-top"><span class="brand">${mark}Family Table <small>PNC Private Bank</small></span><button class="onb-link" data-act="switch">Explore on your own</button></header>
