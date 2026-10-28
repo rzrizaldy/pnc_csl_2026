@@ -9,6 +9,7 @@ const BIN = path.join(process.env.HOME, "Library/Caches/ms-playwright/chromium_h
 const [root, out] = process.argv.slice(2);
 const SHOTS = path.join(__dirname, "../../prototype/shots");
 const BLOBS = {
+  "6eb613845ab2e6ec5be912857ccf9d0f": "../../slides/claude_three/raw_land/brief_hero.png",
   "7a443fab7cc85da3af9e053f8f822af8": "../../slides/claude_three/raw_land/p3_checkin.png",
   "1be6eb346b1834d3dbd6ae0bc9948737": "../../slides/claude_three/raw_land/p4_decide.png",
   "4aef0e68153783241b74dfe501e7ea06": "../../slides/claude_three/raw_land/p5_ask.png",
