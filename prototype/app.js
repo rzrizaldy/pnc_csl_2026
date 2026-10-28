@@ -221,7 +221,7 @@
           <div><b data-count="124" data-fmt="t">$124T</b><span>projected U.S. wealth transfer through 2048</span></div>
           <div><b data-count="89" data-fmt="p">89%</b><span>of business owners want connected business and personal advice</span></div>
           <div><b data-count="67" data-fmt="p">67%</b><span>still manage those needs separately</span></div>
-          <div><b data-count="83" data-fmt="p">83%</b><span>say family dynamics affect succession or exit planning</span></div>
+          <div><b data-count="83" data-fmt="p">83%</b><span>say family dynamics affect succession</span></div>
           <div><b data-count="55" data-fmt="p">55%</b><span>of spouses and heirs say they will not retain their benefactor's advisor</span></div>
         </div>
         <p class="onb-opp"><b>The PNC opportunity</b> Retaining post-sale assets and building relationships with the next generation. Building toward wealth management through deposits, custody, trust, lending and brokerage.</p>
