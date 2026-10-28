@@ -123,6 +123,37 @@ window.SEED = {
   // Before a family engages with PNC: a scenario preview. Ratios come from the Wilson deal so every preset is consistent
   // with the demo: net at closing = 27/48 of the offer, the children's gift = 12/27 of net, buyer equity kept by each
   // child who stays = 1.5/48 of the offer. Illustrative only.
+  // Document intake, before the goals. Margaret adds what she has, AI reads it, and every fact lands somewhere in the plan.
+  // The read is simulated and timed for the demo; the figures match the Wilson deal. feeds = where the document goes.
+  intake: {
+    docs: [
+      { name: "Financial statements, 2023 to 2025.pdf", type: "PDF", pages: 42, finding: "Earnings of about $6.9M a year, steady over three years.", feeds: ["live", "fair", "brief"], step: 1 },
+      { name: "NorthPeak letter of intent.pdf", type: "PDF", pages: 9, finding: "$48.0M offer, about 7 times earnings. $8.0M of it is an earnout.", feeds: ["fair", "live", "brief"], step: 1 },
+      { name: "Shareholder register.pdf", type: "PDF", pages: 4, finding: "Three children hold shares. Ben, COO, keeps $1.5M of NorthPeak equity after closing.", feeds: ["fair", "brief"], step: 2 },
+      { name: "Wilson Transport accounts", type: "PNC", pages: 0, src: "Pulled from PNC, nothing to upload", finding: "$3.5M outstanding on the credit line. Payroll shows one child in the business.", feeds: ["live", "brief"], step: 2 },
+      { name: "Margaret's will, 2012.pdf", type: "PDF", pages: 14, finding: "Leaves the shares equally to the three children. Silent on whether Ben's buyer equity counts.", feeds: ["fair", "brief", "spec"], step: 3, risk: "High risk" },
+      { name: "Key-person life policy, 2015.pdf", type: "PDF", pages: 6, finding: "Pays the company, not the family, and ends at closing.", feeds: ["brief", "spec"], step: 3, risk: "Medium risk" },
+      { name: "Shareholder buy-sell agreement, 2009", type: "Scan", pages: 18, finding: "Valuation formula fixed at 4× earnings in 2009. The offer implies about 7×.", feeds: ["brief", "spec"], step: 3, risk: "Medium risk" },
+      { name: "Personal tax returns, 2023 to 2025.pdf", type: "PDF", pages: 61, finding: "Household spending of about $300K a year. $120K a year already given to Pittsburgh causes.", feeds: ["live", "chapter", "brief"], step: 4 },
+    ],
+    // What AI does, in order. Each step marks the documents with the same step number as read.
+    steps: [
+      ["Took in 7 documents, pulled 1 from PNC", "Encrypted on the way in. Only Alex at PNC can open them; your family never sees them."],
+      ["Read the statements and the offer", "Earnings of $6.9M a year. $48.0M from NorthPeak, about 7 times earnings, with $8.0M paid later if targets are met."],
+      ["Worked out who owns what", "Three children hold shares. Ben stays with the buyer and keeps $1.5M of its equity. $3.5M of debt comes off the top."],
+      ["Checked the older paperwork", "The 2012 will is silent on Ben's buyer equity. The key-person policy ends at closing. The buy-sell formula is out of date."],
+      ["Worked out what you keep, and what you live on", "$27.0M at closing after debt, fees and tax. $12.0M of it could go to the children. Your returns show about $300K a year of spending."],
+      ["Connected it to your plan", "Three goals ranked and pre-filled, Alex's brief started, three documents routed to specialists. Nothing is decided yet."],
+    ],
+    // Where the documents go. Each row fills as its documents are read.
+    feeds: [
+      { id: "fair", icon: "scale", label: "Treat the children fairly", line: "Who holds what, and what the will says" },
+      { id: "live", icon: "home", label: "Keep enough to live on", line: "Earnings, debt, and what you spend now" },
+      { id: "chapter", icon: "compass", label: "Have a next chapter of my own", line: "What you already give, and to whom" },
+      { id: "brief", icon: "brief", label: "Alex's brief", line: "Every fact, with its source, for your advisor" },
+      { id: "spec", icon: "users", label: "PNC specialists", line: "Paperwork that needs an attorney or an insurer" },
+    ],
+  },
   preview: {
     netRatio: 27 / 48, giftShare: 12 / 27, equityRatio: 1.5 / 48,
     // Documents an owner can add before talking to anyone. The read is simulated; the figures match the Wilson deal.
@@ -170,20 +201,15 @@ window.SEED = {
     { id: "earn", q: "If the $8.0M earnout pays out later, where does it go?", opts: [["parents", "Margaret and Tom keep it", "Their cushion grows"], ["half", "Half to the children", "$4.0M, split equally"]] },
   ],
 
-  // Alex's meeting guide for Nov 12, drafted by AI from the approved brief. Minutes add up to 90.
+  // Alex's meeting guide for Nov 12, drafted by AI from the approved brief: one line per part. Minutes add up to 90.
   guide: [
-    { min: 10, title: "Welcome and ground rules", say: "Nobody's answers are on the table, only the family's range. Decisions today are in principle.", show: "The agenda", ask: "What would make today a good meeting for you?" },
-    { min: 15, title: "Where you already agree", say: "Everyone, Margaret included, says her next chapter isn't planned yet. Start there.", show: "Gap 0.25 on Margaret's next chapter", ask: "Margaret, what would a good Monday look like a year from now?" },
-    { min: 30, title: "The fairness question", say: "The family is furthest apart on equal shares. Show the range, never who said what.", show: "The three options, every child's bar", ask: "What would make a split feel fair to someone outside the business?" },
-    { min: 20, title: "Walk the decision tree", say: "Three choices turn 12 possible plans into one. Settle them in order.", show: "The decision tree", ask: "Can we agree the first choice in principle today?" },
-    { min: 15, title: "The will and next steps", say: "Share counsel's summary of the 2012 will, not a conclusion. Each person leaves with one next step.", show: "Everyone's next step", ask: "Who needs a follow-up call with me this week?" },
+    { min: 10, title: "Welcome and ground rules", say: "Nobody's answers are on the table, only the family's range. Decisions today are in principle." },
+    { min: 15, title: "Where you already agree", say: "Everyone, Margaret included, says her next chapter isn't planned yet. Start there." },
+    { min: 30, title: "The fairness question", say: "The family is furthest apart on equal shares. Show the range, never who said what." },
+    { min: 20, title: "Walk the decision tree", say: "Three choices turn 12 possible plans into one. Settle them in order." },
+    { min: 15, title: "The will and next steps", say: "Share counsel's summary of the 2012 will, not a conclusion. Each person leaves with one next step." },
   ],
   guardrails: ["Never attribute a view to a person", "Every number comes from the calculator", "Counsel's summary, never a legal conclusion", "The facilitator runs the fairness discussion"],
-  faqs: [
-    ["Why doesn't everyone just get the same?", "Ben keeps $1.5M of NorthPeak equity. Equal cash means his total is higher; the options show what each choice does."],
-    ["Can we change our minds later?", "Yes. Today's decisions are in principle. The family confirms them with counsel before closing."],
-    ["What if the earnout never pays?", "Nothing changes at closing. The earnout is excluded from every number you've seen."],
-  ],
 
   // One year on: where each dollar of the $27.0M sits, by PNC service. Totals match the buckets and the Balanced split.
   products: [

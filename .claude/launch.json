@@ -4,7 +4,7 @@
     {
       "name": "prototype",
       "runtimeExecutable": "python3",
-      "runtimeArgs": ["-m", "http.server", "4310", "--directory", "/Users/rzrizaldy/CodeFolder/pnc_csl_2026/prototype"],
+      "runtimeArgs": ["-m", "http.server", "4310", "--directory", "prototype"],
       "port": 4310
     }
   ]

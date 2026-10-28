@@ -652,28 +652,19 @@ body.touring main { padding-bottom: 230px; }
 .outcome .btn { margin-top: 14px; }
 
 /* ---------- meeting guide and presenter ---------- */
-.ros { display: flex; gap: 3px; margin-top: 18px; }
-.ros i { height: 28px; border-radius: 6px; background: var(--navy); color: #fff; font-style: normal; font-size: 12.5px; font-weight: 600; display: grid; place-items: center; }
-.ros i.hot { background: var(--orange); }
 .guide { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
 .gd { padding: 16px; border-radius: var(--r-lg); border: 1px solid var(--line); }
 .gd-h { display: flex; align-items: center; gap: 12px; }
 .gd-n { width: 28px; height: 28px; border-radius: 50%; background: var(--navy); color: #fff; font-size: 13px; font-weight: 700; display: grid; place-items: center; flex: none; }
 .gd-h b { flex: 1; font-size: 17px; font-weight: 600; color: var(--navy); }
 .gd-m { font-size: 13.5px; font-weight: 600; color: var(--orange-700); white-space: nowrap; }
-.gd dl { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 6px 12px; margin: 12px 0 0; font-size: 15px; }
-.gd dt { font-size: 13px; font-weight: 600; color: var(--faint); padding-top: 1px; }
-.gd dd { margin: 0; }
+.gd p { margin: 8px 0 0 40px; font-size: 15px; color: var(--sub); }
 .present-panel { background: var(--navy); border-color: var(--navy); color: #fff; }
 .present-panel h2 { color: #fff !important; }
 .present-panel .muted { color: rgba(255,255,255,.75); }
 .guard { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 8px; font-size: 14.5px; }
 .guard li { display: flex; gap: 8px; align-items: flex-start; }
 .guard svg { color: var(--pos); flex: none; margin-top: 2px; }
-.faq { padding: 10px 0; border-bottom: 1px solid var(--line); }
-.faq:last-child { border-bottom: 0; }
-.faq b { display: block; font-size: 15px; color: var(--navy); }
-.faq span { font-size: 14px; color: var(--sub); }
 .present { position: fixed; inset: 0; z-index: 60; background: var(--navy) var(--pattern); color: #fff; display: flex; flex-direction: column; padding: 0 16px; animation: fade .25s; }
 .pz-top { display: flex; align-items: center; gap: 12px; height: 60px; max-width: 1100px; width: 100%; margin: 0 auto; }
 .pz-top .brand { margin-right: auto; }
@@ -732,7 +723,7 @@ ul.pz-list { list-style: none; padding: 0; }
 }
 @media (prefers-reduced-motion: no-preference) {
   .anim .goal, .anim .gd, .anim .pv-card, .anim .dt-node, .anim .pb { animation: ft-rise .45s cubic-bezier(.2,.8,.2,1) both; animation-delay: calc(var(--i, 0) * 50ms + 160ms); }
-  .anim .ros i, .anim .pb-bar i { animation: ft-grow .7s cubic-bezier(.2,.8,.2,1) both; transform-origin: left center; }
+  .anim .pb-bar i { animation: ft-grow .7s cubic-bezier(.2,.8,.2,1) both; transform-origin: left center; }
   .pz-slide > * { animation: ft-rise .45s cubic-bezier(.2,.8,.2,1) both; }
   .pz-slide > :nth-child(2) { animation-delay: .1s; } .pz-slide > :nth-child(n+3) { animation-delay: .2s; }
 }
