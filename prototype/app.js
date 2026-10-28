@@ -39,9 +39,10 @@
   const summaryThemes = () => S.themes.map(th => ({ ...th, s: Object.fromEntries(Object.entries(th.s).filter(([k]) => !(k === "claire" && state.optOut))) }));
   const contributors = () => S.people.filter(p => p.status === "checked" && !(p.id === "claire" && state.optOut)).length;
   const checkedIn = () => S.people.filter(p => p.status === "checked").length;
-  const ini = p => p.name.split(" ").map(x => x[0]).join("");
-  const av = (p, s = 40) => `<span class="av" style="background:${p.color};width:${s}px;height:${s}px;font-size:${Math.round(s / 2.9)}px">${ini(p)}</span>`;
-  const avAlex = (s = 40) => `<span class="av" style="background:#EF6A00;width:${s}px;height:${s}px;font-size:${Math.round(s / 2.9)}px">AL</span>`;
+  // Portraits in faces/ are AI-generated; the people are fictional. Names sit next to every avatar, so alt is empty.
+  const face = (id, s = 40) => `<img class="av" src="faces/${id}.jpg" alt="" width="${s}" height="${s}" style="width:${s}px;height:${s}px">`;
+  const av = (p, s = 40) => face(p.id, s);
+  const avAlex = (s = 40) => face("alex", s);
   const gap = th => { const v = Object.values(th.s); return (Math.max(...v) - Math.min(...v)) / 4; };
   const net = () => { const d = S.deal; return d.offer - d.earnout - d.debt - d.fees - d.tax; };
   // Deterministic gift split: count w (0..1) of the equity each child keeps with the buyer, so totals even out.
@@ -122,8 +123,8 @@
       const a = -Math.PI / 2 + i * 2 * Math.PI / n, x = c + R * Math.cos(a), y = c + R * Math.sin(a);
       const ring = p.status === "checked" ? `stroke="#2E7D32" stroke-width="3"` : `stroke="#A9AFB8" stroke-width="2.5" stroke-dasharray="4 3"`;
       const ly = y + (Math.sin(a) > 0.3 ? 40 : -33);
-      return `<g class="seat-g" style="--i:${i}"><circle cx="${x}" cy="${y}" r="27" fill="#fff" ${ring}/><circle cx="${x}" cy="${y}" r="21" fill="${p.color}"/>
-        <text x="${x}" y="${y + 5}" text-anchor="middle" font-size="13.5" font-weight="700" fill="#fff">${ini(p)}</text>
+      return `<g class="seat-g" style="--i:${i}"><circle cx="${x}" cy="${y}" r="27" fill="#fff" ${ring}/><clipPath id="seat-${p.id}"><circle cx="${x}" cy="${y}" r="21"/></clipPath>
+        <image href="faces/${p.id}.jpg" x="${x - 21}" y="${y - 21}" width="42" height="42" clip-path="url(#seat-${p.id})" preserveAspectRatio="xMidYMid slice"/>
         <text x="${x}" y="${ly}" text-anchor="middle" font-size="13.5" fill="#1F2430" font-weight="600">${p.short}</text></g>`;
     }).join("");
     return `<svg class="viz" viewBox="-20 -12 360 352" style="max-width:${size}px" role="img" aria-label="${done} of ${n} family members have checked in">
@@ -718,10 +719,10 @@
   // ---------- story cards (video only) ----------
   function story(id) {
     const eyebrow = `<div class="eyebrow">${mark} Family Table, a PNC Private Bank concept</div>`;
-    const tile = (bg, i, n, s) => `<div><span class="av" style="background:${bg}">${i}</span><span><b>${n}</b><small>${s}</small></span></div>`;
+    const tile = (id, n, s) => `<div>${face(id, 48)}<span><b>${n}</b><small>${s}</small></span></div>`;
     const cards = {
       hook: `${eyebrow}<h1>Margaret is selling the company she built. Her family has never talked about what's fair.</h1><p class="sub">Most families don't, until the money arrives. By then, the advisor is the last to know.</p>`,
-      cast: `${eyebrow}<h1>One sale, seen from both sides.</h1><div class="cast">${tile("#EF6A00", "MW", "Margaret Wilson", "Founder, Wilson Transport")}${tile("#fff;color:#10214D", "AL", "Alex Lee, PNC", "Private Business Strategist")}${S.people.filter(p => p.id !== "margaret").map(p => tile(p.color, ini(p), p.name, p.role.split(",")[0])).join("")}</div>`,
+      cast: `${eyebrow}<h1>One sale, seen from both sides.</h1><div class="cast">${tile("margaret", "Margaret Wilson", "Founder, Wilson Transport")}${tile("alex", "Alex Lee, PNC", "Private Business Strategist")}${S.people.filter(p => p.id !== "margaret").map(p => tile(p.id, p.name, p.role.split(",")[0])).join("")}</div>`,
       problem: `${eyebrow}<h1>The sale is when families split and money leaves the bank.</h1><div class="stats">
         <div class="stat"><b>13%</b><p>of adult children use their parents' financial advisor.</p><small>Cerulli Associates, 2019</small></div>
         <div class="stat"><b>75%</b><p>of owners “profoundly regretted” selling a year later.</p><small>PNC, Begin at the end</small></div>
