@@ -1,15 +1,29 @@
 {
   "v": 4,
-  "createdOnFiles": { "v": 1, "at": "2026-10-28T01:15:00Z" },
+  "createdOnFiles": {
+    "v": 1,
+    "at": "2026-10-28T01:15:00Z"
+  },
   "lists": "css",
-  "title": "Family Table: three core slides",
+  "title": "Family Table: core slides",
   "cover": "client",
-  "order": ["client", "advisor", "sauce"],
+  "order": [
+    "client",
+    "advisor",
+    "sauce",
+    "feasibility"
+  ],
   "sections": {
-    "s1": { "description": "Rizaldy’s three core slides, built around Align, Allocate and Activate: the family experience, the advisor workbench, and the secret sauce.", "start": "client" }
+    "s1": {
+      "description": "Rizaldy’s core slides, built around Align, Allocate and Activate: the family experience, the advisor workbench, the secret sauce and technical feasibility.",
+      "start": "client"
+    }
   },
   "faces": {
-    "barlow": { "family": "Barlow", "href": "https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700&display=swap" }
+    "barlow": {
+      "family": "Barlow",
+      "href": "https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700&display=swap"
+    }
   },
   "designSystems": []
 }
