@@ -241,12 +241,9 @@ window.SEED = {
     pncBefore: 3, pncAfter: 5,
     feeRate: 0.008, // illustrative blended fee from the economics sensitivity, not a forecast
     events: [
-      { stage: "Signal", what: "Alex called Margaret 12 months before closing" },
-      { stage: "Join", what: "Five of five family members checked in" },
-      { stage: "Align", what: "Fairness was talked through on Nov 12, with a facilitator" },
-      { stage: "Allocate", what: "The family chose the Balanced split" },
-      { stage: "Activate", what: "The will was updated for an estate in cash" },
-      { stage: "Continue", what: "The first yearly check-in is open" },
+      { stage: "Align", what: "Alex called a year early. All five checked in. Fairness was settled on Nov 12 with a facilitator." },
+      { stage: "Allocate", what: "The family chose the Balanced split." },
+      { stage: "Activate", what: "The will was updated for an estate in cash. The first yearly check-in is open." },
     ],
   },
 };
