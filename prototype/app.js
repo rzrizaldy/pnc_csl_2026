@@ -534,16 +534,54 @@
   }
 
   // ---------- advisor: plan ----------
+  // Alex's plan follows the three steps on the landing page: Align (what the family agreed), Allocate (the split, and
+  // what each share could buy at closing), Activate (introductions and specialists that make it happen).
   function advPlan() {
     const log = [...S.ledger,
       ...(state.approved ? [{ t: "Today", who: "Alex Lee", what: "Approved the brief for Nov 12." }] : []),
       ...(sentPath() ? [{ t: "Today", who: "Plan builder", what: `Drafted specialist tasks from ${sentPath().who}'s plan. Alex reviews each one.` }] : []),
       ...messages().filter(m => state.replies[m.id] != null).map(m => ({ t: "Today", who: "Alex Lee", what: `Replied to ${P[m.from].short}, AI draft reviewed.` })),
       ...Object.keys(state.agreed).map(id => ({ t: "Today", who: P[id].name, what: "Agreed to the plan in principle." }))];
+    const hs = heirs(), sent = sentPath(), path = sent ? sent.path : {}, tasks = tasksFor();
+    const nv = Object.keys(votes()).length, t = tally(), lead = S.options.reduce((a, o) => t[o.id] > t[a.id] ? o : a, S.options[0]);
+    const split = path.count ? OPT[path.count] : nv >= MIN_GROUP ? lead : null;
+    const intros = hs.filter(h => state.intro[h.id]).length;
+    // Three steps, each with where it stands. The first step not done is the current one.
+    const steps = [
+      ["Align", state.approved ? "Brief approved. Facilitator booked for Nov 12." : `${checkedIn()} of 5 checked in. Brief waiting for Alex.`, state.approved],
+      ["Allocate", split ? `${split.label} split${path.count ? `, sent by ${sent.who}` : " leads the vote"}. Each share has a home.` : `${nv} of 5 voted. The family decides on Nov 12.`, !!split],
+      ["Activate", `${intros} of ${hs.length} introduced. ${tasks.length} specialists on one plan.`, intros === hs.length],
+    ];
+    let curFound = false;
+    const stepsHtml = `<ol class="plan-steps">${steps.map(([l, line, done], i) => { const cur = !done && !curFound; if (cur) curFound = true;
+      return `<li class="${done ? "done" : cur ? "cur" : ""}"><span class="ps-n">${done ? ic("check", 14, 2.8) : i + 1}</span><span class="ps-tx"><b>${l}</b><span>${line}</span></span></li>`; }).join("")}</ol>`;
+    const head = (n, title, aside) => `<div class="section-head"><h2><span class="stp">${n}</span>${title}</h2><span class="aside">${aside}</span></div>`;
+    // Allocate: what each share could buy at closing. Shares of the gift, so the mix follows the split.
+    const who = ui.allocWho || "both", sel = who === "both" ? hs : hs.filter(h => h.id === who);
+    const lo = sel.reduce((s, h) => s + gifts(0)[h.id], 0), hi = sel.reduce((s, h) => s + gifts(1)[h.id], 0);
+    const r2 = x => Math.round(x * 100 + 1e-9) / 100, amt = pct => split ? money(r2(pct * sel.reduce((s, h) => s + gifts(split.w)[h.id], 0))) : range(r2(pct * lo), r2(pct * hi));
+    const total = split ? money(sel.reduce((s, h) => s + gifts(split.w)[h.id], 0)) : range(lo, hi);
+    const trust = path.pay === "trust";
+    const seg = `<div class="seg alloc-seg" role="group" aria-label="Whose share">${[["both", "Claire and Sam"], ...hs.map(h => [h.id, h.short])].map(([id, l]) => `<button class="${id === who ? "on" : ""}" data-act="alloc-who" data-id="${id}" aria-pressed="${id === who}">${l}</button>`).join("")}</div>`;
+    const allocate = `<section class="section">${head(2, "Allocate", "What each share could buy at closing")}
+      <div class="alloc-top"><div><span class="lab">${who === "both" ? "Their share" : `${P[who].short}'s share`}</span><b>${total}</b></div>
+        <div><span class="lab">Split</span><b>${split ? split.label : "Decided Nov 12"}</b></div>
+        <div><span class="lab">Paid</span><b>${trust ? "By trust, over 10 years" : "At closing, next fall"}</b></div></div>
+      ${seg}
+      <div class="alloc" role="img" aria-label="${S.allocate.map(a => `${a.label} ${amt(a.pct)}`).join(", ")}">${S.allocate.map(a => `<i style="flex:${a.pct};background:${a.color}"></i>`).join("")}</div>
+      <div class="rows alloc-rows">${S.allocate.map(a => `<div class="row"><span class="dot" style="background:${a.color}"></span><span class="tx"><b>${a.label} <small>${Math.round(a.pct * 100)}%</small></b><span>${a.line} <em>${a.via}</em></span></span><span class="rt"${split ? ` data-count="${amt(a.pct).replace(/[$M]/g, "")}" data-fmt="m" data-key="alloc-${a.id}-${who}"` : ""}>${amt(a.pct)}</span></div>`).join("")}</div>
+      <p class="micro faint" style="margin-top:10px">AI suggests the mix from the family's choices and each person's answers. Alex adjusts it with ${who === "both" ? "Claire and Sam" : P[who].short} after the introduction. Nothing is bought until they say so.${trust ? " Through the trust the mix fills in a tenth a year." : ""}</p></section>`;
     return `<div class="page"><div class="cols"><div class="col-main">
-      <section class="hero"><div class="label">Heading to heirs who bank elsewhere</div><div class="value huge">${range(heirSum(0), heirSum(1))}</div><div class="caption">${heirs().map(h => h.short).join(" and ")} could receive this at closing. Neither banks with PNC today.</div></section>
-      <section class="section"><div class="section-head"><h2>Introduce PNC</h2><span class="aside">With Margaret's agreement</span></div><div class="rows">${heirs().map(h => `<div class="row">${av(h)}<span class="tx"><b>${h.name}</b><span>${range(gifts(0)[h.id], gifts(1)[h.id])} at closing</span></span>${state.intro[h.id] ? `<span class="badge g">Intro requested</span>` : `<button class="btn ghost sm" data-act="intro" data-id="${h.id}">Introduce</button>`}</div>`).join("")}</div></section>
-      <section class="section"><div class="section-head"><h2>Specialists</h2><span class="aside">${sentPath() ? `Updated from ${sentPath().who}'s plan` : `${S.tasks.length} teams, one plan`}</span></div><div class="rows">${tasksFor().map(t => `<div class="row"><span class="tx"><b>${t.what}</b><span>${t.who}, due ${t.due}${t.from ? `. Added from ${t.from}'s plan` : ""}</span></span><span class="badge ${t.status === "Booked" ? "g" : t.status.startsWith("Waiting") ? "p" : "n"}">${t.status}</span></div>`).join("")}</div></section>
+      <section class="hero"><div class="label">Heading to heirs who bank elsewhere</div><div class="value huge">${range(heirSum(0), heirSum(1))}</div><div class="caption">${hs.map(h => h.short).join(" and ")} could receive this at closing. Neither banks with PNC today.</div>${stepsHtml}</section>
+      <section class="section">${head(1, "Align", "Done before any number moved")}<div class="rows">
+        <div class="row"><span class="ic p">${ic("lock")}</span><span class="tx"><b>Fairness is the widest gap</b><span>Four private check-ins, one finding. Nobody's answer is on the table.</span></span><span class="badge ${state.approved ? "g" : "n"}">${state.approved ? "Brief approved" : "Brief drafted"}</span></div>
+        <div class="row"><span class="ic o">${ic("cal")}</span><span class="tx"><b>Family meeting, Nov 12</b><span>Hawthorn IFS facilitator leads the fairness question.</span></span><span class="badge g">Booked</span></div></div></section>
+      ${allocate}
+      <section class="section">${head(3, "Activate", "Introductions and specialists")}
+        <div class="sub-lab">Introduce PNC <span>with Margaret's agreement</span></div>
+        <div class="rows">${hs.map(h => `<div class="row">${av(h)}<span class="tx"><b>${h.name}</b><span>${range(gifts(0)[h.id], gifts(1)[h.id])} at closing. ${h.role}.</span></span>${state.intro[h.id] ? `<span class="badge g">Intro requested</span>` : `<button class="btn ghost sm" data-act="intro" data-id="${h.id}">Introduce</button>`}</div>`).join("")}</div>
+        <div class="sub-lab">Specialists <span>${sent ? `updated from ${sent.who}'s plan` : `${tasks.length} teams, one plan`}</span></div>
+        <div class="rows">${tasks.map(t => `<div class="row"><span class="tx"><b>${t.what}</b><span>${t.who}, due ${t.due}${t.from ? `. Added from ${t.from}'s plan` : ""}</span></span><span class="badge ${t.status === "Booked" ? "g" : t.status.startsWith("Waiting") ? "p" : "n"}">${t.status}</span></div>`).join("")}</div></section>
       </div><aside class="col-side">${tallyPanel(true)}
         <div class="panel"><div class="section-head"><h2>Decision log</h2></div><div class="rows">${log.map(l => `<div class="row"><span class="tx"><b>${l.who}</b><span>${l.what}</span></span><span class="rt micro faint">${l.t}</span></div>`).join("")}</div></div>
         ${nextLink("year-one", "One year on")}
@@ -904,7 +942,7 @@
   }
   // Entrance choreography on arrival only; in-page changes only tween the numbers that changed.
   function enter() {
-    app.querySelectorAll(".rows, .stages, .ends, .voices, .col-side, .opts, .cast-row, .gaps, .recap, .tally, .chips, .goals, .guide, .pv-cards, .dtree").forEach(c => [...c.children].forEach((el, i) => el.style.setProperty("--i", i)));
+    app.querySelectorAll(".rows, .stages, .plan-steps, .ends, .voices, .col-side, .opts, .cast-row, .gaps, .recap, .tally, .chips, .goals, .guide, .pv-cards, .dtree").forEach(c => [...c.children].forEach((el, i) => el.style.setProperty("--i", i)));
     app.classList.add("anim"); clearTimeout(animTimer); animTimer = setTimeout(() => app.classList.remove("anim"), 2200);
   }
   function numbers(arrive) {
@@ -950,6 +988,7 @@
     else if (a === "goal-fix") set({ goalFix: Object.assign({}, state.goalFix, { [id]: !state.goalFix[id] }), fairMeans: fairNow(), chapter: chapterNow() });
     else if (a === "chapter") set({ chapter: state.chapter.includes(id) ? state.chapter.filter(x => x !== id) : [...state.chapter, id] });
     else if (a === "intro") set({ intro: Object.assign({}, state.intro, { [id]: true }) });
+    else if (a === "alloc-who") { ui.allocWho = id; render(); }
     else if (a === "agree") set({ agreed: Object.assign({}, state.agreed, { [id]: true }) });
     else if (a === "pick" && v) set({ picked: Object.assign({}, state.picked, { [v]: id }) });
     else if (a === "vote" && v && v !== "alex") set({ votes: Object.assign({}, state.votes, { [v]: currentPick(v) }) });

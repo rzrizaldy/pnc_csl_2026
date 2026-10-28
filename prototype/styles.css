@@ -802,3 +802,27 @@ ul.pz-list { list-style: none; padding: 0; }
 .dk-feeds .row.on .rt { color: var(--pos); font-weight: 600; }
 .dk-cta { margin-top: 16px; }
 .dk-trace.playing .tr-step.on .tr-body > b { color: var(--navy); }
+
+/* ---------- advisor plan: the three steps, then what each share could buy ---------- */
+.plan-steps { list-style: none; margin: 22px 0 0; padding: 0; display: grid; gap: 10px; }
+.plan-steps li { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 12px; align-items: start; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--r); background: var(--bg); }
+.plan-steps .ps-n { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; font-size: 13.5px; font-weight: 700; background: var(--surface); color: var(--sub); }
+.plan-steps li.done .ps-n { background: var(--pos-50); color: var(--pos); }
+.plan-steps li.cur { border-color: var(--orange-lt); background: var(--orange-50); }
+.plan-steps li.cur .ps-n { background: var(--orange); color: #fff; }
+.plan-steps .ps-tx b { display: block; font-size: 15.5px; font-weight: 600; color: var(--navy); }
+.plan-steps .ps-tx span { display: block; font-size: 13.5px; color: var(--sub); line-height: 1.3; margin-top: 2px; }
+.section-head h2 .stp { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; margin-right: 10px; vertical-align: 2px; font-size: 13px; font-weight: 700; background: var(--navy); color: #fff; }
+.sub-lab { margin-top: 16px; padding-bottom: 6px; border-bottom: 1px solid var(--line); font-size: 14px; font-weight: 600; color: var(--navy); }
+.sub-lab span { font-weight: 400; color: var(--sub); }
+.alloc-top { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 8px; }
+.alloc-top .lab { display: block; font-size: 13px; color: var(--sub); }
+.alloc-top b { display: block; font-size: 19px; font-weight: 600; color: var(--navy); letter-spacing: -0.01em; margin-top: 2px; }
+.alloc-seg { margin-top: 14px; max-width: 420px; }
+.alloc-rows .row { padding: 11px 0; }
+.alloc-rows .tx b small { font-size: 13px; font-weight: 500; color: var(--faint); margin-left: 4px; }
+.alloc-rows .tx em { font-style: normal; color: var(--faint); }
+.alloc-rows .tx em::before { content: "· "; }
+@media (min-width: 720px) {
+  .plan-steps { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
