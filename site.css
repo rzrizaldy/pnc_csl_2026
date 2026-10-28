@@ -20,7 +20,7 @@ h1, h2, h3 { font-weight: 500; }
 /* nav */
 .nav { position: sticky; top: 0; z-index: 10; background: var(--navy-2); color: #fff; }
 .nav .wrap { display: flex; align-items: center; gap: 14px; height: 56px; overflow-x: auto; scrollbar-width: none; }
-.nav .brand { display: flex; align-items: center; gap: 8px; color: #fff; text-decoration: none; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; font-size: 14px; white-space: nowrap; margin-right: auto; }
+.nav .brand { display: flex; align-items: center; gap: 8px; color: #fff; text-decoration: none; font-weight: 600; font-size: 16px; white-space: nowrap; margin-right: auto; }
 .nav a.link { color: rgba(255,255,255,.82); text-decoration: none; font-size: 13px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; align-self: stretch; display: flex; align-items: center; border-bottom: 3px solid transparent; padding-top: 3px; }
 .nav a.link.on { color: #fff; border-bottom-color: var(--orange); }
 
