@@ -198,7 +198,7 @@
     const cast = [
       ["margaret", "Margaret Wilson, 63", "Family business owner", "Needs a clear plan the family understands and trusts."],
       ["alex", "Alex Lee", "PNC advisor", "Needs to understand family concerns before decisions are made."],
-      ["tom", "Tom Wilson, 65", "Margaret's husband", "Not an owner. Still affected."],
+      ["tom", "Tom Wilson, 65", "Margaret's husband", "Not an owner, but the plan is his future too."],
       ["ben", "Ben Wilson, 40", "COO, staying on", "Thinks his years should count."],
       ["claire", "Claire Wilson, 37", "Nurse in Columbus", "Thinks equal is fair."],
       ["sam", "Sam Wilson, 33", "Engineer in Austin", "How much, and when?"],
@@ -288,13 +288,13 @@
       hint: "Permissioned activity in Wilson Transport's PNC accounts puts a sale at 81 out of 100, a year before closing. Alex reviews the signal before any outreach. Tap Call Margaret.", target: '[data-act="start"]', done: () => state.started },
     { side: "Family", stage: "Align", route: "preview", title: "Margaret previews what's possible",
       hint: "Before she talks to anyone, she adds what she has and AI reads it. Tap Use the Wilsons' documents.", target: '[data-act="pv-sample"]', done: () => state.pvRead },
-    { side: "Family", stage: "Align", route: "me/margaret/docs", title: "Her documents go in. AI reads them.",
+    { side: "Family", stage: "Align", route: "me/margaret/docs", title: "AI reads Margaret's documents",
       hint: "Eight documents, one upload. AI reads each one and connects it to a goal before she answers a single question. Tap Use the Wilsons' documents.", target: '[data-act="docs-go"]', done: () => state.docsDone },
     { side: "Family", stage: "Align", route: "me/margaret/setup", title: "Margaret sets her goals",
       hint: "AI ranked three goals from her documents and pre-filled each one. Margaret checks them and invites the family.", target: '[data-act="invite"]', done: () => state.invited },
     { side: "Family", stage: "Align", route: "me/claire/checkin", title: "Claire says what she's never said",
       hint: "Her words stay on this screen unless she shares them. Share answer 1 with Alex.", target: '[data-act="toggle-share"][data-id="q1"]', done: () => state.shared.includes("q1") },
-    { side: "Advisor", stage: "Align", route: "advisor/align", title: "The AI reads. Alex decides.", noScroll: true,
+    { side: "Advisor", stage: "Align", route: "advisor/align", title: "AI drafts the brief, Alex approves it", noScroll: true,
       hint: "Four private check-ins become one finding: the widest gap is fairness. Approve the brief.", target: '[data-act="approve"]', done: () => state.approved },
     { side: "Advisor", stage: "Align", route: "advisor/guide", title: "Alex walks in with a guide",
       hint: "AI turns the brief into a 90-minute run of show, one line per part. Tap Present to the family.", target: '[data-act="present-open"]', done: () => state.presented },
@@ -340,7 +340,7 @@
       checkin: ["lock", done ? "g" : "o", "Your private check-in", done ? (pid === "claire" ? `Done. ${state.shared.length} of 3 answers shared` : "Done. Your words stay private") : "Takes about 10 minutes", done ? "" : `<span class="badge o">To do</span>`, `me/${pid}/checkin`],
       vote: ["scale", mine ? "g" : "o", "Vote on the split", mine ? `You voted ${OPT[mine].label}. You can change it until Nov 12` : "Three options. Your vote is private", mine ? "" : `<span class="badge o">Open</span>`, `me/${pid}/options`],
       ask: ["chat", "", "Ask Alex", replies ? `${replies} ${replies === 1 ? "reply" : "replies"} from Alex` : "Questions go to your PNC advisor", "", `me/${pid}/ask`],
-      nextchapter: ["compass", "p", "Plan your next chapter", "Owners who plan life after a sale regret it less", "", `me/${pid}/plan`],
+      nextchapter: ["compass", "p", "Plan your next chapter", "Pick what comes after the sale, and talk it through with Alex", "", `me/${pid}/plan`],
     }[id];
     return `<a class="row" href="#/${R[5]}"><span class="ic ${R[1]}">${ic(R[0])}</span><span class="tx"><b>${R[2]}</b><span>${R[3]}</span></span>${R[4]}${chev}</a>`;
   }
@@ -537,7 +537,7 @@
         <li><b>Then fairness (gap ${top.g.toFixed(2)}).</b> Show all three options as a range, not as people.</li><li><b>Close with the will.</b> Share counsel's summary, not a conclusion.</li></ol>
         <p class="note">${ic("users", 16)} A gap of 0.75 or more calls for a facilitator. Hawthorn IFS is booked.</p>`),
       step(5, state.approved ? "Approved by Alex" : "Alex reviews and approves", state.approved
-        ? `<p>The brief goes to the facilitator. The family sees the agenda, never the inputs.</p><div class="cta-row"><a class="btn sm" href="#/advisor/guide">${ic("guide", 16)} Open the meeting guide</a><button class="linkbtn" data-act="unapprove">Reopen the draft</button></div>`
+        ? `<p>The brief goes to the facilitator. The family sees the agenda. The inputs stay with Alex.</p><div class="cta-row"><a class="btn sm" href="#/advisor/guide">${ic("guide", 16)} Open the meeting guide</a><button class="linkbtn" data-act="unapprove">Reopen the draft</button></div>`
         : `<p>Nothing reaches the family or the facilitator until Alex approves.</p><button class="btn navy" data-act="approve">${ic("check", 18, 2.4)} Approve the brief</button>`, "human", state.approved ? "check" : "person"),
     ].join("");
     return `<div class="page"><div class="cols ai"><div class="col-side sticky">
@@ -753,7 +753,7 @@
           <button class="btn block" data-act="docs-go">Use the Wilsons' documents</button></div>`;
     return `<div class="page"><div class="cols"><div class="col-main">
       <section class="hero"><div class="label">Before you set your goals</div><h1 class="title">${done ? "Your documents are read" : active ? "AI is reading your documents" : "Add your financial documents"}</h1>
-        <div class="caption">${done ? `${docs.length} documents, ${docs.reduce((s, d) => s + d.pages, 0)} pages. Every number below has a source. Check them, then set your goals.` : "AI reads them, pulls out the facts, and connects each one to your plan before you answer a single question. You check the result; nothing is decided for you."}</div>
+        <div class="caption">${done ? `${docs.length} documents, ${docs.reduce((s, d) => s + d.pages, 0)} pages. Every number below has a source. Check them, then set your goals.` : "AI reads them and connects each fact to your plan before you answer a question. You check every result."}</div>
         ${!active ? dropzone : `${own ? `<p class="micro faint" style="margin-top:8px">Your files stayed on this device. In the prototype, AI reads the Wilsons' sample set instead.</p>` : ""}
           ${done ? `<button class="linkbtn" data-act="docs-reset">Start over with other documents</button>` : ""}`}</section>
       ${!active ? `<section class="section"><div class="pv-empty">Add your documents, or use the Wilsons', and watch AI read them: what each one says, and which goal it feeds.</div></section>` : `
@@ -768,8 +768,8 @@
         <p class="micro faint" style="margin-top:10px">AI ranked three goals from these documents and pre-filled each one. The next screen is where you check them.</p></section>` : ""}`}
       </div><aside class="col-side">
         <section class="panel dk-feeds"><div class="section-head"><h2>Where each document goes</h2></div><div class="rows">${X.feeds.map(feedRow).join("")}</div>
-          <p class="micro faint" style="margin-top:8px">Your documents go to Alex at PNC, and only Alex. Your family sees the options they lead to, never the documents.</p></section>
-        ${!active ? `<section class="panel"><div class="section-head"><h2>Why documents first</h2></div><ol class="recap">${[["Fewer questions", "AI fills in what the paperwork already says. You confirm, instead of typing it twice."], ["Goals with numbers", "Each goal arrives pre-filled from your own figures, not a guess."], ["Problems found early", "An old will or a lapsed policy surfaces now, not at closing."]].map(([t, b]) => `<li><span class="rc-ic">${ic("check", 14, 2.6)}</span><span class="tx"><b>${t}</b><span>${b}</span></span></li>`).join("")}</ol></section>` : ""}
+          <p class="micro faint" style="margin-top:8px">Your documents go to Alex at PNC, and only Alex. Your family sees only the options they lead to.</p></section>
+        ${!active ? `<section class="panel"><div class="section-head"><h2>Why documents first</h2></div><ol class="recap">${[["Fewer questions", "AI fills in what the paperwork already says. You confirm, instead of typing it twice."], ["Goals with numbers", "Each goal arrives pre-filled from your own figures."], ["Problems found early", "An old will or a lapsed policy surfaces now, not at closing."]].map(([t, b]) => `<li><span class="rc-ic">${ic("check", 14, 2.6)}</span><span class="tx"><b>${t}</b><span>${b}</span></span></li>`).join("")}</ol></section>` : ""}
       </aside></div></div>`;
   }
   // Timed run: uploads land one by one, then each AI step reads its documents and fills the goals it feeds.
@@ -838,7 +838,7 @@
         <ol class="trace">${[
           ["Read your documents and the preview", `Three years of statements, the shareholder register and NorthPeak's letter. ${money(net())} at closing; ${money(12)} of it could go to the children.`],
           ["Ranked your goals", "Fairness first: one child stays with the buyer and two don't. Then what you live on, then what comes after 35 years of running the company."],
-          ["Pre-filled each one", "From the numbers, not from guesses. Change any of them below."],
+          ["Pre-filled each one", "Each one comes from your own figures. Change any of them below."],
         ].map(([t, b], k) => step(k, t, `<p>${b}${k === 0 ? ` <a href="#/me/margaret/docs">See what it read</a>` : ""}</p>`)).join("")}</ol></section>
       <section class="section recs"><div class="section-head"><h2>What AI recommends</h2><span class="aside">${sel.length} goals, in order</span></div>
         <div class="rec-list">${cards}</div>
