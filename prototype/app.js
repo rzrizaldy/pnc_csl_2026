@@ -102,9 +102,9 @@
 
   // Three steps. The deck's Signal and Join fold into Align; Continue folds into Activate.
   const STAGES = [
-    { id: "align", label: "Align", icon: "lock", line: "PNC spots the sale early. Each person checks in privately, and AI shows where they differ." },
-    { id: "allocate", label: "Allocate", icon: "scale", line: "Each person sees their number under each split, and votes." },
-    { id: "activate", label: "Activate", icon: "chat", line: "Next steps, specialists, and a yearly check-in." },
+    { id: "align", label: "Align", icon: "lock" },
+    { id: "allocate", label: "Allocate", icon: "scale" },
+    { id: "activate", label: "Activate", icon: "chat" },
   ];
 
   // ---------- visualisations ----------
@@ -202,13 +202,12 @@
         <header class="onb-top"><span class="brand">${mark}Family Table <small>PNC Private Bank</small></span><button class="onb-link" data-act="switch">Explore on your own</button></header>
         <div class="onb-hero">
           <div class="onb-copy">
-            <h1>Plan the sale of a family business, together.</h1>
-            <p>Everyone in the family has a private say. The PNC advisor sees the whole family a year early. Nothing is shared without consent.</p>
+            <h1>Crafting the family future, today</h1>
+            <p>Every voice in the family, heard before the sale.</p>
             <div class="onb-ctas"><button class="btn xl" data-act="tour-start">Start the 2-minute demo</button><a class="btn xl ghost-w" href="#/preview">Preview it for your family</a></div>
-            <p class="onb-note">Ten steps, both sides. The preview needs no PNC account.</p>
           </div>
           <div class="onb-how"><h2>How it works</h2>
-            <ol class="stages">${STAGES.map((s, i) => `<li style="--i:${i}"><span class="st-ic">${ic(s.icon, 18)}</span><span class="st-tx"><b>${s.label}</b><span>${s.line}</span></span></li>`).join("")}</ol></div>
+            <ol class="stages">${STAGES.map((s, i) => `<li style="--i:${i}"><span class="st-ic">${ic(s.icon, 18)}</span><span class="st-tx"><b>${s.label}</b></span></li>`).join("")}</ol></div>
         </div></div></section>
       <section class="onb-end"><div class="in">
         <h2>Where it ends, a year after the sale</h2>
