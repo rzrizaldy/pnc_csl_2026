@@ -13,7 +13,7 @@
 
   // ---------- state ----------
   const KEY = "family-table-v8";
-  const fresh = () => ({ shared: [], optOut: false, approved: false, started: false, routed: {}, pick: "balanced", votes: {},
+  const fresh = () => ({ shared: [], optOut: false, approved: false, started: false, routed: {}, pick: "balanced", picked: {}, votes: {},
     answers: {}, intro: {}, invited: false, chapter: [], agreed: {}, msgs: [], replies: {}, drafts: {}, calls: {}, confirmed: {},
     shareReply: {}, tour: -1, pv: { preset: "wilson", value: 48, kids: 3, inBiz: 1 }, previewed: false, goals: ["fair", "live", "chapter"],
     fairMeans: null, spend: 300, foundation: 2, keepName: false, tree: {}, pathSent: {}, presented: false });
@@ -55,6 +55,12 @@
   const heirSum = w => heirs().reduce((s, h) => s + gifts(w)[h.id], 0);
   // Votes are private: screens only ever read the counts.
   const votes = () => Object.assign({}, S.votes, state.votes);
+  // Pre-fills: an earlier input suggests the next step, and the person confirms or changes it. Nothing submits itself.
+  const stanceToOption = v => v >= 1 ? "equal" : v <= -1 ? "equity" : "balanced";
+  const suggestedPick = pid => { const th = S.themes.find(t => t.id === "fair"), v = th && th.s[pid]; return v === undefined || P[pid].status !== "checked" ? null : stanceToOption(v); };
+  const familyDefault = () => state.fairMeans || "equal"; // Margaret's proposal from setup, else her stated plan
+  const pickSource = pid => state.picked[pid] ? "yours" : KIDS.includes(pid) && suggestedPick(pid) ? "checkin" : state.fairMeans ? "margaret" : "plan";
+  const currentPick = pid => state.picked[pid] || (KIDS.includes(pid) && suggestedPick(pid)) || familyDefault();
   const tally = () => { const t = Object.fromEntries(S.options.map(o => [o.id, 0])); Object.values(votes()).forEach(v => t[v]++); return t; };
   // Messages to Alex: the seeded inbox plus anything sent in this session.
   const messages = () => [...S.inbox, ...state.msgs];
@@ -235,9 +241,9 @@
     { side: "Advisor", stage: "Align", route: "advisor/guide", title: "Alex walks in with a guide",
       hint: "AI turns the brief into a 90-minute run of show, with what to say, show and ask. Tap Present to the family.", target: '[data-act="present-open"]', done: () => state.presented },
     { side: "Family", stage: "Allocate", route: "me/sam/options", title: "Sam sees his number, then votes",
-      hint: "Each option shows every child's share. Votes are private, and counts appear only after 3 votes. Cast Sam's vote.", target: '[data-act="vote"]', done: () => !!state.votes.sam },
+      hint: "From Sam's check-in, AI suggests Equal. Each option shows every child's share, and votes stay private. Cast Sam's vote, or change it first.", target: '[data-act="vote"]', done: () => !!state.votes.sam },
     { side: "Family", stage: "Allocate", route: "me/sam/decide", title: "Sam firms up the decision",
-      hint: "Three choices narrow 12 possible plans to one. Choose how the gift is paid.", target: '[data-act="tree"][data-k="pay"]', done: () => !!(state.tree.sam && state.tree.sam.pay) },
+      hint: "Sam's vote settled the first choice: 4 plans left, not 12. Choose how the gift is paid. When Sam sends the finished plan, Alex's task list follows it.", target: '[data-act="tree"][data-k="pay"]', done: () => !!(state.tree.sam && state.tree.sam.pay) },
     { side: "Advisor", stage: "Activate", route: "advisor/inbox", title: "Sam asks. AI drafts. Alex sends.",
       prep: () => { if (!state.msgs.some(m => m.from === "sam")) state.msgs.push({ id: "sam-demo", from: "sam", qi: 0, at: "Just now" }); },
       hint: "Sam's question went to Alex. The draft uses calculator numbers and passes the checks. Approve and send.", target: '[data-act="send"][data-from="sam"]',
@@ -354,18 +360,20 @@
 
   // ---------- family: vote ----------
   function options(pid) {
-    const kid = KIDS.includes(pid), o = OPT[state.pick], g = gifts(o.w), mine = votes()[pid];
+    const kid = KIDS.includes(pid), cur = currentPick(pid), o = OPT[cur], g = gifts(o.w), mine = votes()[pid], src = pickSource(pid);
+    const note = mine ? "" : src === "checkin" ? `<p class="prefill">${ic("brief", 15)}<span>From your check-in, AI suggests <b>${o.label}</b>. Change it, or vote.</span></p>`
+      : src === "margaret" ? `<p class="prefill">${ic("brief", 15)}<span>${pid === "margaret" ? "Your" : "Margaret's"} proposal from setup: <b>${o.label}</b>. Change it, or vote.</span></p>` : "";
     const hero = kid
       ? `<div class="label">Your share with <span data-pickname>${o.label}</span></div><div class="value big" data-count="${g[pid]}" data-fmt="m" data-key="mine-${pid}">${money(g[pid])}</div>
          <div class="caption">${pid === "ben" ? "In cash, plus your $1.5M of NorthPeak equity." : "Paid at closing, expected next fall."}</div>`
       : `<div class="label">The family gift</div><div class="value big" data-count="12" data-fmt="m">${money(12)}</div><div class="caption">Split three ways. Ben also keeps $1.5M of NorthPeak equity, and that's what the options disagree on.</div>`;
-    const cards = S.options.map(x => `<button class="opt ${x.id === state.pick ? "on" : ""}" data-act="pick" data-id="${x.id}" aria-pressed="${x.id === state.pick}">
-        <span class="opt-head"><b>${x.label}</b>${mine === x.id ? `<span class="badge g">Your vote</span>` : ""}</span><span class="opt-line">${x.line}</span>${optBars(x, pid)}</button>`).join("");
-    const cta = mine === state.pick
+    const cards = S.options.map(x => `<button class="opt ${x.id === cur ? "on" : ""}" data-act="pick" data-id="${x.id}" aria-pressed="${x.id === cur}">
+        <span class="opt-head"><b>${x.label}</b>${mine === x.id ? `<span class="badge g">Your vote</span>` : !mine && src === "checkin" && x.id === cur ? `<span class="badge p">AI suggested</span>` : ""}</span><span class="opt-line">${x.line}</span>${optBars(x, pid)}</button>`).join("");
+    const cta = mine === cur
       ? `<button class="btn done block" disabled>${ic("check", 18, 2.4)} You voted ${o.label}</button><p class="micro faint center">You can change your vote until the Nov 12 meeting.</p>`
       : `<button class="btn block" data-act="vote">${mine ? `Change my vote to ${o.label}` : `Vote ${o.label}`}</button>`;
     return `<div class="page"><div class="cols"><div class="col-main">
-      <section class="hero">${hero}</section>
+      <section class="hero">${hero}${note}</section>
       <section class="section"><div class="section-head"><h2>Three ways to split $12.0M</h2></div><div class="opts">${cards}</div>
         <div class="vote-cta">${cta}<p class="privacy">${ic("lock", 15)} Your vote is private. Nobody sees how you voted, Alex included.</p></div>
         ${nextLink(`me/${pid}/decide`, "Firm it up in the decision tree")}</section>
@@ -521,12 +529,13 @@
   function advPlan() {
     const log = [...S.ledger,
       ...(state.approved ? [{ t: "Today", who: "Alex Lee", what: "Approved the brief for Nov 12." }] : []),
+      ...(sentPath() ? [{ t: "Today", who: "Plan builder", what: `Drafted specialist tasks from ${sentPath().who}'s plan. Alex reviews each one.` }] : []),
       ...messages().filter(m => state.replies[m.id] != null).map(m => ({ t: "Today", who: "Alex Lee", what: `Replied to ${P[m.from].short}, AI draft reviewed.` })),
       ...Object.keys(state.agreed).map(id => ({ t: "Today", who: P[id].name, what: "Agreed to the plan in principle." }))];
     return `<div class="page"><div class="cols"><div class="col-main">
       <section class="hero"><div class="label">Heading to heirs who bank elsewhere</div><div class="value huge">${range(heirSum(0), heirSum(1))}</div><div class="caption">${heirs().map(h => h.short).join(" and ")} could receive this at closing. Neither banks with PNC today.</div></section>
       <section class="section"><div class="section-head"><h2>Introduce PNC</h2><span class="aside">With Margaret's agreement</span></div><div class="rows">${heirs().map(h => `<div class="row">${av(h)}<span class="tx"><b>${h.name}</b><span>${range(gifts(0)[h.id], gifts(1)[h.id])} at closing</span></span>${state.intro[h.id] ? `<span class="badge g">Intro requested</span>` : `<button class="btn ghost sm" data-act="intro" data-id="${h.id}">Introduce</button>`}</div>`).join("")}</div></section>
-      <section class="section"><div class="section-head"><h2>Specialists</h2><span class="aside">${S.tasks.length} teams, one plan</span></div><div class="rows">${S.tasks.map(t => `<div class="row"><span class="tx"><b>${t.what}</b><span>${t.who}, due ${t.due}</span></span><span class="badge ${t.status === "Booked" ? "g" : t.status.startsWith("Waiting") ? "p" : "n"}">${t.status}</span></div>`).join("")}</div></section>
+      <section class="section"><div class="section-head"><h2>Specialists</h2><span class="aside">${sentPath() ? `Updated from ${sentPath().who}'s plan` : `${S.tasks.length} teams, one plan`}</span></div><div class="rows">${tasksFor().map(t => `<div class="row"><span class="tx"><b>${t.what}</b><span>${t.who}, due ${t.due}${t.from ? `. Added from ${t.from}'s plan` : ""}</span></span><span class="badge ${t.status === "Booked" ? "g" : t.status.startsWith("Waiting") ? "p" : "n"}">${t.status}</span></div>`).join("")}</div></section>
       </div><aside class="col-side">${tallyPanel(true)}
         <div class="panel"><div class="section-head"><h2>Decision log</h2></div><div class="rows">${log.map(l => `<div class="row"><span class="tx"><b>${l.who}</b><span>${l.what}</span></span><span class="rt micro faint">${l.t}</span></div>`).join("")}</div></div>
         ${nextLink("year-one", "One year on")}
@@ -636,14 +645,28 @@
   }
 
   // ---------- family: decision tree ----------
-  const pathFor = pid => Object.assign({ count: votes()[pid] || state.pick }, state.tree[pid] || {});
+  // The vote answers the tree's first question until the person changes it.
+  const pathFor = pid => Object.assign(votes()[pid] ? { count: votes()[pid] } : {}, state.tree[pid] || {});
+  const autoCount = pid => !!votes()[pid] && pathFor(pid).count === votes()[pid];
+  // Alex's specialist list follows a plan a family member sent. Paths that weren't sent stay private.
+  const sentPath = () => { for (const id of ["sam", "claire", "ben", "margaret"]) if (state.pathSent[id]) { const p = pathFor(id); if (p.pay) return { who: P[id].short, path: p }; } return null; };
+  const tasksFor = () => {
+    const c = sentPath(); if (!c) return S.tasks;
+    const p = c.path, add = [];
+    if (p.pay === "trust") add.push({ who: "Trust specialist", what: "Set up the family trust that pays the gifts over 10 years", due: "Dec 1", status: "Requested", from: c.who });
+    if (p.pay === "close") add.push({ who: "Wealth advisor", what: "Open accounts for Claire and Sam before closing, so the gifts land at PNC", due: "Nov 26", status: "Requested", from: c.who });
+    if (p.earn === "half") add.push({ who: "Tax specialist", what: "Tax treatment of the earnout, half to the children", due: "Dec 8", status: "Requested", from: c.who });
+    if (p.count) add.push({ who: "Estate attorney", what: `Write the ${OPT[p.count].label} split into the updated will`, due: "Nov 19", status: "Requested", from: c.who });
+    const dup = t => (p.pay === "trust" && t.who === "Trust specialist") || (p.pay === "close" && t.who === "Wealth advisor");
+    return [...add, ...S.tasks.filter(t => !dup(t))];
+  };
   function decide(pid) {
     const path = pathFor(pid), T = S.tree, chosen = T.filter(n => path[n.id]).length;
     let left = 1; T.forEach(n => { if (!path[n.id]) left *= n.opts.length; });
     const vs = votes(), nv = Object.keys(vs).length, t = tally(), lead = S.options.reduce((a, o) => t[o.id] > t[a.id] ? o : a, S.options[0]);
     const levels = T.map((n, i) => {
       if (i > 0 && !path[T[i - 1].id]) return "";
-      return `<li class="dt-node ${path[n.id] ? "done" : "open"}"><span class="dt-dot">${path[n.id] ? ic("check", 14, 2.8) : i + 1}</span><div class="dt-body"><b>${n.q}</b>
+      return `<li class="dt-node ${path[n.id] ? "done" : "open"}"><span class="dt-dot">${path[n.id] ? ic("check", 14, 2.8) : i + 1}</span><div class="dt-body"><b>${n.q}</b>${n.id === "count" && autoCount(pid) ? `<span class="badge p dt-from">From your vote</span>` : ""}
         <div class="dt-opts">${n.opts.map(([id, l, s]) => `<button class="dt-opt ${path[n.id] === id ? "on" : ""}" data-act="tree" data-k="${n.id}" data-id="${id}" aria-pressed="${path[n.id] === id}"><b>${l}</b><span>${s}</span></button>`).join("")}</div>
         ${n.id === "count" && nv >= MIN_GROUP ? `<p class="micro faint">The family's private vote leans ${lead.label}, ${t[lead.id]} of ${nv}. Counts only.</p>` : ""}</div></li>`;
     }).join("");
@@ -653,12 +676,12 @@
       outcome = `<section class="panel outcome"><div class="section-head"><h2>Your plan</h2><span class="aside">1 of 12</span></div>
         <div class="obars">${KIDS.map(k => `<span class="ob ${k === pid ? "mine" : ""}"><span class="ob-n">${k === pid ? "You" : P[k].short}</span><span class="ob-t"><i style="width:${(g[k] / mx * 100).toFixed(1)}%;background:${P[k].color}"></i>${later ? `<i class="later" style="width:${(later / mx * 100).toFixed(1)}%"></i>` : ""}</span><b>${money(g[k] + later)}</b></span>`).join("")}</div>
         <p class="small muted" style="margin-top:10px">${path.pay === "trust" ? `Paid through a family trust: ${pid && KIDS.includes(pid) ? `about ${kOrM(g[pid] / 10)} a year for you` : "about a tenth of each share a year"}, for 10 years.` : "Paid in cash at closing, next fall."}${later ? ` Plus ${money(later)} each later, only if the earnout targets are met (striped).` : ""}</p>
-        ${KIDS.includes(pid) || pid === "margaret" ? (state.pathSent[pid] ? `<button class="btn done block" disabled>${ic("check", 18, 2.4)} Sent to Alex for Nov 12</button>` : `<button class="btn block" data-act="send-path">Send my path to Alex for Nov 12</button>`) : ""}
+        ${KIDS.includes(pid) || pid === "margaret" ? (state.pathSent[pid] ? `<button class="btn done block" disabled>${ic("check", 18, 2.4)} Sent to Alex for Nov 12</button><p class="prefill">${ic("brief", 15)}<span>Alex's specialist list now follows your plan.</span></p>` : `<button class="btn block" data-act="send-path">Send my path to Alex for Nov 12</button>`) : ""}
         <p class="micro faint" style="margin-top:8px">Only Alex sees a path you send. The family decides together on Nov 12; this is in principle until counsel confirms it.</p></section>`;
     }
     return `<div class="page"><div class="cols"><div class="col-main">
       <section class="hero"><div class="label">Possible plans left</div><div class="value huge"><span>${left}</span><span class="unit">of 12</span></div>
-        <div class="caption">Three choices turn twelve possible plans into one. Settle them in order; each one shows what it does to every share.</div>
+        <div class="caption">${autoCount(pid) ? `Your vote settled the first choice, so ${left} plans are left. Two more choices turn them into one.` : "Three choices turn twelve possible plans into one. Settle them in order; each one shows what it does to every share."}</div>
         <div class="dt-prog" aria-label="${chosen} of 3 settled">${T.map(n => `<i class="${path[n.id] ? "on" : ""}"></i>`).join("")}</div></section>
       <section class="section"><ol class="dtree">${levels}</ol></section>
       </div><aside class="col-side">${outcome || `<section class="panel"><div class="section-head"><h2>Your plan</h2></div><p class="small muted">Settle all three choices to see every child's number under your plan.</p></section>`}
@@ -818,8 +841,8 @@
     else if (a === "chapter") set({ chapter: state.chapter.includes(id) ? state.chapter.filter(x => x !== id) : [...state.chapter, id] });
     else if (a === "intro") set({ intro: Object.assign({}, state.intro, { [id]: true }) });
     else if (a === "agree") set({ agreed: Object.assign({}, state.agreed, { [id]: true }) });
-    else if (a === "pick") set({ pick: id });
-    else if (a === "vote" && v && v !== "alex") set({ votes: Object.assign({}, state.votes, { [v]: state.pick }) });
+    else if (a === "pick" && v) set({ picked: Object.assign({}, state.picked, { [v]: id }) });
+    else if (a === "vote" && v && v !== "alex") set({ votes: Object.assign({}, state.votes, { [v]: currentPick(v) }) });
     else if (a === "send-q" && v) set({ msgs: [...state.msgs, { id: v + "-" + Date.now(), from: v, qi: +id, at: "Just now" }] });
     else if (a === "send-free" && v) {
       const box = app.querySelector("textarea[data-compose]"), text = box ? box.value.trim() : "";

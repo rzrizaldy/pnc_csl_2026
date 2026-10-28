@@ -227,6 +227,10 @@ button.row.pick.on b { color: var(--pos); }
 .ob.mine .ob-t i { opacity: 1; }
 .ob.mine b { color: var(--navy); }
 .vote-cta { margin-top: 16px; }
+.prefill { display: flex; align-items: flex-start; gap: 7px; margin-top: 12px; font-size: 14.5px; color: var(--purple); line-height: 1.4; }
+.prefill svg { flex: none; margin-top: 3px; }
+.prefill b { color: inherit; }
+.dt-from { margin-left: 8px; vertical-align: 2px; }
 .vote-cta .micro { margin-top: 8px; }
 .privacy { display: block; font-size: 13.5px; color: var(--sub); margin-top: 12px; text-align: center; }
 .privacy svg { color: var(--pos); vertical-align: -2px; margin-right: 3px; }
