@@ -153,11 +153,19 @@ function disc(P, x, y, z, r, fill, o, stroke = "none", sw = 2) { const [sx, sy] 
 // text lying on a horizontal plane, reading up and to the right
 function floorText(P, x, y, z, txt, size, fill, o, weight = 700) { const [sx, sy] = P(x, y, z); return o > .002 ? `<text transform="matrix(${IC},${-IS},${IC},${IS},${fx(sx)},${fx(sy)})" font-family="Barlow" font-weight="${weight}" font-size="${fx(size * P.k)}" fill="${fill}" text-anchor="middle" dominant-baseline="middle" opacity="${o.toFixed(3)}">${txt}</text>` : ""; }
 // the Family Table mark lying on a plane: ring, three seats, an orange centre
-function markFlat(P, x, y, z, r, o) {
+const SEAT_ANG = [-90, 21.8, 158.2];   // the app mark: seats at (16,5), (26,20), (6,20) on a 32-unit grid
+function markFlat(P, x, y, z, r, o, base = false) {
   if (o <= .002) return "";
-  let s = disc(P, x, y, z, r, "none", o, "#fff", Math.max(2, r * P.k * .1));
-  [-90, 30, 150].forEach(a => { const q = a * Math.PI / 180; s += disc(P, x + r * Math.cos(q), y + r * Math.sin(q), z, r * .2, "#fff", o); });
-  return s + disc(P, x, y, z, r * .36, "#EF6A00", o);
+  let s = base ? disc(P, x, y, z, r * 1.32, "#16295F", o) : "";
+  s += disc(P, x, y, z, r, "none", o, "#fff", Math.max(2, r * P.k * .13));
+  SEAT_ANG.forEach(a => { const q = a * Math.PI / 180; s += disc(P, x + r * .786 * Math.cos(q), y + r * .786 * Math.sin(q), z, r * .171, "#fff", o); });
+  return s + disc(P, x, y, z, r * .357, "#EF6A00", o);
+}
+// an upright cylinder: side band, then the top
+function cyl(P, x, y, z, r, h, top, side, o) {
+  if (o <= .002 || r <= 0) return "";
+  const [bx, by] = P(x, y, z), [tx, ty] = P(x, y, z + h), rx = r * P.k, ry = rx * .57735;
+  return `<g opacity="${o.toFixed(3)}"><ellipse cx="${fx(bx)}" cy="${fx(by)}" rx="${fx(rx)}" ry="${fx(ry)}" fill="${side}"/><rect x="${fx(tx - rx)}" y="${fx(ty)}" width="${fx(2 * rx)}" height="${fx(by - ty)}" fill="${side}"/><ellipse cx="${fx(tx)}" cy="${fx(ty)}" rx="${fx(rx)}" ry="${fx(ry)}" fill="${top}"/></g>`;
 }
 function grid(P, o, n = 12) {
   if (o <= .002) return "";
@@ -214,7 +222,7 @@ function makeSlots() {
     const d = el("div", "dev " + kind, root), bez = el("div", "bez", d), scr = el("div", "scr", bez);
     const f = el("iframe", "", scr); loads.push(new Promise(r => f.addEventListener("load", r, { once: true }))); f.src = PROTO;
     const fxl = el("div", "fx", scr, `<div class="tap"></div><div class="tap"></div>${CURSOR}<div class="ring"></div>`);
-    SLOTS[kind + L] = { el: d, frame: f, taps: [...fxl.querySelectorAll(".tap")], cursor: fxl.querySelector(".cursor"), ring: fxl.querySelector(".ring") };
+    SLOTS[kind + L] = { el: d, bez, frame: f, taps: [...fxl.querySelectorAll(".tap")], cursor: fxl.querySelector(".cursor"), ring: fxl.querySelector(".ring") };
   }
   return Promise.all(loads);
 }
@@ -279,7 +287,8 @@ async function setup(sh) { sh.ready = true; await go(sh.win(), sh.route, sh.stat
 function drawDev(sh, t) {
   const S = sh.slot, D = sh.D, sc = sh.scroll.value(t).s;
   if (Math.abs(sh.win().scrollY - sc) > .01) sh.win().scrollTo({ top: sc, behavior: "instant" });
-  const sy = sh.win().scrollY, v = { ...sh.v.value(t) }; v.s *= 1 + .035 * clamp((t - sh.t0) / (sh.t1 - sh.t0));
+  const sy = sh.win().scrollY, v = sh.v.value(t);
+  S.bez.style.boxShadow = `0 0 0 2px rgba(255,255,255,.2), 0 ${(50 * (1 - v.a)).toFixed(1)}px 90px rgba(3,8,26,${(.45 * (1 - v.a)).toFixed(3)})`;
   // a shot that continues the previous one on the same device dissolves its screen in over the old one
   const xin = sh.cont ? io(clamp((t - sh.t0) / XF)) : 1;
   S.el.style.opacity = (v.o * xin).toFixed(3);
@@ -425,7 +434,7 @@ const LAYERS = [
 ];
 function worldC(t) {
   const Y = K.yearone, St = K.stack, Cl = K.close, P = iso(push(CAM_C.value(t), t, Y - .8, .006)), z = P.k / 72;
-  const all = seg(t, Y - .5, .9) * (1 - seg(t, Cl + 1.2, 1.0));
+  const all = seg(t, Y - .5, .9);   // the stack and the graph fade on their own; the mark stays to the end
   if (all <= .002) return;
   OUT.svg.push(grid(P, all * .8 * (1 - seg(t, St + .2, 1.2)), 12));
   // household graph
@@ -444,6 +453,18 @@ function worldC(t) {
     if (l > .01 && l < .99) OUT.svg.push(disc(P, x, y, .14, .6 + 1.2 * l, "none", pop * (1 - l), "#EF6A00", 3));
     person(P, n, x, y, 1.15, 78 * z, pop, NAMES[n], "", .14);
   });
+  // the close: a navy base, the ring drawn in, three seats and the orange centre rising, the app mark in 3D
+  const lg = seg(t, Cl + .5, .8) * all;
+  if (lg > .002) {
+    const cx = -.2, R = 1.25, base = .32, ring = seg(t, Cl + .9, .9), [rx0, ry0] = P(cx, 0, base + .02);
+    OUT.svg.push(cyl(P, cx, 0, 0, R * 1.32, base, "#1D3270", "#0F1E4B", lg));
+    OUT.svg.push(`<ellipse cx="${fx(rx0)}" cy="${fx(ry0)}" rx="${fx(R * P.k)}" ry="${fx(R * P.k * .57735)}" fill="none" stroke="#fff" stroke-width="${fx(R * P.k * .13)}" pathLength="1" stroke-dasharray="1" stroke-dashoffset="${(1 - ring).toFixed(4)}" transform="rotate(${(-90 * (1 - ring)).toFixed(2)} ${fx(rx0)} ${fx(ry0)})" opacity="${lg.toFixed(3)}"/>`);
+    // seats behind the centre first, then the centre, then the front seat, so the depth reads right
+    const seat = i => { const q = SEAT_ANG[i] * Math.PI / 180, p = seg(t, Cl + 1.4 + .16 * i, .5), sx = cx + R * .786 * Math.cos(q), sy = R * .786 * Math.sin(q);
+      return cyl(P, sx, sy, base, R * .171, .26 * outC(p), "#FFFFFF", "#C2CADF", lg * p); };
+    const cp = seg(t, Cl + 1.9, .6), lift = Math.sin(Math.PI * clamp((t - Cl - 1.9) / .6)) * .25;
+    OUT.svg.push(seat(0), seat(2), cyl(P, cx, 0, base, R * .357, .42 * outC(cp) + lift, "#EF6A00", "#C45600", lg * cp), seat(1));
+  }
   // the stack
   const st = seg(t, St + .1, 1.4) * all;
   if (st > .002) {
@@ -452,7 +473,7 @@ function worldC(t) {
     LAYERS.forEach((ly, i) => {
       const s0 = St + .3 + (i === 1 ? 0 : .5 + .32 * Math.abs(i - 1)), p = ly.id === "data" ? st : seg(t, s0, .9) * all;
       if (p <= .002) return;
-      const zi = zOf(i) + (1 - p) * (i < 1 ? -1.6 : 1.6), sz = L * mix(1, .3, fold), o = p * (1 - seg(t, Cl + .6, .6));
+      const zi = zOf(i) + (1 - p) * (i < 1 ? -1.6 : 1.6), sz = L * mix(1, .45, fold), o = p * (1 - seg(t, Cl + .3, .55));
       const hl = ly.lit != null ? win(t, St + 5.0 + 1.25 * ly.lit, Cl - .3, .5) : 0;
       OUT.svg.push(boxC(P, cx, 0, zi, sz, sz, .3, ly.c, o));
       if (hl > .01) OUT.svg.push(quad(P, [[cx - sz / 2, -sz / 2, zi + .301], [cx + sz / 2, -sz / 2, zi + .301], [cx + sz / 2, sz / 2, zi + .301], [cx - sz / 2, sz / 2, zi + .301]], "none", o * hl, "#FFB27A", 4));
@@ -461,7 +482,7 @@ function worldC(t) {
         OUT.svg.push(g(G.wt, mid), g(G.margaret, G.tom), g(mid, hub), g(hub, G.ben), g(hub, G.claire), g(hub, G.sam));
         [G.wt, G.margaret, G.tom, G.ben, G.claire, G.sam].forEach(q => OUT.svg.push(disc(P, q[0] * .55 + cx + .4, q[1] * .55, zi + .31, .2, "#1D3270", o * .9)));
       }
-      if (ly.id === "exp") OUT.svg.push(markFlat(P, cx, 0, zi + .301, .9 * mix(1, .4, fold), o));
+      if (ly.id === "exp") OUT.svg.push(markFlat(P, cx, 0, zi + .301, .9 * mix(1, .4, fold), o, true));
       // label to the right, with a leader from the layer's right corner
       const lo = seg(t, St + 2.9 + .12 * (4 - i), .7) * (1 - seg(t, Cl - .4, .6)) * all;
       if (lo > .01) {
@@ -526,23 +547,28 @@ function miniVault(t, P, o) {
   const [ax, ay] = P(3.0, -3.0, 2.8); face("alex", ax, ay, 58, o * gateOpen);
   OUT.lab.push(lbl(ax, ay + 40, "Only if she shares", "c soft", o));
 }
-// the brief: four check-ins and three documents, through the AI, to Alex, who approves
+// the brief: four check-ins and three documents, through the AI, to one brief that waits for Alex
 function miniBrief(t, P, o) {
   const k0 = K.brief, ok = k0 + 9.1;
-  for (let j = 0; j < 4; j++) OUT.svg.push(glass(P, -2.9 + .7 * j, 2.0 - .7 * j, 0, .5, .5, .5, o));
-  for (let j = 0; j < 3; j++) OUT.svg.push(boxC(P, -1.3, 3.0, .1 * j, .75, .95, .06, COL.doc, o));
-  { const [sx, sy] = P(-1.0, 3.6, 0); OUT.lab.push(lbl(sx, sy + 8, "4 check-ins, 3 documents", "c soft", o)); }
-  OUT.svg.push(boxC(P, .6, .2, 0, 1.2, 1.2, .5, COL.pur, o));
-  { const [sx, sy] = P(.1, -.4, .5); OUT.lab.push(lbl(sx, sy - 40, "AI", "c pur", o)); }
-  for (let j = 0; j < 3; j++) { const ph = ((t - k0) * .5 + j / 3) % 1; OUT.svg.push(packet(P, [[-1.6, 2.4, .3], [.6, .2, .5]], ph, COL.ice, o * win(ph, 0, 1, .15), .16)); }
+  OUT.svg.push(boxC(P, -4.2, -1.4, 0, 2.0, 2.0, .12, COL.navy2, o));
+  [[-4.65, -1.85], [-3.75, -1.85], [-4.65, -.95], [-3.75, -.95]].forEach(([x, y], j) => OUT.svg.push(glass(P, x, y, .12, .6, .6, .6, o * seg(t, k0 + .8 + .12 * j, .5))));
+  for (let j = 0; j < 3; j++) OUT.svg.push(boxC(P, -3.6, 2.2, .1 * j, .8, 1.05, .06, COL.doc, o * seg(t, k0 + 1.1 + .12 * j, .5)));
+  { const [sx, sy] = P(-4.2, -1.4, .75); OUT.lab.push(lbl(sx, sy - 44, "4 check-ins", "c soft", o)); }
+  { const [sx, sy] = P(-3.6, 2.75, 0); OUT.lab.push(lbl(sx, sy + 8, "3 documents", "c soft", o)); }
+  OUT.svg.push(boxC(P, 0, 0, 0, 1.3, 1.3, .55, COL.pur, o));
+  { const [sx, sy] = P(0, 0, .55); OUT.lab.push(lbl(sx, sy - 52, "AI", "c pur", o)); }
+  for (let j = 0; j < 2; j++) { const ph = ((t - k0) * .5 + j / 2) % 1;
+    OUT.svg.push(packet(P, [[-3.2, -1.4, .4], [-.65, -.2, .4]], ph, COL.ice, o * win(ph, 0, 1, .15), .16), packet(P, [[-3.2, 2.2, .25], [-.65, .2, .3]], (ph + .25) % 1, COL.doc, o * win((ph + .25) % 1, 0, 1, .15), .16)); }
   const br = seg(t, k0 + 3.0, .7);
-  OUT.svg.push(boxC(P, 2.0, -1.4, 0, .9, 1.2, .08, COL.doc, o * br));
-  OUT.svg.push(line3(P, [1.2, -.4, .3], [1.55, -.9, .1], "#C9D1E6", 2, o * br, "3 6", -t * 20));
-  { const [sx, sy] = P(2.45, -.8, 0); OUT.lab.push(lbl(sx, sy + 8, "One brief", "c soft", o * br)); }
-  const ap = seg(t, ok, .5), [ax, ay] = P(3.0, -3.0, 2.0);
-  face("alex", ax, ay, 62, o * br);
+  OUT.svg.push(line3(P, [.65, 0, .3], [1.9, 0, .1], "#C9D1E6", 2, o * br, "3 6", -t * 20));
+  OUT.svg.push(boxC(P, 2.45, 0, 0, .9, 1.2, .08, COL.doc, o * br));
+  { const [sx, sy] = P(2.9, .6, 0); OUT.lab.push(lbl(sx, sy + 8, "One brief", "c soft", o * br)); }
+  const ap = seg(t, ok, .5);
+  OUT.svg.push(line3(P, [2.9, 0, .1], [3.9, 0, .05], ap > .5 ? "#FF9A4D" : "#5A6FAE", 2, o * br, "3 6", -t * 20));
+  OUT.svg.push(disc(P, 4.5, 0, .02, .6, ap > .5 ? "rgba(239,106,0,.25)" : "rgba(90,111,174,.2)", o * br, ap > .5 ? "#EF6A00" : "#5A6FAE", 3));
+  const [ax, ay] = P(4.5, 0, 1.9); face("alex", ax, ay, 60, o * br);
   OUT.svg.push(CHECK(ax + 24, ay + 22, 14, o * ap));
-  OUT.lab.push(lbl(ax, ay + 42, ap > .5 ? "Approved by Alex" : "Waits for Alex", "c" + (ap > .5 ? " org" : " soft"), o * br));
+  OUT.lab.push(lbl(ax, ay - 66, ap > .5 ? "Approved by Alex" : "Waits for Alex", "c" + (ap > .5 ? " org" : " soft"), o * br));
 }
 // twelve possible plans, settled by three choices
 function miniPlans(t, P, o) {
@@ -600,7 +626,7 @@ function build() {
   world(0, K.signal + 1.2, worldA);
   head(.8, 4.7, { h: "Margaret is selling the company she built.", top: 400 });
   head(4.9, K.stakes - .1, { h: "Her family has one question: what’s fair?", top: 400 });
-  head(K.stakes + .5, K.between - .1, { num: "55%", p: "of spouses and heirs leave the benefactor’s advisor.", src: "Natixis Investment Managers, 2026 Wealth Transfer Report", top: 300 });
+  head(K.stakes + .5, K.between - .1, { num: "$124T", p: "of U.S. wealth will change hands by 2048.", src: "Cerulli Associates, U.S. High-Net-Worth and Ultra-High-Net-Worth Markets, 2024", top: 300 });
   head(K.between + .7, K.between + 5.3, { h: "Family Table sits between them.", p: "A consent-based AI layer for the family and their PNC advisor.", top: 370 });
   head(K.between + 5.5, K.signal - .3, { h: "Align. Allocate. Activate.", p: "Three steps from a first signal to a plan the family trusts.", top: 370 });
 
@@ -711,11 +737,11 @@ function build() {
     CAM_C = new Track({ ox: 1330, oy: 520, k: 120 });
     CAM_C.to(Y - .6, 1.6, { ox: 1310, oy: 560, k: 96 })
          .to(St + .2, 2.0, { ox: 1010, oy: 590, k: 64 })
-         .to(Cl - .1, 1.4, { ox: 960, oy: 560, k: 40 });
+         .to(Cl - .1, 1.4, { ox: 975, oy: 380, k: 112 });
     world(Y - .8, T_END, worldC);
     head(Y + .4, St - .1, { num: t => t < Y + 3.2 ? "3 of 5" : t < Y + 4.0 ? "4 of 5" : "5 of 5", numCls: "mid", h: "family members work with PNC.", p: "One year on, the sale has closed and the plan is everyday banking.", top: 300 });
     head(St + .4, Cl - .2, { h: "Why only PNC?", p: "Three proprietary assets in one consented stack.", top: 380 });
-    head(Cl + .5, T_END, { nodim: true, top: 520, end: () => `<h1>Family Table</h1><p>A plan the family trusts.</p><div class="team">Alen Ilmi, Rizaldy Utomo, Nindy Aditya Dewi and Aditya Mulya Pratama · Carnegie Mellon University</div><div class="note">Fictional people. Portraits are AI-generated.</div>` });
+    head(Cl + 1.6, T_END, { nodim: true, top: 600, end: () => `<h1>Family Table</h1><p>A plan the family trusts.</p><div class="team">Alen Ilmi, Rizaldy Utomo, Nindy Aditya Dewi and Aditya Mulya Pratama · Carnegie Mellon University</div>` });
   }
   SHOTS = sh;
   return sh;

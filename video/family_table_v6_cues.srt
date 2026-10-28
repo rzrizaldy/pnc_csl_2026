@@ -1,0 +1,47 @@
+1
+00:00:00,400 --> 00:00:07,700
+Margaret Wilson is selling the company she built. For her family, it raises one question: what's fair?
+
+2
+00:00:08,400 --> 00:00:15,200
+By 2048, 124 trillion dollars will change hands in the U.S. And heirs often leave the family's advisor.
+
+3
+00:00:15,900 --> 00:00:25,200
+Family Table sits between the family and their PNC advisor, Alex Lee: a consent-based AI layer that guides them through three steps. Align. Allocate. Activate.
+
+4
+00:00:25,900 --> 00:00:35,200
+It starts with a signal PNC already holds: account activity that says a sale is likely, a year early. Alex reviews it, then calls Margaret.
+
+5
+00:00:35,900 --> 00:00:45,200
+Margaret adds her documents. AI reads them and drafts her goals. She checks each one, and invites her family.
+
+6
+00:00:45,900 --> 00:00:57,200
+Each family member checks in privately. Claire says what she's never told her mother. Her words stay hers. AI lifts out the themes, and she decides what Alex sees.
+
+7
+00:00:57,900 --> 00:01:08,200
+On Alex's side, AI turns four check-ins and three family documents into one brief. The widest gap is fairness. AI prepares; Alex makes the call.
+
+8
+00:01:08,900 --> 00:01:20,200
+Then, Allocate. Sam sees his own number under every split and votes in private. Three choices turn twelve possible plans into one.
+
+9
+00:01:20,900 --> 00:01:32,200
+Then, Activate. Sam asks a question. AI drafts the answer from PNC's calculators; Alex checks it and sends it. Nothing reaches the family until the advisor approves.
+
+10
+00:01:32,900 --> 00:01:41,200
+One year on, the sale has closed, the plan is everyday banking, and all five Wilsons work with PNC.
+
+11
+00:01:41,900 --> 00:01:51,200
+Why only PNC? Three proprietary assets in one consented stack: a signal PNC already holds, family intelligence that's private by default, and one household graph.
+
+12
+00:01:51,900 --> 00:01:56,200
+Family Table. A plan the family trusts.

@@ -2,7 +2,8 @@
 //
 //   node render.js stills [--every 2] [--from 0] [--to 116] [--at 3,10.5]
 //                         stills at those film times plus contact sheets in video/build3/stills/
-//   node render.js video  60 fps picture -> video/family_table_v5_silent.mp4 (picture + silent AAC 48 kHz stereo)
+//   node render.js video [--ver v6]  60 fps picture -> video/family_table_<ver>_silent.mp4 (picture + silent AAC 48 kHz stereo).
+//                         Refuses to overwrite an existing file; earlier versions are kept.
 //
 // Time is fake: Playwright's clock drives every timer, requestAnimationFrame and Date in the stage and the app iframes,
 // and the stage pauses and seeks the app's CSS animations each frame. View Transitions are removed. Frames are captured
@@ -81,7 +82,9 @@ const ff = (...a) => execFileSync("ffmpeg", ["-y", "-hide_banner", "-loglevel", 
       if (f % 600 === 0) console.log(`frame ${f}/${frames}  ${((Date.now() - t0) / 1000).toFixed(0)} s`);
     }
     enc.stdin.end(); await new Promise(r => enc.on("close", r));
-    const dur = (frames / FPS).toFixed(3), outp = path.join(VIDEO, "family_table_v5_silent.mp4");
+    const dur = (frames / FPS).toFixed(3), outp0 = path.join(VIDEO, `family_table_${arg("ver", "v6")}_silent.mp4`);
+    let outp = outp0;
+    if (fs.existsSync(outp) && !process.argv.includes("--force")) { outp = outp0.replace(/\.mp4$/, `_${Date.now()}.mp4`); console.log(`${path.basename(outp0)} exists; writing ${path.basename(outp)} instead`); }
     ff("-i", pic, "-f", "lavfi", "-t", dur, "-i", "anullsrc=r=48000:cl=stereo", "-map", "0:v", "-map", "1:a", "-c:v", "copy", "-c:a", "aac", "-b:a", "128k", "-ar", "48000", "-ac", "2", "-t", dur, "-movflags", "+faststart", outp);
     console.log(`done in ${((Date.now() - t0) / 60000).toFixed(1)} min: ${path.relative(ROOT, outp)}`);
   }
