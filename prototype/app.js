@@ -888,7 +888,7 @@
     }
     return `<div class="page"><div class="cols"><div class="col-main">
       <section class="hero"><div class="label">Possible plans left</div><div class="value huge"><span>${left}</span><span class="unit">of 12</span></div>
-        <div class="caption">${autoCount(pid) ? `Your vote settled the first choice, so ${left} plans are left. Two more choices turn them into one.` : "Three choices turn twelve possible plans into one. Settle them in order; each one shows what it does to every share."}</div>
+        <div class="caption">${left === 1 ? "All three choices are settled. This is your plan." : autoCount(pid) ? `Your vote settled the first choice, so ${left} plans are left. Two more choices turn them into one.` : "Three choices turn twelve possible plans into one. Settle them in order; each one shows what it does to every share."}</div>
         <div class="dt-prog" aria-label="${chosen} of 3 settled">${T.map(n => `<i class="${path[n.id] ? "on" : ""}"></i>`).join("")}</div></section>
       <section class="section"><ol class="dtree">${levels}</ol></section>
       </div><aside class="col-side">${outcome || `<section class="panel"><div class="section-head"><h2>Your plan</h2></div><p class="small muted">Settle all three choices to see every child's number under your plan.</p></section>`}

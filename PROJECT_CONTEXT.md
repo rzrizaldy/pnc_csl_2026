@@ -270,6 +270,8 @@ A gap of 0.75 or more recommends a facilitator.
 
 Rz's three core slides (AI Client & Family Experience, AI Advisor Workbench, Added Value: The Secret Sauce & Core Innovation) also exist as a standalone three-slide Claude Slides deck in the PNC navy theme, with the same content as the PPTX: https://claude.ai/artifact/4i1gadSusfcxXqzgcHbiaz (source in `slides/claude_three/`). Versions: these in the full deck, that standalone deck, and `slides/canva/family_table_3_slides.pptx` in the team Canva deck's look (see `slides/canva/README.md`). Slide images are artifact assets; `video/src/slide_shots_v2.js` and `slide_crops.js` regenerate them, and `slides_check.js` maps them for local render checks.
 
+**Film (music-only, Apple-keynote style):** `video/apple/`. `STORYBOARD.md` has the 15 scenes from the Canva deck before the appendix. `capture.js` grabs the screens, `film.html` holds the GSAP timeline, `music.py` writes the synced 96 BPM score, and `node render.js video` renders `video/family_table_film.mp4` (120 s, 1920×1080, −14 LUFS). The MP4 is gitignored; share it by Drive.
+
 ## 8. Design system and voice
 
 **PNC Private Bank design language** (annaboyle-design.com/pncpb-designsystems):

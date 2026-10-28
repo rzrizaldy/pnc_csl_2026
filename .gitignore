@@ -9,3 +9,7 @@ video/build/
 *.m4a
 video/src/node_modules/
 .claude/worktrees/
+video/apple/silent.mp4
+video/apple/preview/
+video/apple/node_modules
+video/family_table_film.mp4

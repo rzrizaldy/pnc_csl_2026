@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Family Table film</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1920px; height: 1080px; overflow: hidden; background: #050B1E; }
+  body { font-family: "Barlow", Arial, sans-serif; color: #F5F6F8; -webkit-font-smoothing: antialiased; }
+  #stage { position: absolute; inset: 0; overflow: hidden; }
+  .glow { position: absolute; width: 1600px; height: 1600px; left: 160px; top: -260px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(239,106,0,.20) 0%, rgba(239,106,0,.06) 35%, rgba(5,11,30,0) 65%); }
+  .glow2 { position: absolute; width: 1400px; height: 1400px; left: -500px; top: 300px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(47,109,181,.18) 0%, rgba(5,11,30,0) 60%); }
+  .scene { position: absolute; inset: 0; opacity: 0; }
+  .center { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+  .huge { font-size: 300px; font-weight: 900; letter-spacing: -0.045em; line-height: .9;
+    background: linear-gradient(180deg, #FFFFFF 30%, #F7A766 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .h1 { font-size: 112px; font-weight: 800; letter-spacing: -0.035em; line-height: 1.02; }
+  .h2 { font-size: 84px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.05; }
+  .sub { font-size: 44px; font-weight: 500; color: #AEB6C8; letter-spacing: -0.01em; line-height: 1.25; }
+  .label { font-size: 34px; font-weight: 700; color: #F7A766; letter-spacing: 0.02em; }
+  .src { position: absolute; left: 0; right: 0; bottom: 56px; text-align: center; font-size: 22px; color: #6B7591; }
+  .or { color: #F7A766; }
+  .mark { width: 220px; height: 220px; }
+  .chip { display: inline-block; font-size: 28px; font-weight: 600; color: #C9D0DE; border: 2px solid #26345E; border-radius: 40px; padding: 8px 24px; margin: 0 8px; }
+  .insight { font-size: 76px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; opacity: 0; }
+  .face { width: 300px; height: 300px; border-radius: 50%; object-fit: cover; border: 6px solid #EF6A00; box-shadow: 0 30px 80px rgba(0,0,0,.5); }
+  .who { font-size: 44px; font-weight: 800; margin-top: 28px; }
+  .role { font-size: 30px; color: #AEB6C8; margin-top: 6px; max-width: 520px; line-height: 1.3; }
+  .word { position: absolute; left: 0; right: 0; text-align: center; font-size: 230px; font-weight: 900; letter-spacing: -0.05em; opacity: 0; }
+  /* camera rigs: transform-origin 0 0, GSAP moves x / y / scale */
+  .cam { position: absolute; transform-origin: 0 0; }
+  .view { position: absolute; inset: 0; -webkit-mask-image: linear-gradient(90deg, transparent 0px, transparent 900px, #000 1010px); mask-image: linear-gradient(90deg, transparent 0px, transparent 900px, #000 1010px); }
+  .phone { position: absolute; left: 0; top: 0; width: 424px; height: 890px; border-radius: 64px; background: #0B1533; padding: 12px;
+    box-shadow: 0 0 0 2px #2A3866, 0 60px 120px rgba(0,0,0,.6), 0 0 120px rgba(239,106,0,.12); }
+  .phone .scr { position: relative; width: 400px; height: 866px; border-radius: 52px; overflow: hidden; background: #fff; }
+  .phone img { position: absolute; left: 0; top: 0; width: 400px; height: auto; }
+  .notch { position: absolute; left: 50%; top: 20px; width: 110px; height: 30px; margin-left: -55px; border-radius: 20px; background: #0B1533; z-index: 3; }
+  .browser { position: absolute; left: 0; top: 0; width: 1480px; border-radius: 22px; background: #0B1533; padding: 0 8px 8px;
+    box-shadow: 0 0 0 2px #2A3866, 0 60px 120px rgba(0,0,0,.6); }
+  .browser .bar { height: 40px; display: flex; align-items: center; gap: 10px; padding-left: 14px; }
+  .browser .bar i { width: 13px; height: 13px; border-radius: 50%; background: #3A4C82; display: block; }
+  .browser .scr { position: relative; width: 1464px; height: 915px; overflow: hidden; border-radius: 0 0 16px 16px; background: #fff; }
+  .browser img { position: absolute; left: 0; top: 0; width: 1464px; height: auto; }
+  .ring { position: absolute; width: 120px; height: 120px; margin: -60px 0 0 -60px; border-radius: 50%; border: 6px solid #EF6A00; opacity: 0; }
+  .side { position: absolute; left: 150px; top: 0; bottom: 0; width: 760px; display: flex; flex-direction: column; justify-content: center; gap: 26px; }
+  .side .t { opacity: 0; }
+  .steps3 { position: absolute; left: 150px; top: 120px; display: flex; gap: 14px; }
+  .steps3 span { font-size: 26px; font-weight: 700; padding: 6px 20px; border-radius: 30px; border: 2px solid #26345E; color: #6B7591; }
+  .steps3 span.on { background: #EF6A00; border-color: #EF6A00; color: #fff; }
+  .lockwrap { width: 200px; height: 200px; border-radius: 50%; background: rgba(239,106,0,.12); display: flex; align-items: center; justify-content: center; margin-bottom: 50px; }
+  .stackL { position: absolute; left: 250px; top: 290px; }
+  .lbl { position: absolute; left: 1000px; width: 820px; opacity: 0; }
+  .lbl b { display: block; font-size: 40px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em; }
+  .lbl span { font-size: 26px; color: #AEB6C8; }
+  .lbl em { font-style: normal; display: inline-block; font-size: 24px; font-weight: 700; color: #fff; background: #EF6A00; border-radius: 20px; padding: 3px 14px; margin-left: 14px; vertical-align: 8px; opacity: 0; }
+  .stat3 { display: flex; gap: 120px; margin-top: 50px; }
+  .stat3 div { text-align: center; opacity: 0; }
+  .stat3 b { display: block; font-size: 150px; font-weight: 900; letter-spacing: -0.04em; line-height: 1; color: #fff; }
+  .stat3 span { font-size: 34px; color: #AEB6C8; }
+  .team { font-size: 26px; color: #6B7591; margin-top: 60px; line-height: 1.5; }
+  .fade { position: absolute; inset: 0; background: #000; opacity: 0; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div class="glow" id="glow"></div><div class="glow2" id="glow2"></div>
+
+  <!-- 1. Hook -->
+  <section class="scene center" id="s1">
+    <div class="huge" id="n124">$0T</div>
+    <div class="sub" id="s1sub" style="margin-top:40px;opacity:0">in U.S. wealth changes hands by 2048.</div>
+    <div class="src">Cerulli Associates, U.S. High-Net-Worth and Ultra-High-Net-Worth Markets, 2024</div>
+  </section>
+
+  <!-- 2. Stakes -->
+  <section class="scene center" id="s2">
+    <div class="huge" id="n55">0%</div>
+    <div class="sub" id="s2sub" style="margin-top:40px;opacity:0;max-width:1300px">of spouses and heirs won’t keep their benefactor’s advisor.</div>
+    <div class="src">Natixis Investment Managers, 2026 Wealth Transfer Report</div>
+  </section>
+
+  <!-- 3. Turn -->
+  <section class="scene center" id="s3">
+    <div class="h1" id="s3a" style="max-width:1500px">A business sale doesn’t just move money.</div>
+    <div class="h1" id="s3b" style="position:absolute;opacity:0">It moves a <span class="or">family</span>.</div>
+  </section>
+
+  <!-- 4. Discovery -->
+  <section class="scene center" id="s4">
+    <div class="label" id="s4l" style="opacity:0">We listened to five families</div>
+    <div id="s4chips" style="margin:26px 0 70px;opacity:0"><span class="chip">Hospital group</span><span class="chip">Bus operator</span><span class="chip">Catering</span><span class="chip">Catering</span><span class="chip">Clothing brand</span></div>
+    <div class="insight" id="i1">Letting go is personal.</div>
+    <div class="insight" id="i2">Families need clearer roles.</div>
+    <div class="insight" id="i3">Knowledge needs a handover.</div>
+  </section>
+
+  <!-- 5. Title -->
+  <section class="scene center" id="s5">
+    <svg class="mark" id="mark" viewBox="0 0 32 32"><circle cx="16" cy="16" r="14" fill="none" stroke="#fff" stroke-width="1.6"/><circle cx="16" cy="16" r="5" fill="#EF6A00"/><circle cx="16" cy="5" r="2.4" fill="#fff"/><circle cx="26" cy="20" r="2.4" fill="#fff"/><circle cx="6" cy="20" r="2.4" fill="#fff"/></svg>
+    <div style="font-size:190px;font-weight:900;letter-spacing:-0.05em;margin-top:36px" id="s5t">Family Table</div>
+    <div class="sub" id="s5s" style="opacity:0;margin-top:10px">Crafting the family future, today.</div>
+    <div class="label" id="s5p" style="opacity:0;margin-top:40px;font-size:28px;color:#6B7591">A PNC Private Bank concept</div>
+  </section>
+
+  <!-- 6. Two sides -->
+  <section class="scene center" id="s6">
+    <div class="h2" id="s6t">One sale. Two sides.</div>
+    <div style="display:flex;gap:260px;margin-top:70px">
+      <div class="center" id="s6a" style="opacity:0"><img class="face" src="assets/margaret.jpg"><div class="who">Margaret Wilson</div><div class="role">Founder. Needs a plan her family understands and trusts.</div></div>
+      <div class="center" id="s6b" style="opacity:0"><img class="face" src="assets/alex.jpg" style="border-color:#2F6DB5"><div class="who">Alex Lee</div><div class="role">PNC advisor. Needs to hear the family before decisions are made.</div></div>
+    </div>
+  </section>
+
+  <!-- 7. Three steps -->
+  <section class="scene" id="s7">
+    <div class="word" id="w1" style="top:110px">Align</div>
+    <div class="word" id="w2" style="top:390px">Allocate</div>
+    <div class="word" id="w3" style="top:670px">Activate</div>
+  </section>
+
+  <!-- 8. Align -->
+  <section class="scene" id="s8">
+    <div class="steps3"><span class="on">Align</span><span>Allocate</span><span>Activate</span></div>
+    <div class="side"><div class="h1 t" id="s8a">Speak in private.</div><div class="sub t" id="s8b">AI reads the themes.<br>You choose what Alex sees.</div></div>
+    <div class="view"><div class="cam" id="cam8" style="left:1200px;top:95px"><div class="phone"><div class="notch"></div><div class="scr"><img src="assets/phone_checkin.png"></div></div></div></div>
+    <div class="ring" id="ring8"></div>
+  </section>
+
+  <!-- 9. Allocate -->
+  <section class="scene" id="s9">
+    <div class="steps3"><span>Align</span><span class="on">Allocate</span><span>Activate</span></div>
+    <div class="side"><div class="h1 t" id="s9a">See your number.</div><div class="sub t" id="s9b">Every child sees their share under every option.</div>
+      <div class="h1 t" id="s9c" style="position:absolute;top:400px">Vote in private.<br>Then decide.</div><div class="sub t" id="s9d" style="position:absolute;top:660px">Twelve possible plans become one.</div></div>
+    <div class="view"><div class="cam" id="cam9" style="left:1200px;top:95px"><div class="phone"><div class="notch"></div><div class="scr"><img src="assets/phone_vote.png"><img id="decide" src="assets/phone_decide.png" style="opacity:0"></div></div></div></div>
+  </section>
+
+  <!-- 10. Activate -->
+  <section class="scene" id="s10">
+    <div class="steps3"><span>Align</span><span>Allocate</span><span class="on">Activate</span></div>
+    <div class="side"><div class="h1 t" id="s10a">Ask a person,<br>not a bot.</div><div class="sub t" id="s10b">AI drafts. Alex checks.<br>Then it reaches the family.</div></div>
+    <div class="view"><div class="cam" id="cam10" style="left:1200px;top:95px"><div class="phone"><div class="notch"></div><div class="scr"><img src="assets/phone_ask.png"></div></div></div></div>
+    <div class="ring" id="ring10"></div>
+  </section>
+
+  <!-- 11. Advisor -->
+  <section class="scene" id="s11">
+    <div class="cam" id="cam11" style="left:220px;top:120px"><div class="browser"><div class="bar"><i></i><i></i><i></i></div><div class="scr"><img src="assets/desk_brief.png"><img id="inbox" src="assets/desk_inbox.png" style="opacity:0"></div></div></div>
+    <div id="s11cap" style="position:absolute;left:0;right:0;bottom:60px;text-align:center"><div class="h2" id="s11a" style="opacity:0;text-shadow:0 6px 40px rgba(0,0,0,.8)">AI prepares the analysis.</div></div>
+    <div style="position:absolute;left:0;right:0;bottom:60px;text-align:center"><div class="h2" id="s11b" style="opacity:0;text-shadow:0 6px 40px rgba(0,0,0,.8)">The advisor makes the call.</div></div>
+    <div class="ring" id="ring11"></div>
+  </section>
+
+  <!-- 12. Governance -->
+  <section class="scene center" id="s12">
+    <div class="lockwrap" id="lock"><svg width="110" height="110" viewBox="0 0 24 24" fill="none" stroke="#F7A766" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 11h12v10H6zM8.5 11V8a3.5 3.5 0 0 1 7 0v3"/></svg></div>
+    <div class="h1" id="s12a" style="opacity:0">Nothing reaches the family</div>
+    <div class="h1" id="s12b" style="opacity:0">until the advisor approves it.</div>
+    <div class="sub" id="s12c" style="opacity:0;margin-top:40px">Every output is logged. The advisor sees divergence, never anyone’s private words.</div>
+  </section>
+
+  <!-- 13. Secret sauce -->
+  <section class="scene" id="s13">
+    <div class="label" id="s13l" style="position:absolute;left:150px;top:90px;opacity:0">The secret sauce</div>
+    <div class="h2" id="s13t" style="position:absolute;left:150px;top:140px;opacity:0;max-width:1700px">Three proprietary assets. One consented stack.</div>
+    <svg class="stackL" id="stack" width="620" height="720" viewBox="0 0 620 720"></svg>
+    <div id="labels"></div>
+  </section>
+
+  <!-- 14. Business -->
+  <section class="scene center" id="s14">
+    <div class="huge" id="n499" style="font-size:250px">$0B</div>
+    <div class="sub" id="s14a" style="opacity:0;margin-top:26px">in PNC client assets under administration, a relationship worth keeping.</div>
+    <div class="label" id="s14l" style="opacity:0;margin-top:90px">The pilot</div>
+    <div class="stat3"><div id="p1"><b>10</b><span>families</span></div><div id="p2"><b>3</b><span>advisors</span></div><div id="p3"><b>90</b><span>days</span></div></div>
+    <div class="src">PNC 3Q 2026 Financial Supplement. Pilot as proposed in the team roadmap.</div>
+  </section>
+
+  <!-- 15. Close -->
+  <section class="scene center" id="s15">
+    <svg class="mark" id="mark2" viewBox="0 0 32 32" style="width:160px;height:160px"><circle cx="16" cy="16" r="14" fill="none" stroke="#fff" stroke-width="1.6"/><circle cx="16" cy="16" r="5" fill="#EF6A00"/><circle cx="16" cy="5" r="2.4" fill="#fff"/><circle cx="26" cy="20" r="2.4" fill="#fff"/><circle cx="6" cy="20" r="2.4" fill="#fff"/></svg>
+    <div style="font-size:150px;font-weight:900;letter-spacing:-0.05em;margin-top:30px">Family Table</div>
+    <div class="sub" id="s15s" style="opacity:0;margin-top:6px">Crafting the family future, today.</div>
+    <div class="team" id="s15t" style="opacity:0">Alen Ilmi, Rizaldy Utomo, Nindy Aditya Dewi and Aditya Mulya Pratama<br>Carnegie Mellon University, CSL 2026. A student concept for PNC Private Bank.</div>
+  </section>
+
+  <div class="fade" id="fade"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script>
+const BOX = {"phone_checkin":{"themes":[32,491,716,52],"share":[644,577,104,64]},"phone_vote":{"opt":[32,544,716,392],"hero":[32,216,716,121]},"phone_decide":{"hero":[32,112,716,387]},"phone_ask":{"reply":[32,639,673,599]},"desk_brief":{"gap":[304,164,800,720],"bars":[1332,683,1244,378]},"desk_inbox":{"draft":[304,609,1344,929],"send":[1233,1408,381,96]}};
+const tl = gsap.timeline({ paused: true });
+const $ = id => document.getElementById(id);
+const E = "power3.inOut";
+
+// scene envelope: soft push-in entrance, quick pull-back exit
+function scene(id, t0, t1) {
+  tl.fromTo($(id), { opacity: 0, scale: 1.06 }, { opacity: 1, scale: 1, duration: .6, ease: "power2.out" }, t0);
+  tl.to($(id), { opacity: 0, scale: .96, duration: .45, ease: "power2.in" }, t1 - .45);
+}
+const show = (id, t, d = .6, y = 30) => tl.fromTo($(id), { opacity: 0, y }, { opacity: 1, y: 0, duration: d, ease: "power3.out" }, t);
+const hide = (id, t, d = .35) => tl.to($(id), { opacity: 0, y: -20, duration: d, ease: "power2.in" }, t);
+const punch = (id, t) => tl.fromTo($(id), { scale: 1.12 }, { scale: 1, duration: .7, ease: "expo.out" }, t);
+function count(id, from, to, t, d, fmt) {
+  const o = { v: from };
+  tl.to(o, { v: to, duration: d, ease: "power2.out", onUpdate: () => { $(id).textContent = fmt(Math.round(o.v)); } }, t);
+}
+// camera: bring local point (lx, ly) of a cam to screen point (sx, sy) at the given scale
+function camTo(id, lx, ly, scale, sx, sy, t, d = 1.4) {
+  const el = $(id), L = parseFloat(el.style.left), T = parseFloat(el.style.top);
+  tl.to(el, { x: sx - L - scale * lx, y: sy - T - scale * ly, scale, duration: d, ease: E }, t);
+}
+const camHome = (id, t, d = 1.2) => tl.to($(id), { x: 0, y: 0, scale: 1, duration: d, ease: E }, t);
+// a box centre inside a phone (screen 400 px wide for a 780 px capture, 12 px bezel)
+const PS = 400 / 780, pc = b => [12 + (b[0] + b[2] / 2) * PS, 12 + (b[1] + b[3] / 2) * PS];
+const DS = 1464 / 2880, dc = b => [8 + (b[0] + b[2] / 2) * DS, 40 + (b[1] + b[3] / 2) * DS];
+function ring(id, x, y, t) {
+  tl.set($(id), { left: x, top: y }, t);
+  tl.fromTo($(id), { opacity: 1, scale: .5 }, { opacity: 0, scale: 1.9, duration: 1.1, ease: "power2.out" }, t);
+  tl.fromTo($(id), { opacity: 1, scale: .5 }, { opacity: 0, scale: 1.9, duration: 1.1, ease: "power2.out" }, t + .55);
+}
+
+// ambient glow drift
+tl.to("#glow", { x: -300, y: 200, duration: 60, ease: "sine.inOut" }, 0).to("#glow", { x: 200, y: -100, duration: 60, ease: "sine.inOut" }, 60);
+tl.to("#glow2", { x: 400, y: -200, duration: 120, ease: "sine.inOut" }, 0);
+
+// 1. Hook 0–7.5
+scene("s1", 0, 7.5);
+count("n124", 0, 124, .4, 2.1, v => "$" + v + "T"); punch("n124", 2.5); show("s1sub", 3.0);
+// 2. Stakes 7.5–15
+scene("s2", 7.5, 15);
+count("n55", 0, 55, 7.9, 2.1, v => v + "%"); punch("n55", 10); show("s2sub", 10.4);
+// 3. Turn 15–22.5
+scene("s3", 15, 22.5);
+show("s3a", 15.4, .8, 40); hide("s3a", 18.3, .45);
+tl.fromTo("#s3b", { opacity: 0, scale: .85 }, { opacity: 1, scale: 1, duration: .9, ease: "expo.out" }, 18.75);
+// 4. Discovery 22.5–30
+scene("s4", 22.5, 30);
+show("s4l", 22.9); show("s4chips", 23.4);
+show("i1", 24.4, .6, 50); show("i2", 25.7, .6, 50); show("i3", 27.0, .6, 50);
+// 5. Title 30–35
+scene("s5", 30, 35);
+tl.fromTo("#mark", { scale: .3, rotation: -120, opacity: 0 }, { scale: 1, rotation: 0, opacity: 1, duration: 1.2, ease: "expo.out" }, 30);
+tl.fromTo("#s5t", { opacity: 0, letterSpacing: "0.1em" }, { opacity: 1, letterSpacing: "-0.05em", duration: 1.4, ease: "expo.out" }, 30.2);
+show("s5s", 31.4); show("s5p", 32.2, .6, 10);
+// 6. Two sides 35–40
+scene("s6", 35, 40);
+show("s6a", 35.6, .7, 60); show("s6b", 36.2, .7, 60);
+// 7. Three steps 40–45
+scene("s7", 40, 45);
+[["w1", 40], ["w2", 41.25], ["w3", 42.5]].forEach(([w, t]) => tl.fromTo("#" + w, { opacity: 0, scale: 1.6, filter: "blur(20px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: .6, ease: "expo.out" }, t));
+tl.to(["#w1", "#w2"], { opacity: .25, duration: .4 }, 42.5); tl.to("#w1", { opacity: 1, color: "#F7A766", duration: .4 }, 43.8);
+
+// 8. Align 45–57.5
+scene("s8", 45, 57.5);
+tl.fromTo("#cam8", { y: 500, rotation: 6 }, { y: 0, rotation: 0, duration: 1.2, ease: "expo.out" }, 45);
+show("s8a", 45.6); show("s8b", 46.6);
+{ const [x, y] = pc(BOX.phone_checkin.themes); camTo("cam8", x, y, 2.1, 1420, 520, 48.8); }
+{ const [x, y] = pc(BOX.phone_checkin.share); camTo("cam8", x, y, 2.6, 1420, 540, 52.6); ring("ring8", 1420, 540, 54.2); }
+camHome("cam8", 55.6);
+// 9. Allocate 57.5–70
+scene("s9", 57.5, 70);
+tl.fromTo("#cam9", { y: 500, rotation: -6 }, { y: 0, rotation: 0, duration: 1.2, ease: "expo.out" }, 57.5);
+show("s9a", 58.1); show("s9b", 59.0);
+{ const [x, y] = pc(BOX.phone_vote.opt); camTo("cam9", x, y, 1.75, 1410, 540, 60.2); }
+hide("s9a", 63.2); hide("s9b", 63.2);
+camHome("cam9", 63.4, 1.0);
+tl.to("#decide", { opacity: 1, duration: .6 }, 64.0);
+show("s9c", 64.0); show("s9d", 65.0);
+{ const [x, y] = pc(BOX.phone_decide.hero); camTo("cam9", x, y, 1.9, 1410, 520, 65.2); }
+camHome("cam9", 68.2, 1.2);
+// 10. Activate 70–80
+scene("s10", 70, 80);
+tl.fromTo("#cam10", { y: 500, rotation: 6 }, { y: 0, rotation: 0, duration: 1.2, ease: "expo.out" }, 70);
+show("s10a", 70.6); show("s10b", 71.6);
+{ const [x, y] = pc(BOX.phone_ask.reply); camTo("cam10", x, y, 1.75, 1400, 540, 72.6); }
+camHome("cam10", 77.6);
+
+// 11. Advisor 80–92.5: start tight on the 1.00, pull out to the whole workbench
+scene("s11", 80, 92.5);
+{ const [x, y] = dc(BOX.desk_brief.gap); tl.set("#cam11", { x: 960 - 220 - 3.2 * x, y: 470 - 120 - 3.2 * y, scale: 3.2 }, 80); }
+tl.to("#cam11", { x: 133, y: -60, scale: .82, duration: 3.2, ease: "power3.inOut" }, 81.4);
+show("s11a", 82.4); hide("s11a", 86.6);
+tl.to("#inbox", { opacity: 1, duration: .7 }, 87.0);
+show("s11b", 87.0);
+{ const [x, y] = dc(BOX.desk_inbox.send); camTo("cam11", x, y, 2.2, 1060, 470, 88.0, 1.6); ring("ring11", 1060, 470, 89.8); }
+// 12. Governance 92.5–100
+scene("s12", 92.5, 100);
+tl.fromTo("#lock", { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: .9, ease: "back.out(2)" }, 92.8);
+show("s12a", 93.4); show("s12b", 94.4); show("s12c", 96.0, .8, 20);
+
+// 13. Secret sauce 100–107.5: isometric stack drops in layer by layer
+scene("s13", 100, 107.5);
+{
+  const svg = $("stack"), NS = "http://www.w3.org/2000/svg";
+  const cx = 300, a = 250, b = 142, t = 50, step = 92, Y0 = 6;
+  const layers = [
+    ["Experience", "#EF6A00", "#C75800", "#A84A00", "One plan, two views", ""],
+    ["AI layer", "#6D4AA0", "#583B85", "#47306B", "Themes, documents and drafts, with review", "Family intelligence"],
+    ["Formulas", "#4C5870", "#3D475C", "#323A4B", "Every number auditable", ""],
+    ["Data and consent", "#2F6DB5", "#265A96", "#1F4A7B", "Member vaults and a consent ledger", "Household graph"],
+    ["PNC systems", "#1A2B5C", "#13214A", "#0E1A3B", "Permissioned relationship signals", "Early signal"],
+  ];
+  const P = pts => pts.map(p => p.join(",")).join(" ");
+  const groups = [];
+  for (let i = layers.length - 1; i >= 0; i--) {
+    const [n, top, lf, rf] = layers[i], y = Y0 + i * step;
+    const T = [cx, y], R = [cx + a, y + b], B = [cx, y + 2 * b], L = [cx - a, y + b], d = p => [p[0], p[1] + t];
+    const g = document.createElementNS(NS, "g");
+    g.innerHTML = `<polygon points="${P([L, B, d(B), d(L)])}" fill="${lf}" stroke="#050B1E" stroke-width="2"/><polygon points="${P([B, R, d(R), d(B)])}" fill="${rf}" stroke="#050B1E" stroke-width="2"/><polygon points="${P([T, R, B, L])}" fill="${top}" stroke="#050B1E" stroke-width="2"/>`;
+    svg.appendChild(g); groups[i] = g;
+  }
+  const lab = $("labels");
+  layers.forEach(([n, , , , line, tag], i) => {
+    const d = document.createElement("div"); d.className = "lbl"; d.style.top = (290 + Y0 + i * step + b + t / 2 - 34) + "px";
+    d.innerHTML = `<b>${n}${tag ? `<em>${tag}</em>` : ""}</b><span>${line}</span>`; lab.appendChild(d);
+    // bottom layer lands first
+  });
+  const order = [4, 3, 2, 1, 0];
+  order.forEach((i, k) => {
+    tl.fromTo(groups[i], { y: -500, opacity: 0 }, { y: 0, opacity: 1, duration: .6, ease: "bounce.out" }, 100.4 + k * .5);
+    tl.fromTo(lab.children[i], { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: .5, ease: "power3.out" }, 100.7 + k * .5);
+  });
+  show("s13l", 103.4); show("s13t", 103.7);
+  [...lab.querySelectorAll("em")].forEach((e, k) => tl.fromTo(e, { opacity: 0, scale: .5 }, { opacity: 1, scale: 1, duration: .45, ease: "back.out(3)" }, 104.8 + k * .45));
+  tl.set(".lbl", { top: "+=0" }, 0);
+}
+// 14. Business 107.5–115
+scene("s14", 107.5, 115);
+count("n499", 0, 499, 107.8, 1.9, v => "$" + v + "B"); punch("n499", 110); show("s14a", 110.2);
+show("s14l", 111.4); show("p1", 111.8, .5, 40); show("p2", 112.3, .5, 40); show("p3", 112.8, .5, 40);
+// 15. Close 115–120
+tl.fromTo("#s15", { opacity: 0, scale: 1.08 }, { opacity: 1, scale: 1, duration: .9, ease: "expo.out" }, 115);
+tl.fromTo("#mark2", { rotation: -90 }, { rotation: 0, duration: 1.2, ease: "expo.out" }, 115);
+show("s15s", 115.9); show("s15t", 116.8, .8, 10);
+tl.to("#fade", { opacity: 1, duration: .9, ease: "power1.in" }, 119.1);
+tl.to({}, { duration: 0.01 }, 120);
+
+window.DURATION = 120;
+window.seek = t => { tl.seek(t, false); };
+window.seek(0);
+</script>
+</body>
+</html>
