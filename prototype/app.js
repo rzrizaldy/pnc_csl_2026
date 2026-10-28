@@ -94,14 +94,11 @@
   const chev = `<span class="chev">${ic("chev", 18)}</span>`;
   const mark = `<svg viewBox="0 0 32 32" width="22" height="22" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="16" cy="16" r="5" fill="#EF6A00"/><circle cx="16" cy="5" r="2.4" fill="#fff"/><circle cx="26" cy="20" r="2.4" fill="#fff"/><circle cx="6" cy="20" r="2.4" fill="#fff"/></svg>`;
 
-  // The team deck's six stages.
+  // Three steps. The deck's Signal and Join fold into Align; Continue folds into Activate.
   const STAGES = [
-    { id: "signal", label: "Signal", icon: "pulse", line: "PNC spots a likely sale a year before closing" },
-    { id: "join", label: "Join", icon: "users", line: "The founder invites the whole family" },
-    { id: "align", label: "Align", icon: "lock", line: "Private check-ins. AI finds where the family differs" },
-    { id: "allocate", label: "Allocate", icon: "scale", line: "Each person sees their number and votes privately" },
-    { id: "activate", label: "Activate", icon: "chat", line: "Questions to the advisor, specialists, next steps" },
-    { id: "continue", label: "Continue", icon: "repeat", line: "A yearly check-in keeps the plan current" },
+    { id: "align", label: "Align", icon: "lock", line: "PNC spots the sale early. Each person checks in privately, and AI shows where they differ." },
+    { id: "allocate", label: "Allocate", icon: "scale", line: "Each person sees their number under each split, and votes." },
+    { id: "activate", label: "Activate", icon: "chat", line: "Next steps, specialists, and a yearly check-in." },
   ];
 
   // ---------- visualisations ----------
@@ -225,11 +222,11 @@
 
   // ---------- guided story: alternates the two sides ----------
   const TOUR = [
-    { side: "Advisor", stage: "Signal", route: "advisor", title: "Alex sees the sale coming",
+    { side: "Advisor", stage: "Align", route: "advisor", title: "Alex sees the sale coming",
       hint: "PNC's own account data puts Wilson Transport at 81 out of 100, a year before closing. Tap Call Margaret.", target: '[data-act="start"]', done: () => state.started },
-    { side: "Family", stage: "Preview", route: "preview", title: "Margaret previews what's possible",
+    { side: "Family", stage: "Align", route: "preview", title: "Margaret previews what's possible",
       hint: "Before she commits to anything, she sees what a sale could mean for her family. Try another family: tap Four children, two in it.", target: '[data-act="pv-preset"][data-id="mixed"]', done: () => state.previewed },
-    { side: "Family", stage: "Join", route: "me/margaret/setup", title: "Margaret sets her goals",
+    { side: "Family", stage: "Align", route: "me/margaret/setup", title: "Margaret sets her goals",
       hint: "PNC already filled in the facts. She sharpens what fair means to her, then invites the family.", target: '[data-act="invite"]', done: () => state.invited },
     { side: "Family", stage: "Align", route: "me/claire/checkin", title: "Claire says what she's never said",
       hint: "Her words stay on this screen unless she shares them. Share answer 1 with Alex.", target: '[data-act="toggle-share"][data-id="q1"]', done: () => state.shared.includes("q1") },
@@ -245,7 +242,7 @@
       prep: () => { if (!state.msgs.some(m => m.from === "sam")) state.msgs.push({ id: "sam-demo", from: "sam", qi: 0, at: "Just now" }); },
       hint: "Sam's question went to Alex. The draft uses calculator numbers and passes the checks. Approve and send.", target: '[data-act="send"][data-from="sam"]',
       done: () => state.msgs.some(m => m.from === "sam" && state.replies[m.id] != null) },
-    { side: "Both sides", stage: "Continue", route: "year-one", title: "One year on",
+    { side: "Both sides", stage: "Activate", route: "year-one", title: "One year on",
       hint: "The sale has closed. Every dollar is working in a PNC service, and all five Wilsons bank with PNC.", target: null, done: () => true },
   ];
   function tourBar() {
