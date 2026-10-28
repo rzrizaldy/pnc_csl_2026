@@ -15,7 +15,7 @@ Margaret Wilson is selling the trucking company / she built over **thirty-five y
 *(pause 2 s)*
 
 ### 2 · Problem · about 10 s
-Most families don't, / until the money arrives. / By then the advisor has heard from **one person**, / and only **thirteen percent** of adult children / keep their parents' advisor.
+Most families don't, / until the money arrives. / By then the advisor has heard from **one person**, / and more than **half of heirs** / don't keep their parents' advisor.
 
 *(pause 2 s)*
 
@@ -66,7 +66,7 @@ Why only PNC? / It **sees** the sale coming, / **hears** what families won't say
 
 ## Tone
 - **Calm and warm** on line 1, like telling a friend about someone you know. Then confident, like talking to one person.
-- **Slow down** on "fair", "thirteen percent", "a year ahead" and "four voices".
+- **Slow down** on "fair", "half of heirs", "a year ahead" and "four voices".
 - **Land the ending:** a short beat after "Family Table.", then the last line, slowly.
 
 **Pronunciation:** Wilson **WIL-sun** · Hawthorn **HAW-thorn**

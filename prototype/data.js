@@ -169,7 +169,7 @@ window.SEED = {
       ["Who is heard", "The founder, usually alone", "Every family member, privately"],
       ["When the family talks", "After the deal is signed", "Before the letter of intent"],
       ["Each child's number", "A guess, or a surprise", "Their own number, under every option"],
-      ["The next generation", "13% stay with their parents' advisor", "Meets PNC before the money moves"],
+      ["The next generation", "55% of heirs leave their parents' advisor", "Meets PNC before the money moves"],
     ],
     month: [
       ["Week 1", "A call with your PNC advisor"],

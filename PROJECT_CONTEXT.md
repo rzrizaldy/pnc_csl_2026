@@ -135,14 +135,17 @@ A gap of 0.75 or more recommends a facilitator.
 
 **Contingency:** if Margaret can't continue before closing, Ben runs operations for 90 days and the family decides within 30.
 
-**Cited statistics (only these):**
+**Cited statistics (the team deck's, Oct 28; the prototype uses only these):**
 
 | Statistic | Source |
 |---|---|
-| 13% of adult children use their parents' financial advisor | Cerulli 2019, via InvestmentNews |
-| 75% of owners "profoundly regretted" selling a year later | PNC, *Begin at the end* |
-| 50% of exits are involuntary | PNC Business Succession Planning series |
-| 1 in 3 owners have no formal plan; family conflict is the top reason | PNC Business Succession Planning series |
+| $124T projected U.S. wealth transfer through 2048 | Cerulli Associates, 2024 |
+| 89% of owners want connected business and personal advice; 67% still manage those needs separately | PNC Private Bank Business Owner Wealth Insights 2026 |
+| 83% say family dynamics affect succession or exit planning | PNC Private Bank Business Owner Wealth Insights 2026 |
+| 55% of spouses and heirs say they will not, or did not, retain their benefactor's advisor | Natixis Investment Managers Wealth Transfer Report 2026 |
+| $499B total client assets under administration (group-wide scale, not a post-sale TAM); $146B Private Bank AUM | PNC 3Q 2026 Financial Supplement |
+
+The overview site (`index.html`, `case.html`) still carries the older PNC Business Succession Planning figures (75% regret, 50% involuntary, 1 in 3 no plan); swap them if the site is shown next to the deck.
 
 **Economics (sensitivity, not a forecast):**
 - Assumes a 0.8% blended fee, to validate with PNC.
