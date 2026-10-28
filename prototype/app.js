@@ -107,9 +107,9 @@
 
   // Three steps. The deck's Signal and Join fold into Align; Continue folds into Activate.
   const STAGES = [
-    { id: "align", label: "Align", icon: "lock" },
-    { id: "allocate", label: "Allocate", icon: "scale" },
-    { id: "activate", label: "Activate", icon: "chat" },
+    { id: "align", label: "Align", icon: "lock", line: "Surface views privately" },
+    { id: "allocate", label: "Allocate", icon: "scale", line: "Make trade-offs visible" },
+    { id: "activate", label: "Activate", icon: "chat", line: "Act with the advisor" },
   ];
 
   // ---------- visualisations ----------
@@ -196,12 +196,12 @@
   function splash() {
     // Portraits in faces/ are AI-generated; the people are fictional.
     const cast = [
-      ["margaret", "Margaret Wilson, 63", "Founder, selling Wilson Transport", P.margaret.line],
-      ["alex", "Alex Lee", "PNC advisor", "Wants to hear the whole family before closing."],
-      ["tom", "Tom Wilson, 65", "Margaret's husband", P.tom.line],
-      ["ben", "Ben Wilson, 40", "COO, staying on with the buyer", "Thinks his years should count."],
-      ["claire", "Claire Wilson, 37", "Nurse practitioner in Columbus", "Thinks equal is fair. Has never told her mother."],
-      ["sam", "Sam Wilson, 33", "Software engineer in Austin", "Wants to know how much, and when."],
+      ["margaret", "Margaret Wilson, 63", "Founder, selling the company", "Wants a plan the family trusts."],
+      ["alex", "Alex Lee", "PNC advisor", "Hears everyone before closing."],
+      ["tom", "Tom Wilson, 65", "Margaret's husband", "Not an owner. Still affected."],
+      ["ben", "Ben Wilson, 40", "COO, staying on", "Thinks his years should count."],
+      ["claire", "Claire Wilson, 37", "Nurse in Columbus", "Thinks equal is fair."],
+      ["sam", "Sam Wilson, 33", "Engineer in Austin", "How much, and when?"],
     ];
     return `<section class="onb"><div class="onb-in">
         <header class="onb-top"><span class="brand">${mark}Family Table <small>PNC Private Bank</small></span><button class="onb-link" data-act="switch">Explore on your own</button></header>
@@ -212,16 +212,16 @@
             <div class="onb-ctas"><button class="btn xl" data-act="tour-start">Start the 2-minute demo</button><a class="btn xl ghost-w" href="#/preview">Preview it for your family</a></div>
           </div>
           <div class="onb-how"><h2>How it works</h2>
-            <ol class="stages">${STAGES.map((s, i) => `<li style="--i:${i}"><span class="st-ic">${ic(s.icon, 18)}</span><span class="st-tx"><b>${s.label}</b></span></li>`).join("")}</ol></div>
+            <ol class="stages">${STAGES.map((s, i) => `<li style="--i:${i}"><span class="st-ic">${ic(s.icon, 18)}</span><span class="st-tx"><b>${s.label}</b><span>${s.line}</span></span></li>`).join("")}</ol></div>
         </div></div></section>
       <section class="onb-end"><div class="in">
-        <h2>Why now</h2>
+        <h2>A business exit puts both assets and family relationships in motion</h2>
         <div class="ends">
-          <div><b data-count="124" data-fmt="t">$124T</b><span>in wealth transfers in the United States by 2048</span></div>
-          <div><b>3 in 4</b><span>Americans have no will, and most heirs leave their parents' advisor</span></div>
-          <div><b data-count="2" data-fmt="p">2%</b><span>of 30 million family-owned U.S. businesses reach a $10&ndash;50M valuation</span></div>
+          <div><b data-count="124" data-fmt="t">$124T</b><span>projected U.S. wealth transfer through 2048</span></div>
+          <div><b data-count="83" data-fmt="p">83%</b><span>of business owners say family dynamics affect succession or exit planning</span></div>
+          <div><b data-count="55" data-fmt="p">55%</b><span>of spouses and heirs say they will not, or did not, retain their benefactor's advisor</span></div>
         </div>
-        <p class="small muted">Only 1,800 to 3,500 of these family businesses sell each year. Sources: U.S. Census Bureau, Family Enterprise USA, PitchBook &amp; GF Data, IBBA Market Pulse.</p>
+        <p class="small muted">89% of owners want connected business and personal advice; 67% still manage those needs separately. Sources: Cerulli Associates (2024); PNC Private Bank Business Owner Wealth Insights 2026; Natixis Investment Managers Wealth Transfer Report 2026.</p>
       </div></section>
       <section class="onb-cast"><div class="in"><h2>Meet the Wilsons</h2>
         <p class="muted">Margaret built Wilson Transport over 35 years. Now she's selling it for $48.0M, sure her children agree on what's fair.</p>
@@ -459,7 +459,7 @@
           <div class="cta-row">${state.started ? `<button class="btn done" disabled>${ic("check", 18, 2.4)} Called Margaret on Oct 15</button>` : `<button class="btn" data-act="start">${ic("phone", 18)} Call Margaret</button>`}</div></section>
       </div><aside class="col-side">
         <section class="panel stake"><div class="label">At stake for PNC</div><div class="value">${range(heirSum(0), heirSum(1))}</div>
-          <p class="small muted">heading to Claire and Sam at closing. Neither banks with PNC, and only 13% of adult children use their parents' advisor (Cerulli, 2019).</p></section>
+          <p class="small muted">heading to Claire and Sam at closing. Neither banks with PNC, and 55% of spouses and heirs say they will not, or did not, retain their benefactor's advisor (Natixis, 2026).</p></section>
         <section class="panel"><div class="section-head"><h2>The Wilson family</h2><span class="aside">Status, not answers</span></div><div class="table-viz">${familyTable(240)}</div></section>
         ${state.started ? nextLink("me/margaret", "Margaret invites her family") : ""}
       </aside></div></div>`;
@@ -891,9 +891,9 @@
       hook: `${eyebrow}<h1>Margaret is selling the company she built. Her family has never talked about what's fair.</h1><p class="sub">Most families don't, until the money arrives. By then, the advisor is the last to know.</p>`,
       cast: `${eyebrow}<h1>One sale, seen from both sides.</h1><div class="cast">${tile("margaret", "Margaret Wilson", "Founder, Wilson Transport")}${tile("alex", "Alex Lee, PNC", "Private Business Strategist")}${S.people.filter(p => p.id !== "margaret").map(p => tile(p.id, p.name, p.role.split(",")[0])).join("")}</div>`,
       problem: `${eyebrow}<h1>The sale is when families split and money leaves the bank.</h1><div class="stats">
-        <div class="stat"><b>13%</b><p>of adult children use their parents' financial advisor.</p><small>Cerulli Associates, 2019</small></div>
-        <div class="stat"><b>75%</b><p>of owners “profoundly regretted” selling a year later.</p><small>PNC, Begin at the end</small></div>
-        <div class="stat"><b>1 in 2</b><p>business exits are involuntary: death, illness, divorce or dispute.</p><small>PNC Business Succession Planning series</small></div></div>`,
+        <div class="stat"><b>83%</b><p>of business owners say family dynamics affect succession or exit planning.</p><small>PNC Business Owner Wealth Insights, 2026</small></div>
+        <div class="stat"><b>67%</b><p>still manage business and personal finances separately, though 89% want them connected.</p><small>PNC Business Owner Wealth Insights, 2026</small></div>
+        <div class="stat"><b>55%</b><p>of spouses and heirs will not, or did not, keep their benefactor's advisor.</p><small>Natixis Wealth Transfer Report, 2026</small></div></div>`,
       sauce: `${eyebrow}<h1>Why only PNC can build this</h1><div class="stats pillars">
         <div class="stat"><span class="pi">${ic("flag", 26)}</span><b>A signal PNC already holds</b><p>Business-account activity can flag a sale a year before closing.</p></div>
         <div class="stat"><span class="pi">${ic("lock", 26)}</span><b>Private by default</b><p>Each person answers alone. The advisor sees the gaps, not the words.</p></div>

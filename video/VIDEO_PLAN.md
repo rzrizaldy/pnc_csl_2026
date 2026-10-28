@@ -27,7 +27,7 @@ The demo follows the guided tour, which alternates the family side and the advis
 | # | Screen (prototype route) | Side | On-screen action | Narration (Nindy) |
 |---|---|---|---|---|
 | 1 | `story/hook` | — | — | Margaret Wilson is selling the trucking company she built over thirty-five years. Her family has never talked about what's fair. |
-| 2 | `story/problem` | — | stats build in | Most families don't, until the money arrives. By then the advisor has heard from one person, and only thirteen percent of adult children keep their parents' advisor. |
+| 2 | `story/problem` | — | stats build in | Most families don't, until the money arrives. By then the advisor has heard from one person, and more than half of heirs don't keep their parents' advisor. |
 | 3 | `story/cast` | — | Margaret, Alex, then the family | Family Table helps both sides of the sale: Margaret's family, and Alex, her PNC advisor. |
 | 4 | `advisor` | Advisor | chart draws; cursor → **Call Margaret** | PNC already banks the business. Payments to deal advisers flag a likely sale a year ahead, so Alex calls Margaret before anything is signed. |
 | 5 | `me/margaret` | Family | cursor → **Invite the family**; voices appear | Margaret previews what a sale could mean, sets her goals, and invites her family. Each of them answers in private. |
@@ -41,7 +41,7 @@ The demo follows the guided tour, which alternates the family side and the advis
 **Hard cap is 2:00.** If the take runs long, cut line 3 first, then the last sentence of line 8. Lines 4 to 7 and 10 stay.
 
 **Facts spoken, all cited on screen:**
-- "Thirteen percent" is from Cerulli 2019, via InvestmentNews.
+- "Fifty-five percent" (heirs who do not keep the benefactor's advisor) is from the Natixis Wealth Transfer Report 2026; the 83% and 67% figures are PNC Business Owner Wealth Insights 2026, as on the deck.
 - "Eight million dollars" is the prototype's fictional figure ($8.0M to $9.0M for Claire and Sam).
 - No other statistics are spoken.
 
