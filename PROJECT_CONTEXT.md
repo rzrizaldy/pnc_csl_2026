@@ -220,8 +220,9 @@ A gap of 0.75 or more recommends a facilitator.
 | `prototype/shots/` | Screenshots used by the site and slides |
 | `slides/claude_deck/` | Source of the Claude Slides deck (`deck.json` and `slides/*.html`) |
 | `slides/build_secret_sauce.py`, `secret_sauce.pptx` | Editable PPTX of the sauce slide, for Canva |
-| `video/VIDEO_PLAN.md`, `video/RECORDING_SCRIPT.md` | Old video plan (v3); voice-over script **v4** (13 lines, about 245 words, deck facts only) |
-| `video/src2/` | **The final voice-over film**: `shots.json`, `stage.html`, `cards.html`, `render.js`, `vo.py`, `ingest.py`; see its README |
+| `video/VIDEO_PLAN.md`, `video/RECORDING_SCRIPT.md` | Old video plan (v3); voice-over script **v5** (12 lines, 254 words, timed to the v5 picture) |
+| `video/src3/` | **The final film (v5)**: `STORYBOARD.md`, `shots.json` (timing + script lines), `stage.html` (iso world, devices, copy), `render.js`, `cues.py` |
+| `video/src2/` | The v4 voice-over film (superseded): `shots.json`, `stage.html`, `cards.html`, `render.js`, `vo.py`, `ingest.py` |
 | `video/src/*.js` | Playwright tooling, listed in §9 |
 | `docs/TWO_WAY_JOURNEY.md` | Reassessment: each persona goal mapped to a screen |
 | `docs/DEVILS_ADVOCATE_REVIEW.md` | Scorecard, kill shots, judge Q&A, economics |
@@ -271,13 +272,14 @@ A gap of 0.75 or more recommends a facilitator.
 
 Rz's three core slides (AI Client & Family Experience, AI Advisor Workbench, Added Value: The Secret Sauce & Core Innovation) also exist as a standalone three-slide Claude Slides deck in the PNC navy theme, with the same content as the PPTX: https://claude.ai/artifact/4i1gadSusfcxXqzgcHbiaz (source in `slides/claude_three/`). Versions: these in the full deck, that standalone deck, and `slides/canva/family_table_3_slides.pptx` in the team Canva deck's look (see `slides/canva/README.md`). Slide images are artifact assets; `video/src/slide_shots_v2.js` and `slide_crops.js` regenerate them, and `slides_check.js` maps them for local render checks.
 
-**Final film (voice-over, the one to submit):** `video/src2/`. Thirteen voice-over lines (`video/RECORDING_SCRIPT.md` v4), one scene each:
-- bold cards for the deck facts ($124T, 55%, five interviews, two sides, the five-layer stack, $499B and the pilot)
-- live prototype footage for Align, the AI brief, Allocate, Activate and governance: real clicks, typing and count-ups, with a camera that pushes in on one element at a time
-- no music and no sound effects
-- 60 fps, 0.5 s dissolves, deterministic (fake clock)
+**Final film (v5, the one to submit):** `video/src3/`. A silent picture, cut to `video/RECORDING_SCRIPT.md` v5 (12 lines, 254 words). The voice is recorded later to fixed cues in `video/family_table_v5_cues.srt`. See `video/src3/STORYBOARD.md`.
+- **Order:** follows Adit's cut (`video/adit/family_table_silent2.mp4`, from a teammate's Claude): family → 55% → Family Table between the family and Alex → signal → Margaret → private check-ins → brief → Allocate → Activate → one year on (5 of 5) → why only PNC → close ("A plan the family trusts.").
+- **One isometric world** drawn as SVG. Devices stand up out of it and lie back down into it: phones for the family, an iPad for Alex. Every product shot is inside a device frame. Each device shot has a small live iso diagram beside it.
+- **The layered stack** (vantis.sh style) closes the argument.
+- **Numbers on screen:** only 55% and 5 of 5 (Rz's call, Oct 28).
+- **Render:** 60 fps, deterministic (fake clock, live prototype). `node render.js stills --every 2`, then `node render.js video` → `video/family_table_v5_silent.mp4` (gitignored).
 
-`python3 vo.py tts` makes the TTS draft and the timing; `node render.js video` writes `video/family_table_vo_draft.mp4` and `video/family_table_silent.mp4` (about 117 s); `python3 ingest.py <take>` re-times the film to Nindy's recording and writes `video/family_table_final.mp4`. The cues are in `video/family_table_vo_cues.srt`. The MP4s are gitignored.
+**Previous voice-over film (v4, superseded by v5):** `video/src2/`. Thirteen TTS-timed lines on cards plus full-bleed prototype footage. `python3 vo.py tts`, `node render.js video`, and `ingest.py` for a real take. Rz found its numbers too many and its look too close to a screen recording.
 
 **Earlier film (music-only, Apple-keynote style, superseded):** `video/apple/`. `STORYBOARD.md` has the 15 scenes from the Canva deck before the appendix. `capture.js` grabs the screens, `film.html` holds the GSAP timeline, `music.py` writes the synced 96 BPM score, and `node render.js video` renders `video/family_table_film.mp4` (120 s, 1920×1080, −14 LUFS). The MP4 is gitignored; share it by Drive.
 

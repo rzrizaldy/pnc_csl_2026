@@ -1,0 +1,775 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Family Table film v5</title>
+<!-- The v5 film, 1920×1080, stepped frame by frame by render.js with window.frame(t) under a fake clock.
+     Three layers, all functions of t:
+       world   isometric schematics, drawn as SVG every frame (one projection for the whole film)
+       devices phones (family) and an iPad (Alex) running the live prototype; they stand up out of the world
+               and lie back down into it, using the same projection, so every schematic joins every screen
+       heads   headlines and the two numbers, plus a small live diagram beside each device shot
+     Story and timing: STORYBOARD.md and shots.json. -->
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; }
+  body { font-family: "Barlow", Arial, sans-serif; -webkit-font-smoothing: antialiased; color: #fff; background: #0D1C44; }
+  #svg { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+  #lab, #devs, #heads { position: absolute; inset: 0; pointer-events: none; }
+  /* each layer is its own stacking context, so a portrait never draws over a device */
+  #lab { z-index: 1; } #devs { z-index: 2; } #heads { z-index: 3; } #fade { z-index: 4; }
+  .face { position: absolute; left: 0; top: 0; border-radius: 50%; overflow: hidden; opacity: 0; background: #1D3270;
+    box-shadow: 0 0 0 3px #fff, 0 10px 24px rgba(4,10,30,.45); }
+  .face img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .lbl { position: absolute; white-space: nowrap; font-size: 22px; font-weight: 600; color: #fff; line-height: 1.2; }
+  .lbl.c { transform: translateX(-50%); text-align: center; }
+  .lbl.r { transform: translateX(-100%); text-align: right; }
+  .lbl small { display: block; font-size: 18px; font-weight: 500; color: #AEB9D6; }
+  .lbl.soft { color: #C9D1E6; font-weight: 500; }
+  .lbl.pur { color: #B9AFFF; }
+  .lbl.org { color: #FF9A4D; }
+  .lbl.big { font-size: 28px; font-weight: 700; }
+  .dev { position: absolute; left: 0; top: 0; transform-origin: 0 0; opacity: 0; }
+  .bez { position: absolute; left: 0; top: 0; background: #0A1430; box-shadow: 0 0 0 2px rgba(255,255,255,.2), 0 50px 90px rgba(3,8,26,.45); }
+  .phone .bez { width: 414px; height: 868px; border-radius: 60px; }
+  .phone .scr { position: absolute; left: 12px; top: 12px; width: 390px; height: 844px; border-radius: 48px; overflow: hidden; background: #fff; }
+  .tab .bez { width: 1418px; height: 1076px; border-radius: 48px; }
+  .tab .scr { position: absolute; left: 26px; top: 26px; width: 1366px; height: 1024px; border-radius: 22px; overflow: hidden; background: #fff; }
+  .scr iframe { position: absolute; left: 0; top: 0; border: 0; }
+  .phone iframe { width: 390px; height: 844px; }
+  .tab iframe { width: 1366px; height: 1024px; }
+  .fx { position: absolute; inset: 0; pointer-events: none; }
+  .tap { position: absolute; left: 0; top: 0; width: 48px; height: 48px; margin: -24px 0 0 -24px; border-radius: 50%; background: rgba(16,33,77,.2); border: 2px solid rgba(16,33,77,.4); opacity: 0; }
+  .cursor { position: absolute; left: 0; top: 0; width: 44px; height: 61px; opacity: 0; transform-origin: 3px 3px; }
+  .ring { position: absolute; left: 0; top: 0; width: 72px; height: 72px; margin: -36px 0 0 -36px; border-radius: 50%; border: 5px solid #EF6A00; opacity: 0; }
+  .hd { position: absolute; left: 150px; width: 600px; }
+  .hd .pills { display: flex; gap: 10px; margin-bottom: 26px; }
+  .hd .pills span { font-size: 22px; font-weight: 600; padding: 5px 18px; border-radius: 26px; border: 2px solid #3A5299; color: #9AA7CC; }
+  .hd .pills span.on { background: #EF6A00; border-color: #EF6A00; color: #fff; }
+  .hd h1 { font-size: 64px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.06; margin: 0; }
+  .hd p { font-size: 30px; font-weight: 500; color: #C9D1E6; line-height: 1.32; margin: 22px 0 0; }
+  .hd .num { font-size: 210px; font-weight: 700; letter-spacing: -0.035em; line-height: .92; color: #EF6A00; margin: 0; }
+  .hd .num.mid { font-size: 150px; }
+  .hd .src { font-size: 18px; color: #8592BA; margin-top: 26px; }
+  .end { position: absolute; left: 0; right: 0; text-align: center; }
+  .end h1 { font-size: 110px; font-weight: 700; letter-spacing: -0.025em; margin: 0; }
+  .end p { font-size: 40px; font-weight: 500; color: #C9D1E6; margin: 18px 0 0; }
+  .end .team { font-size: 22px; color: #AEB9D6; margin-top: 70px; }
+  .end .note { font-size: 17px; color: #7F8CB3; margin-top: 12px; }
+</style>
+</head>
+<body>
+<svg id="svg" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="gfade" cx="50%" cy="50%" r="55%"><stop offset="0" stop-color="#fff"/><stop offset=".75" stop-color="#fff" stop-opacity=".35"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+    <mask id="gmask" maskUnits="userSpaceOnUse" x="0" y="0" width="1920" height="1080"><rect x="0" y="0" width="1920" height="1080" fill="url(#gfade)"/></mask>
+  </defs>
+  <g id="gw"></g>
+</svg>
+<div id="lab"><div id="labt"></div></div>
+<div id="devs"></div>
+<div id="heads"></div>
+<div id="fade" style="position:absolute;inset:0;background:#0D1C44;opacity:0"></div>
+<script>
+// ---------------------------------------------------------------- helpers
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const io = p => p < .5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;   // cubic in-out
+const outC = p => 1 - Math.pow(1 - p, 3);
+const mix = (a, b, p) => a + (b - a) * p;
+const seg = (t, a, d) => io(clamp((t - a) / d));
+const win = (t, a, b, f = .6) => seg(t, a, f) * (1 - seg(t, b - f, f));   // fade in at a, out by b
+const lerp = (a, b, p) => { const o = {}; for (const k in b) o[k] = (typeof b[k] === "number" ? a[k] + (b[k] - a[k]) * p : b[k]); return o; };
+const fx = n => n.toFixed(1);
+const PROTO = "../../prototype/index.html?reset#/story/hook";
+let CFG, XF, K = {}, T_END = 0;
+
+class Track {
+  constructor(init) { this.init = init; this.k = []; }
+  to(t, d, v) { this.k.push({ t, d, v }); this.k.sort((a, b) => a.t - b.t); return this; }
+  base() { if (typeof this.init === "function") this.init = this.init(); return this.init; }
+  value(t) {
+    let v = this.base();
+    for (const k of this.k) {
+      if (t < k.t) break;
+      if (!k.done) { k.val = typeof k.v === "function" ? k.v() : k.v; k.from = v; k.done = true; }
+      v = lerp(k.from, k.val, io(clamp((t - k.t) / k.d)));
+    }
+    return v;
+  }
+  last() { let v = this.base(); for (const k of this.k) if (k.done) v = k.val; return v; }
+}
+
+// ---------------------------------------------------------------- isometric world
+// x → (cos30, sin30), y → (−cos30, sin30), z up. A unit square on the floor is the same diamond a device makes with
+// rotateX(54.7356deg) rotateZ(45deg), so devices can lie on this floor exactly.
+const IC = .70710678, IS = .40824829, IV = .81649658;
+// `until`: the push eases back out by the time a dive lands, so a device rises from exactly the planned spot
+const push = (c, t, t0, rate = .006, until = 1e9) => ({ ...c, k: c.k * (1 + rate * Math.max(0, t - t0) * (1 - seg(t, until, 1.4))) });
+const iso = c => { const f = (x, y, z = 0) => [c.ox + (x - y) * IC * c.k, c.oy + (x + y) * IS * c.k - z * IV * c.k]; f.k = c.k; return f; };
+const COL = {
+  navy:  { t: "#1D3270", l: "#15275C", r: "#0F1E4B", e: "#3A5299" },
+  navy2: { t: "#16295F", l: "#11214F", r: "#0C1940", e: "#2E4486" },
+  org:   { t: "#EF6A00", l: "#C45600", r: "#9C4500", e: "#FF9A4D" },
+  pur:   { t: "#7C6CF0", l: "#5F50D0", r: "#4A3CB0", e: "#A99DFF" },
+  ice:   { t: "#E8ECF6", l: "#C2CADF", r: "#A0ABC8", e: "#FFFFFF" },
+  sky:   { t: "#BFD3F2", l: "#98B0D8", r: "#7C94C0", e: "#E2ECFF" },
+  doc:   { t: "#FFFFFF", l: "#D5DAE8", r: "#B5BDD2", e: "#FFFFFF" },
+};
+const pts = a => a.map(p => fx(p[0]) + "," + fx(p[1])).join(" ");
+function quad(P, c, fill, o, stroke = "none", sw = 1) { return `<polygon points="${pts(c.map(q => P(...q)))}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}" stroke-linejoin="round" opacity="${o.toFixed(3)}"/>`; }
+// a solid box seen from the front: top, the +y face (left) and the +x face (right)
+function box(P, x, y, z, w, d, h, c, o = 1, edge = true) {
+  if (o <= .002) return "";
+  const t = z + h, e = edge ? c.e : "none";
+  let s = "";
+  if (h > .002) {
+    s += quad(P, [[x, y + d, z], [x + w, y + d, z], [x + w, y + d, t], [x, y + d, t]], c.l, o, e, .8);
+    s += quad(P, [[x + w, y, z], [x + w, y + d, z], [x + w, y + d, t], [x + w, y, t]], c.r, o, e, .8);
+  }
+  return s + quad(P, [[x, y, t], [x + w, y, t], [x + w, y + d, t], [x, y + d, t]], c.t, o, e, 1.1);
+}
+const boxC = (P, cx, cy, z, w, d, h, c, o, edge) => box(P, cx - w / 2, cy - d / 2, z, w, d, h, c, o, edge);
+// a glass box: faint faces, every edge drawn, back edges fainter
+function glass(P, cx, cy, z, w, d, h, o, tint = "#DCE4FF") {
+  if (o <= .002) return "";
+  const x = cx - w / 2, y = cy - d / 2, t = z + h, L = (a, b, op) => `<line x1="${fx(P(...a)[0])}" y1="${fx(P(...a)[1])}" x2="${fx(P(...b)[0])}" y2="${fx(P(...b)[1])}" stroke="${tint}" stroke-width="1.6" opacity="${(o * op).toFixed(3)}"/>`;
+  let s = quad(P, [[x, y + d, z], [x + w, y + d, z], [x + w, y + d, t], [x, y + d, t]], tint, o * .07)
+        + quad(P, [[x + w, y, z], [x + w, y + d, z], [x + w, y + d, t], [x + w, y, t]], tint, o * .05)
+        + quad(P, [[x, y, t], [x + w, y, t], [x + w, y + d, t], [x, y + d, t]], tint, o * .1);
+  s += L([x, y, z], [x + w, y, z], .3) + L([x, y, z], [x, y + d, z], .3) + L([x, y, z], [x, y, t], .3);
+  [[[x + w, y, z], [x + w, y + d, z]], [[x, y + d, z], [x + w, y + d, z]], [[x + w, y + d, z], [x + w, y + d, t]], [[x + w, y, z], [x + w, y, t]], [[x, y + d, z], [x, y + d, t]],
+   [[x, y, t], [x + w, y, t]], [[x, y, t], [x, y + d, t]], [[x + w, y, t], [x + w, y + d, t]], [[x, y + d, t], [x + w, y + d, t]]].forEach(([a, b]) => s += L(a, b, .85));
+  return s;
+}
+function line3(P, a, b, stroke, sw, o, dash = "", off = 0) {
+  if (o <= .002) return "";
+  const p = P(...a), q = P(...b);
+  return `<line x1="${fx(p[0])}" y1="${fx(p[1])}" x2="${fx(q[0])}" y2="${fx(q[1])}" stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round" opacity="${o.toFixed(3)}"${dash ? ` stroke-dasharray="${dash}" stroke-dashoffset="${off.toFixed(1)}"` : ""}/>`;
+}
+const at3 = (a, b, p) => [mix(a[0], b[0], p), mix(a[1], b[1], p), mix(a[2], b[2], p)];
+// a flat circle on a horizontal plane (an ellipse on screen)
+function disc(P, x, y, z, r, fill, o, stroke = "none", sw = 2) { const [sx, sy] = P(x, y, z); return o > .002 ? `<ellipse cx="${fx(sx)}" cy="${fx(sy)}" rx="${fx(r * P.k)}" ry="${fx(r * P.k * .57735)}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}" opacity="${o.toFixed(3)}"/>` : ""; }
+// text lying on a horizontal plane, reading up and to the right
+function floorText(P, x, y, z, txt, size, fill, o, weight = 700) { const [sx, sy] = P(x, y, z); return o > .002 ? `<text transform="matrix(${IC},${-IS},${IC},${IS},${fx(sx)},${fx(sy)})" font-family="Barlow" font-weight="${weight}" font-size="${fx(size * P.k)}" fill="${fill}" text-anchor="middle" dominant-baseline="middle" opacity="${o.toFixed(3)}">${txt}</text>` : ""; }
+// the Family Table mark lying on a plane: ring, three seats, an orange centre
+function markFlat(P, x, y, z, r, o) {
+  if (o <= .002) return "";
+  let s = disc(P, x, y, z, r, "none", o, "#fff", Math.max(2, r * P.k * .1));
+  [-90, 30, 150].forEach(a => { const q = a * Math.PI / 180; s += disc(P, x + r * Math.cos(q), y + r * Math.sin(q), z, r * .2, "#fff", o); });
+  return s + disc(P, x, y, z, r * .36, "#EF6A00", o);
+}
+function grid(P, o, n = 12) {
+  if (o <= .002) return "";
+  let s = `<g mask="url(#gmask)" opacity="${o.toFixed(3)}">`;
+  for (let i = -n; i <= n; i++) { s += line3(P, [i, -n, 0], [i, n, 0], "#2C4180", 1, .55); s += line3(P, [-n, i, 0], [n, i, 0], "#2C4180", 1, .55); }
+  return s + "</g>";
+}
+const LOCK = (x, y, sz, col, o) => `<g transform="translate(${fx(x)},${fx(y)}) scale(${(sz / 24).toFixed(3)})" opacity="${o.toFixed(3)}"><rect x="-8" y="-2" width="16" height="12" rx="2.5" fill="${col}"/><path d="M-5 -2 V-6 a5 5 0 0 1 10 0 V-2" fill="none" stroke="${col}" stroke-width="2.6"/></g>`;
+const CHECK = (x, y, r, o, bg = "#EF6A00") => o > .002 ? `<g transform="translate(${fx(x)},${fx(y)})" opacity="${o.toFixed(3)}"><circle r="${r}" fill="${bg}"/><path d="M${-r * .42} 0 L${-r * .1} ${r * .32} L${r * .45} ${-r * .3}" fill="none" stroke="#fff" stroke-width="${(r * .2).toFixed(1)}" stroke-linecap="round" stroke-linejoin="round"/></g>` : "";
+
+// ---------------------------------------------------------------- per-frame output: svg, labels, portraits
+let OUT;
+const FACE_NAMES = ["margaret", "tom", "ben", "claire", "sam", "alex"], FACES = {};
+function makeFaces() {
+  const lab = document.getElementById("lab"), loads = [];
+  for (const n of FACE_NAMES) { FACES[n] = [0, 1].map(() => { const d = document.createElement("div"); d.className = "face"; const im = document.createElement("img"); im.src = `../../prototype/faces/${n}.jpg`; loads.push(im.decode().catch(() => {})); d.appendChild(im); lab.insertBefore(d, lab.firstChild); return d; }); }
+  return Promise.all(loads);
+}
+// a portrait floating at (sx, sy) on screen, diameter d
+function face(name, sx, sy, d, o, depth = 0) { if (o > .002 && d > 1) OUT.faces.push({ name, sx, sy, d, o, depth }); }
+// a portrait in the world: a stem to the floor, a shadow, the portrait, an optional name
+function person(P, name, x, y, z, d, o, label, cls = "", floor = 0) {
+  if (o <= .002) return;
+  const [bx, by] = P(x, y, floor), [sx, sy] = P(x, y, z);
+  OUT.svg.push(disc(P, x, y, floor, .32, "#050C24", o * .45) + `<line x1="${fx(bx)}" y1="${fx(by)}" x2="${fx(sx)}" y2="${fx(sy)}" stroke="#7F90C4" stroke-width="1.5" opacity="${(o * .6).toFixed(3)}"/>`);
+  face(name, sx, sy, d, o, x + y);
+  if (label) OUT.lab.push(lbl(sx, sy + d / 2 + 12, label, "c " + cls, o));
+}
+function lbl(x, y, html, cls, o) { return o > .002 ? `<div class="lbl ${cls}" style="left:${fx(x)}px;top:${fx(y)}px;opacity:${o.toFixed(3)}">${html}</div>` : ""; }
+// a leader line from a point to a label
+function leader(a, b, o, col = "#7F90C4") { return o > .002 ? `<polyline points="${fx(a[0])},${fx(a[1])} ${fx(b[0])},${fx(b[1])}" fill="none" stroke="${col}" stroke-width="1.5" opacity="${o.toFixed(3)}"/><circle cx="${fx(a[0])}" cy="${fx(a[1])}" r="3.5" fill="${col}" opacity="${o.toFixed(3)}"/>` : ""; }
+// a small cube travelling along a polyline in the world, at fraction p
+function packet(P, path, p, c, o, s = .22) {
+  if (o <= .002) return "";
+  const n = path.length - 1, f = clamp(p) * n, i = Math.min(n - 1, Math.floor(f)), q = at3(path[i], path[i + 1], f - i);
+  return boxC(P, q[0], q[1], q[2] - s / 2, s, s, s, c, o);
+}
+function flowPath(P, path, stroke, sw, o, t, speed = 30) {
+  if (o <= .002) return "";
+  return path.slice(1).map((b, i) => line3(P, path[i], b, stroke, sw, o, "2 10", -t * speed)).join("");
+}
+
+// ---------------------------------------------------------------- devices
+const DEV = {
+  phone: { W: 414, H: 868, b: 12, sw: 390, sh: 844, home: { X: 1330, Y: 540, s: 1.0 } },
+  tab:   { W: 1418, H: 1076, b: 26, sw: 1366, sh: 1024, home: { X: 1300, Y: 548, s: .735 } },
+};
+const CURSOR = `<svg class="cursor" viewBox="0 0 36 50"><path d="M3 3 L3 39 L12 30.5 L18.5 45 L25 42 L18.6 28 L30.5 28 Z" fill="#fff" stroke="#14181F" stroke-width="2.4" stroke-linejoin="round"/></svg>`;
+let SLOTS = {}, SHOTS = [];
+function el(tag, cls, parent, html) { const e = document.createElement(tag); if (cls) e.className = cls; if (html) e.innerHTML = html; parent.appendChild(e); return e; }
+function makeSlots() {
+  const root = document.getElementById("devs"), loads = [];
+  for (const kind of ["phone", "tab"]) for (const L of ["A", "B"]) {
+    const d = el("div", "dev " + kind, root), bez = el("div", "bez", d), scr = el("div", "scr", bez);
+    const f = el("iframe", "", scr); loads.push(new Promise(r => f.addEventListener("load", r, { once: true }))); f.src = PROTO;
+    const fxl = el("div", "fx", scr, `<div class="tap"></div><div class="tap"></div>${CURSOR}<div class="ring"></div>`);
+    SLOTS[kind + L] = { el: d, frame: f, taps: [...fxl.querySelectorAll(".tap")], cursor: fxl.querySelector(".cursor"), ring: fxl.querySelector(".ring") };
+  }
+  return Promise.all(loads);
+}
+const hashed = w => new Promise(r => w.addEventListener("hashchange", () => r(), { once: true }));
+async function settle(w) { await w.document.fonts.ready; await Promise.all([...w.document.images].map(i => i.decode().catch(() => {}))); }
+async function go(w, route, st) {
+  w.FT.reset(); if (st) w.FT.set(JSON.parse(JSON.stringify(st)));
+  const target = "#/" + route;
+  if (w.location.hash === target) { const h = hashed(w); w.location.hash = "#/story/close"; await h; }
+  const h = hashed(w); w.location.hash = target; await h;
+  w.scrollTo(0, 0); await settle(w);
+}
+const born = new WeakMap();
+function seekAnims(t) {
+  const ms = t * 1000;
+  for (const k in SLOTS) { const d = SLOTS[k].frame.contentDocument; if (!d) continue;
+    for (const a of d.getAnimations()) { if (!born.has(a)) { born.set(a, ms); a.pause(); } try { a.currentTime = ms - born.get(a); } catch (e) {} } }
+}
+const home = (D, extra = {}) => Object.assign({ X: D.home.X, Y: D.home.Y, s: D.home.s, a: 0, o: 1, gx: D.W / 2, gy: D.H / 2 }, extra);
+// a pose lying flat at a stage point, small and transparent: where devices come from and go to
+const flat = (D, X, Y, s, o = 0) => ({ X, Y, s, a: 1, o, gx: D.W / 2, gy: D.H / 2 });
+
+function makeShot(kind, o) {
+  const D = DEV[kind], sh = Object.assign({ kind, D, acts: [], ticks: [], taps: [], rings: [] }, o);
+  sh.win = () => sh.slot.frame.contentWindow;
+  sh.doc = () => sh.win().document;
+  sh.q = sel => sh.doc().querySelector(sel);
+  sh.qt = (sel, text) => { const e = [...sh.doc().querySelectorAll(sel)].find(x => x.textContent.includes(text)); if (!e) throw new Error(`no ${sel} with "${text}"`); return e; };
+  sh.box = e => { const r = e.getBoundingClientRect(), y = sh.win().scrollY; return { x: r.left, y: r.top + y, w: r.width, h: r.height, cx: r.left + r.width / 2, cy: r.top + y + r.height / 2 }; };
+  sh.R = sel => { const e = typeof sel === "string" ? sh.q(sel) : sel(); if (!e) throw new Error(`${sh.name}: no element ${sel}`); return sh.box(e); };
+  sh.docH = () => sh.doc().documentElement.scrollHeight;
+  sh.maxScroll = () => Math.max(0, sh.docH() - D.sh);
+  sh.act = (t, fn) => sh.acts.push({ t, fn });
+  sh.tick = (t0, t1, fn) => sh.ticks.push({ t0, t1, fn });
+  sh.scroll = new Track({ s: 0 });
+  sh.cur = new Track({ x: 0, y: 0, o: 0 });
+  sh.v = new Track(o.from || home(D));
+  sh.to = (t, d, pose) => sh.v.to(t, d, pose);
+  // push in on an element: its centre lands on stage point (X, Y) at zoom z. The scroll that's set by then counts.
+  sh.focus = (t, d, sel, z, X, Y, dx = 0, dy = 0) => sh.v.to(t, d, () => { const r = sh.R(sel), sc = sh.scroll.last().s;
+    // phones stay whole on screen (the content scrolls instead); the iPad may crop on the right, never into the copy column
+    const s = D.home.s * Math.min(z, sh.kind === "phone" ? 1.1 : 1.32), gx = D.b + r.cx + dx, gy = D.b + r.cy - sc + dy;
+    let x = Math.max(X ?? D.home.X, 800 + gx * s), y = Y ?? D.home.Y;
+    if (sh.kind === "phone") x = Math.min(x, 1880 - (D.W - gx) * s);
+    if (D.H * s <= 1050) { const top = y - gy * s, bot = y + (D.H - gy) * s; if (top < 16) y += 16 - top; if (bot > 1064) y -= bot - 1064; }
+    return home(D, { s, gx, gy, X: x, Y: y }); });
+  sh.home = (t, d) => sh.v.to(t, d, home(D));
+  sh.scrollTo = (t, d, f) => sh.scroll.to(t, d, () => ({ s: clamp(typeof f === "function" ? f() : f, 0, sh.maxScroll()) }));
+  sh.tap = (t, sel) => { sh.act(t - .28, () => { const r = sh.R(sel); sh.taps.push({ t, x: r.cx, y: r.cy }); }); sh.act(t, () => sh.R(sel) && (typeof sel === "string" ? sh.q(sel) : sel()).click()); };
+  sh.type = (t0, t1, sel, text, before = "") => { let n = -1;
+    sh.tick(t0, t1, p => { const k = Math.round(text.length * p); if (k === n) return; n = k; const e = sh.q(sel); e.value = before + text.slice(0, k); e.dispatchEvent(new Event("input", { bubbles: true })); }); };
+  sh.click = (t, sel, travel = .9, arrive = .35) => {
+    const first = sh.cur.k.length === 0;
+    if (first) sh.cur.to(t - arrive - travel - .01, .01, () => { const r = sh.R(sel); return { x: r.cx + 260, y: r.cy + 200, o: 0 }; });
+    sh.cur.to(t - arrive - travel, travel, () => { const r = sh.R(sel); return { x: r.cx + 4, y: r.cy + 6, o: 1 }; });
+    sh.act(t, () => { const r = sh.R(sel); sh.rings.push({ t, x: r.cx + 4, y: r.cy + 6 }); sh.q(sel).click(); });
+    sh.cur.to(t + .45, .9, () => { const v = sh.cur.last(); return { x: v.x + 80, y: v.y + 70, o: 0 }; });
+  };
+  return sh;
+}
+async function setup(sh) { sh.ready = true; await go(sh.win(), sh.route, sh.state); }
+function drawDev(sh, t) {
+  const S = sh.slot, D = sh.D, sc = sh.scroll.value(t).s;
+  if (Math.abs(sh.win().scrollY - sc) > .01) sh.win().scrollTo({ top: sc, behavior: "instant" });
+  const sy = sh.win().scrollY, v = { ...sh.v.value(t) }; v.s *= 1 + .035 * clamp((t - sh.t0) / (sh.t1 - sh.t0));
+  // a shot that continues the previous one on the same device dissolves its screen in over the old one
+  const xin = sh.cont ? io(clamp((t - sh.t0) / XF)) : 1;
+  S.el.style.opacity = (v.o * xin).toFixed(3);
+  S.el.style.zIndex = sh.index + 1;
+  S.el.style.transform = `translate(${v.X.toFixed(2)}px,${v.Y.toFixed(2)}px) rotateX(${(54.7356 * v.a).toFixed(3)}deg) rotateZ(${(45 * v.a).toFixed(3)}deg) scale(${v.s.toFixed(4)}) translate(${(-v.gx).toFixed(2)}px,${(-v.gy).toFixed(2)}px)`;
+  const live = sh.taps.filter(x => t >= x.t - .28 && t <= x.t + .55).slice(-2);
+  S.taps.forEach((e, i) => { const tp = live[i]; if (!tp) { e.style.opacity = 0; return; }
+    const d = t - tp.t, o = d < 0 ? outC(clamp((d + .28) / .2)) : 1 - outC(clamp(d / .55)), s = d < 0 ? .75 + .25 * outC(clamp((d + .28) / .2)) : d < .1 ? 1 - .12 * Math.sin(Math.PI * d / .1) : 1 + .5 * outC(clamp((d - .1) / .45));
+    e.style.opacity = o; e.style.transform = `translate(${tp.x}px,${tp.y - sy}px) scale(${s})`; });
+  const c = sh.cur.value(t), lastClick = sh.rings.filter(r => r.t <= t).pop(), press = lastClick ? 1 - .14 * Math.sin(Math.PI * clamp((t - lastClick.t) / .22)) : 1;
+  S.cursor.style.opacity = c.o; S.cursor.style.transform = `translate(${c.x - 3}px,${c.y - sy - 3}px) scale(${press})`;
+  if (lastClick && t - lastClick.t < .8) { const q = clamp((t - lastClick.t) / .8); S.ring.style.opacity = .9 * (1 - outC(q)); S.ring.style.transform = `translate(${lastClick.x}px,${lastClick.y - sy}px) scale(${.45 + 1.3 * outC(q)})`; }
+  else S.ring.style.opacity = 0;
+}
+
+// ---------------------------------------------------------------- headlines
+let HEADS = [], DIMS = [];
+// left-column copy. h: {pill, h, p, num, numCls, src, top}
+function head(t0, t1, h) { HEADS.push({ t0, t1, h }); }
+// stretches when a device zooms across the left column: the copy and the side diagram step back
+function dim(t0, t1) { DIMS.push({ t0, t1 }); }
+const dimAt = t => DIMS.reduce((m, d) => Math.min(m, 1 - win(t, d.t0, d.t1, .6)), 1);
+function drawHeads(t) {
+  const dm = dimAt(t);
+  let html = "";
+  for (const x of HEADS) {
+    if (t < x.t0 - .01 || t > x.t1 + .01) continue;
+    const pin = outC(clamp((t - x.t0) / .7)), pout = 1 - io(clamp((t - (x.t1 - .5)) / .5)), h = x.h;
+    let o = pin * pout * (h.nodim ? 1 : dm); if (o <= .002) continue;
+    if (h.end) { html += `<div class="end" style="top:${h.top}px;opacity:${o.toFixed(3)};transform:translateY(${((1 - pin) * 26).toFixed(1)}px) scale(${(1 + .035 * clamp((t - x.t0) / (x.t1 - x.t0))).toFixed(4)})">${h.end(t)}</div>`; continue; }
+    const pills = h.pill != null ? `<div class="pills">${["Align", "Allocate", "Activate"].map((n, i) => `<span class="${i === h.pill ? "on" : ""}">${n}</span>`).join("")}</div>` : "";
+    const num = h.num ? `<div class="num ${h.numCls || ""}">${typeof h.num === "function" ? h.num(t) : h.num}</div>` : "";
+    const top = h.top ?? 150;
+    html += `<div class="hd" style="top:${top}px;opacity:${o.toFixed(3)};transform:translateY(${((1 - pin) * 26).toFixed(1)}px)">${pills}${num}${h.h ? `<h1>${h.h}</h1>` : ""}${h.p ? `<p>${h.p}</p>` : ""}${h.src ? `<div class="src">${h.src}</div>` : ""}</div>`;
+  }
+  document.getElementById("heads").innerHTML = html;
+}
+
+// ---------------------------------------------------------------- the world, scene by scene
+let WORLDS = [];
+const world = (t0, t1, fn) => WORLDS.push({ t0, t1, fn });
+const SEATS = { margaret: [-3.3, 0], tom: [-1.05, -2.0], ben: [1.05, -2.0], claire: [-1.05, 2.0], sam: [1.05, 2.0] };
+const CLUSTER = (() => { const c = [-5.0, 0], r = 1.0, ang = { margaret: -135, tom: -55, ben: 20, sam: 95, claire: 165 }, o = {};
+  for (const n in ang) { const q = ang[n] * Math.PI / 180; o[n] = [c[0] + r * Math.cos(q), c[1] + r * Math.sin(q)]; } return o; })();
+const FAMILY = ["margaret", "tom", "ben", "claire", "sam"], NAMES = { margaret: "Margaret", tom: "Tom", ben: "Ben", claire: "Claire", sam: "Sam", alex: "Alex" };
+let CAM_A, CAM_B, CAM_C;
+
+// 1–3: the family at the table, the advisor they'd lose, Family Table between them
+function worldA(t) {
+  const B = K.stakes, C = K.between, D = K.signal, P = iso(push(CAM_A.value(t), t, 0, .004, K.signal - 1.0)), z = P.k / 88;
+  const all = 1 - seg(t, D + .15, .9);
+  OUT.svg.push(grid(P, all * seg(t, 0, 1.6) * .9, 14));
+  const m = seg(t, C + .1, 2.0);
+  // the family's platform, from "between" on
+  const fp = seg(t, C + .4, 1.3) * all;
+  OUT.svg.push(box(P, -6.6, -1.6, 0, 3.2, 3.2, .16, COL.navy2, fp));
+  if (fp > .01) OUT.lab.push(lbl(...P(-3.4, 1.6, 0).map((v, i) => v + [-10, 18][i]), "The family", "soft", fp));
+  // the table, which becomes the Family Table block
+  const rise = seg(t, .3, 1.2), w = mix(4.6, 2.6, m), d = mix(2.4, 2.6, m), h = mix(.22, .78, m) * rise;
+  const tcol = m > .5 ? COL.navy : COL.navy;
+  OUT.svg.push(boxC(P, 0, 0, 0, w, d, h, tcol, rise * all));
+  OUT.svg.push(markFlat(P, 0, 0, h + .001, .78, m * all));
+  if (m > .01) { const [sx, sy] = P(0, 0, h); OUT.lab.push(lbl(sx, sy - 0.95 * 88 * z - 34, "Family Table", "c big", m * all)); }
+  // PNC, which becomes Alex's platform
+  const pin = seg(t, B + .3, .9) * all, AX = mix(4.4, 4.85, m);
+  OUT.svg.push(boxC(P, AX, 0, 0, 1.7, 1.7, .55, COL.navy, pin));
+  OUT.svg.push(quad(P, [[AX - .85, -.85, .551], [AX + .85, -.85, .551], [AX + .85, .85, .551], [AX - .85, .85, .551]], "none", pin, "#EF6A00", 2.2));
+  OUT.svg.push(floorText(P, AX, 0, .56, "PNC", .5, "#EF6A00", pin * (1 - m)));
+  // the people
+  const heirsGo = seg(t, B + 2.9, 1.5);
+  FAMILY.forEach((n, i) => {
+    const pop = n === "margaret" ? seg(t, 1.0, .7) : seg(t, 2.9 + .28 * i, .6);
+    let [x, y] = SEATS[n];
+    if (n !== "margaret") y *= 1 + .28 * heirsGo * (1 - m);
+    const [cx, cy] = CLUSTER[n]; x = mix(x, cx, m); y = mix(y, cy, m);
+    const zz = mix(1.35, 1.3, m), d = (n === "margaret" ? 112 : 92) * mix(1, .8, m) * z * (.6 + .4 * pop);
+    person(P, n, x, y, zz, d, pop * all, m < .5 ? NAMES[n] : "", "", m > .5 ? .16 * m : 0);
+    if (n === "margaret" || true) {
+      // stakes: a line from PNC to each person; the heirs' lines break
+      const lo = seg(t, B + .9 + .12 * i, .6) * (1 - seg(t, C + .1, .8)) * all;
+      if (lo > .01) {
+        const a = [AX - .3, 0, .56], b = [x, y, zz - .25];
+        if (n === "margaret") OUT.svg.push(line3(P, a, b, "#EF6A00", 2.6, lo));
+        else { const g = heirsGo; OUT.svg.push(line3(P, a, at3(a, b, .5 - .42 * g), "#EF6A00", 2.6, lo * (1 - .65 * g), g > .02 ? "7 7" : ""),
+                                          line3(P, at3(a, b, .5 + .42 * g), b, "#EF6A00", 2.6, lo * (1 - .65 * g), g > .02 ? "7 7" : "")); }
+      }
+    }
+  });
+  // Alex on his platform
+  const ax = seg(t, C + 1.3, .8) * all;
+  person(P, "alex", AX, 0, 1.75, 104 * z, ax, "Alex Lee<small>PNC advisor</small>", "", .55);
+  // what flows between them
+  const fl = seg(t, C + 2.4, 1.0) * all;
+  if (fl > .01) {
+    const L1 = [[-3.4, -.75, .1], [-1.3, -.75, .35]], R1 = [[1.3, -.75, .35], [4.0, -.75, .3]], L2 = [[-1.3, -.2, .35], [-3.4, -.2, .1]], R2 = [[4.0, -.2, .3], [1.3, -.2, .35]];
+    [L1, R1].forEach(p => OUT.svg.push(flowPath(P, p, "#A99DFF", 2.4, fl, t)));
+    [L2, R2].forEach(p => OUT.svg.push(flowPath(P, p, "#FF9A4D", 2.4, fl, t)));
+    for (let i = 0; i < 2; i++) { const ph = (t * .45 + i * .5) % 1;
+      OUT.svg.push(packet(P, L1, ph, COL.pur, fl * win(ph, 0, 1, .12)), packet(P, R1, ph, COL.pur, fl * win(ph, 0, 1, .12)),
+                   packet(P, R2, ph, COL.org, fl * win(ph, 0, 1, .12)), packet(P, L2, ph, COL.org, fl * win(ph, 0, 1, .12))); }
+  }
+  // the three steps slide out in front
+  ["Align", "Allocate", "Activate"].forEach((n, i) => {
+    const u = (i - 1) * 1.3, s0 = C + 5.4 + .18 * i, p = seg(t, s0, .9), lit = seg(t, C + 6.3 + .75 * i, .45);
+    const cx = mix(0, 2.0 + u, p), cy = mix(0, 2.0 - u, p), o = p * all;
+    OUT.svg.push(boxC(P, cx, cy, 0, 1.0, 1.0, .16, lit > .5 ? COL.org : COL.navy, o));
+    const [sx, sy] = P(cx + .5, cy + .5, 0);
+    OUT.lab.push(lbl(sx, sy + 8, n, "c" + (lit > .5 ? " org" : " soft"), o));
+  });
+}
+// 6: private check-ins. Five glass vaults; words stay inside; themes rise to the shared plane.
+const THEME = { margaret: "Next chapter", tom: "Timing", ben: "Role", claire: "Fairness", sam: "Fairness" };
+function worldB(t) {
+  const k0 = K.private, P = iso(push(CAM_B.value(t), t, k0 - .4, .01, k0 + 4.1)), z = P.k / 64;
+  const all = seg(t, k0 - .3, .9) * (1 - seg(t, k0 + 5.0, .9));
+  if (all <= .002) return;
+  OUT.svg.push(grid(P, all * .8, 12));
+  const plane = seg(t, k0 + 1.2, .9) * all;
+  OUT.svg.push(box(P, -5.6, -1.0, 3.3, 11.2, 2.0, .06, { t: "#7C6CF0", l: "#5F50D0", r: "#4A3CB0", e: "#A99DFF" }, plane * .28));
+  OUT.svg.push(quad(P, [[-5.6, -1, 3.36], [5.6, -1, 3.36], [5.6, 1, 3.36], [-5.6, 1, 3.36]], "none", plane, "#A99DFF", 1.6));
+  { const [sx, sy] = P(-5.6, -1, 3.36); OUT.lab.push(lbl(sx - 4, sy - 52, "What Alex sees<small>Themes, never words</small>", "pur", plane)); }
+  FAMILY.forEach((n, i) => {
+    const x = -4.4 + 2.2 * i, pop = seg(t, k0 + .1 + .14 * i, .7) * all;
+    // words inside: three bars, staying put
+    for (let j = 0; j < 3; j++) OUT.svg.push(boxC(P, x - .05 + (j - 1) * .02, 0, .2 + .27 * j, .62 - .12 * (j % 2), .16, .05, COL.ice, pop * .75, false));
+    OUT.svg.push(glass(P, x, 0, 0, 1.2, 1.2, 1.2, pop));
+    const [lx, ly] = P(x, .6, .55); OUT.svg.push(LOCK(lx, ly, 26 * z, "#DCE4FF", pop * .9));
+    person(P, n, x + .2, 1.9, .95, 66 * z, pop, NAMES[n], "soft");
+    // the theme rises out of the vault
+    const r = seg(t, k0 + 1.6 + .3 * i, 1.4), zc = mix(1.25, 3.38, r), co = pop * seg(t, k0 + 1.5 + .3 * i, .3);
+    OUT.svg.push(boxC(P, x, 0, zc, 1.0, .42, .1, COL.pur, co));
+    const [cx, cy] = P(x, 0, zc + .12); OUT.lab.push(lbl(cx, cy - 34, THEME[n], "c", co * seg(t, k0 + 2.4 + .3 * i, .5)));
+  });
+}
+// 10–12: the household one year on, which flattens into the stack, which folds into the mark
+const GRAPH = { wt: [-4.0, 0], margaret: [-1.2, -1.15], tom: [-1.2, 1.15], ben: [1.9, -2.3], claire: [1.9, 0], sam: [1.9, 2.3] };
+const LAYERS = [
+  { id: "pnc", name: "PNC systems", line: "Commercial banking data flags a likely sale early.", own: "Proprietary early signal", c: COL.navy, lit: 0 },
+  { id: "data", name: "Data and consent", line: "Member vaults, a consent ledger, the household graph.", own: "Proprietary household graph", c: COL.sky, lit: 2 },
+  { id: "form", name: "Formulas", line: "Proceeds, gap score and decision tree. Every number auditable.", c: COL.ice },
+  { id: "ai", name: "AI layer", line: "Themes, document reading and drafts. Alex reviews each one.", own: "Proprietary family intelligence", c: COL.pur, lit: 1 },
+  { id: "exp", name: "Experience", line: "One plan, two views: a family app and an advisor workbench.", c: COL.org },
+];
+function worldC(t) {
+  const Y = K.yearone, St = K.stack, Cl = K.close, P = iso(push(CAM_C.value(t), t, Y - .8, .006)), z = P.k / 72;
+  const all = seg(t, Y - .5, .9) * (1 - seg(t, Cl + 1.2, 1.0));
+  if (all <= .002) return;
+  OUT.svg.push(grid(P, all * .8 * (1 - seg(t, St + .2, 1.2)), 12));
+  // household graph
+  const gr = all * (1 - seg(t, St + .3, 1.3));
+  const lit = n => n === "margaret" || n === "tom" || n === "ben" ? seg(t, Y + .6, .6) : seg(t, Y + (n === "claire" ? 3.2 : 4.0), .6);
+  const E = (a, b, on) => line3(P, [...a, .02], [...b, .02], on > .5 ? "#EF6A00" : "#5A6FAE", 2.4, gr);
+  const G = GRAPH, mid = [-1.2, 0], hub = [.6, 0];
+  OUT.svg.push(E(G.wt, mid, 1), E(G.margaret, G.tom, 1), E(mid, hub, 1), E(hub, [hub[0], -2.3], lit("ben")), E([hub[0], -2.3], G.ben, lit("ben")),
+               E(hub, G.claire, lit("claire")), E(hub, [hub[0], 2.3], lit("sam")), E([hub[0], 2.3], G.sam, lit("sam")));
+  OUT.svg.push(boxC(P, ...G.wt, 0, 2.0, 2.0, .9, COL.navy, gr));
+  OUT.svg.push(quad(P, [[G.wt[0] - 1, -1, .901], [G.wt[0] + 1, -1, .901], [G.wt[0] + 1, 1, .901], [G.wt[0] - 1, 1, .901]], "none", gr, "#EF6A00", 2));
+  { const [sx, sy] = P(G.wt[0] + 1, 1, 0); OUT.lab.push(lbl(sx - 30, sy + 10, "Wilson Transport<small>Sold to NorthPeak</small>", "c", gr)); }
+  FAMILY.forEach((n, i) => {
+    const [x, y] = G[n], l = lit(n), pop = seg(t, Y - .2 + .12 * i, .7) * gr;
+    OUT.svg.push(boxC(P, x, y, 0, 1.15, 1.15, .14, l > .5 ? COL.org : COL.navy, pop));
+    if (l > .01 && l < .99) OUT.svg.push(disc(P, x, y, .14, .6 + 1.2 * l, "none", pop * (1 - l), "#EF6A00", 3));
+    person(P, n, x, y, 1.15, 78 * z, pop, NAMES[n], "", .14);
+  });
+  // the stack
+  const st = seg(t, St + .1, 1.4) * all;
+  if (st > .002) {
+    const L = 6.0, cx = -.2, ex = seg(t, St + 2.6, 1.2), fold = seg(t, Cl - .1, 1.3);
+    const zOf = i => mix(mix(i * .38, i * 1.18, ex), 1.6, fold);
+    LAYERS.forEach((ly, i) => {
+      const s0 = St + .3 + (i === 1 ? 0 : .5 + .32 * Math.abs(i - 1)), p = ly.id === "data" ? st : seg(t, s0, .9) * all;
+      if (p <= .002) return;
+      const zi = zOf(i) + (1 - p) * (i < 1 ? -1.6 : 1.6), sz = L * mix(1, .3, fold), o = p * (1 - seg(t, Cl + .6, .6));
+      const hl = ly.lit != null ? win(t, St + 5.0 + 1.25 * ly.lit, Cl - .3, .5) : 0;
+      OUT.svg.push(boxC(P, cx, 0, zi, sz, sz, .3, ly.c, o));
+      if (hl > .01) OUT.svg.push(quad(P, [[cx - sz / 2, -sz / 2, zi + .301], [cx + sz / 2, -sz / 2, zi + .301], [cx + sz / 2, sz / 2, zi + .301], [cx - sz / 2, sz / 2, zi + .301]], "none", o * hl, "#FFB27A", 4));
+      if (ly.id === "data") { // the household graph, printed on its own layer
+        const g = (a, b) => line3(P, [a[0] * .55 + cx + .4, a[1] * .55, zi + .31], [b[0] * .55 + cx + .4, b[1] * .55, zi + .31], "#4D68A8", 2, o * .7);
+        OUT.svg.push(g(G.wt, mid), g(G.margaret, G.tom), g(mid, hub), g(hub, G.ben), g(hub, G.claire), g(hub, G.sam));
+        [G.wt, G.margaret, G.tom, G.ben, G.claire, G.sam].forEach(q => OUT.svg.push(disc(P, q[0] * .55 + cx + .4, q[1] * .55, zi + .31, .2, "#1D3270", o * .9)));
+      }
+      if (ly.id === "exp") OUT.svg.push(markFlat(P, cx, 0, zi + .301, .9 * mix(1, .4, fold), o));
+      // label to the right, with a leader from the layer's right corner
+      const lo = seg(t, St + 2.9 + .12 * (4 - i), .7) * (1 - seg(t, Cl - .4, .6)) * all;
+      if (lo > .01) {
+        const a = P(cx + sz / 2, -sz / 2 + .0, zi + .15), lx = 1330, lyy = a[1] - 26;
+        OUT.svg.push(leader(a, [lx - 18, a[1]], lo, hl > .3 ? "#FF9A4D" : "#7F90C4"));
+        OUT.lab.push(lbl(lx, lyy, `${ly.name}${ly.own ? ` <span style="display:inline-block;margin-left:10px;font-size:17px;font-weight:600;padding:3px 12px;border-radius:14px;background:${hl > .3 ? "#EF6A00" : "rgba(239,106,0,.18)"};color:${hl > .3 ? "#fff" : "#FF9A4D"}">${ly.own}</span>` : ""}<small>${ly.line}</small>`, "", lo));
+      }
+    });
+  }
+}
+
+// ---------------------------------------------------------------- side diagrams beside the device shots
+const MINI = { ox: 430, oy: 830, k: 50 };
+function mini(t0, t1, fn) { world(t0, t1, t => { const o = win(t, t0, t1, .7) * dimAt(t); if (o > .002) fn(t, iso(push(MINI, t, t0, .012)), o); }); }
+// signal: three account tiles pulse up into one signal that Alex reviews
+function miniSignal(t, P, o) {
+  const k0 = K.signal, call = k0 + 6.6, node = [0, 0, 3.0];
+  [["Payments", -1.9], ["Credit line", 0], ["Financials", 1.9]].forEach(([n, u], i) => {
+    OUT.svg.push(boxC(P, u, -u, 0, 1.1, 1.1, .32, COL.navy, o));
+    const [sx, sy] = P(u + .55, -u + .55, 0); OUT.lab.push(lbl(sx, sy + 6, n, "c soft", o));
+    for (let j = 0; j < 2; j++) { const ph = ((t - k0) * .55 + j * .5 + i * .2) % 1; OUT.svg.push(packet(P, [[u, -u, .4], node], ph, COL.org, o * win(ph, 0, 1, .15), .18)); }
+  });
+  const sig = seg(t, k0 + 1.5, .7);
+  OUT.svg.push(boxC(P, 0, 0, node[2], 1.1, 1.1, .4, COL.org, o * sig));
+  const [nx, ny] = P(0, 0, node[2] + .4);
+  OUT.lab.push(lbl(nx - 70, ny - 16, "Sale likely", "r org", o * sig));
+  const rv = seg(t, k0 + 3.0, .7), ax = nx + 120, ay = ny - 10;
+  OUT.svg.push(`<line x1="${fx(nx + 34)}" y1="${fx(ny)}" x2="${fx(ax - 36)}" y2="${fx(ay)}" stroke="#C9D1E6" stroke-width="2" stroke-dasharray="4 6" stroke-dashoffset="${fx(-t * 20)}" opacity="${(o * rv).toFixed(3)}"/>`);
+  face("alex", ax, ay, 64, o * rv);
+  OUT.lab.push(lbl(ax + 44, ay - 26, "Alex reviews it", "", o * rv));
+  const ok = seg(t, call - .1, .5); OUT.svg.push(CHECK(ax + 24, ay + 24, 14, o * ok));
+  OUT.lab.push(lbl(ax + 44, ay + 2, "then calls Margaret", "soft", o * ok));
+}
+// Margaret: documents go in, AI reads them, three goals come out
+function miniDocs(t, P, o) {
+  const k0 = K.margaret, read = k0 + 2.2;
+  for (let j = 0; j < 3; j++) { const p = seg(t, k0 + .6 + .2 * j, .7); OUT.svg.push(boxC(P, -2.0, 2.0, .14 * j + (1 - p) * 1.2, .9, 1.2, .07, COL.doc, o * p)); }
+  { const [sx, sy] = P(-1.55, 2.6, 0); OUT.lab.push(lbl(sx, sy + 8, "Her documents", "c soft", o)); }
+  const ai = seg(t, read - .2, .6);
+  OUT.svg.push(boxC(P, 0, 0, 0, 1.2, 1.2, .5, COL.pur, o * ai));
+  { const [sx, sy] = P(.6, .6, 0); OUT.lab.push(lbl(sx, sy + 8, "AI reads", "c pur", o * ai)); }
+  for (let j = 0; j < 3; j++) { const ph = clamp((t - read - .25 * j) / 1.1); OUT.svg.push(packet(P, [[-2.0, 2.0, .4], [0, 0, .6]], ph, COL.doc, o * win(ph, .01, .99, .1), .18)); }
+  ["Fair split", "Enough to live on", "Next chapter"].forEach((g, j) => {
+    const p = seg(t, read + 1.4 + .4 * j, .6), x = 2.0, y = -2.0, zz = .02 + .75 * j;
+    OUT.svg.push(boxC(P, x, y, zz, 1.1, 1.1, .14, j === 0 ? COL.org : COL.ice, o * p));
+    const [sx, sy] = P(x + .55, y - .55, zz + .14); OUT.lab.push(lbl(sx + 12, sy - 14, g, j === 0 ? "org" : "", o * p));
+  });
+  const inv = seg(t, k0 + 7.7, .5); { const [sx, sy] = P(2.0, -2.0, 2.4); OUT.svg.push(CHECK(sx, sy - 10, 15, o * inv)); OUT.lab.push(lbl(sx + 24, sy - 24, "Family invited", "org", o * inv)); }
+}
+// Claire: her words stay in the vault; the theme waits at a gate until she shares it
+function miniVault(t, P, o) {
+  const k0 = K.private, share = k0 + 9.9, typed = k0 + 7.6;
+  for (let j = 0; j < 3; j++) OUT.svg.push(boxC(P, -1.8, 1.8, .22 + .3 * j, .7 - .14 * (j % 2), .18, .05, COL.ice, o * seg(t, k0 + 6.4 + .5 * j, .4), false));
+  OUT.svg.push(glass(P, -1.8, 1.8, 0, 1.4, 1.4, 1.4, o));
+  { const [sx, sy] = P(-1.1, 2.5, 0); OUT.lab.push(lbl(sx - 10, sy + 6, "Her words stay here", "c soft", o)); }
+  const gateOpen = seg(t, share, .5);
+  OUT.svg.push(disc(P, .6, -.6, 1.7, .55, "none", o, gateOpen > .5 ? "#EF6A00" : "#5A6FAE", 4));
+  const th = seg(t, typed, .6), go2 = seg(t, share + .2, 1.2);
+  const p = [mix(-1.8, .6, seg(t, typed + .3, .9)) + mix(0, 2.0, go2), mix(1.8, -.6, seg(t, typed + .3, .9)) - mix(0, 2.0, go2), mix(1.5, 1.7, seg(t, typed + .3, .9)) + mix(0, .5, go2)];
+  OUT.svg.push(boxC(P, p[0], p[1], p[2], .9, .4, .1, COL.pur, o * th));
+  { const [sx, sy] = P(p[0], p[1], p[2] + .1); OUT.lab.push(lbl(sx, sy - 36, "Fairness", "c pur", o * th)); }
+  const [ax, ay] = P(3.0, -3.0, 2.8); face("alex", ax, ay, 58, o * gateOpen);
+  OUT.lab.push(lbl(ax, ay + 40, "Only if she shares", "c soft", o));
+}
+// the brief: four check-ins and three documents, through the AI, to Alex, who approves
+function miniBrief(t, P, o) {
+  const k0 = K.brief, ok = k0 + 9.1;
+  for (let j = 0; j < 4; j++) OUT.svg.push(glass(P, -2.9 + .7 * j, 2.0 - .7 * j, 0, .5, .5, .5, o));
+  for (let j = 0; j < 3; j++) OUT.svg.push(boxC(P, -1.3, 3.0, .1 * j, .75, .95, .06, COL.doc, o));
+  { const [sx, sy] = P(-1.0, 3.6, 0); OUT.lab.push(lbl(sx, sy + 8, "4 check-ins, 3 documents", "c soft", o)); }
+  OUT.svg.push(boxC(P, .6, .2, 0, 1.2, 1.2, .5, COL.pur, o));
+  { const [sx, sy] = P(.1, -.4, .5); OUT.lab.push(lbl(sx, sy - 40, "AI", "c pur", o)); }
+  for (let j = 0; j < 3; j++) { const ph = ((t - k0) * .5 + j / 3) % 1; OUT.svg.push(packet(P, [[-1.6, 2.4, .3], [.6, .2, .5]], ph, COL.ice, o * win(ph, 0, 1, .15), .16)); }
+  const br = seg(t, k0 + 3.0, .7);
+  OUT.svg.push(boxC(P, 2.0, -1.4, 0, .9, 1.2, .08, COL.doc, o * br));
+  OUT.svg.push(line3(P, [1.2, -.4, .3], [1.55, -.9, .1], "#C9D1E6", 2, o * br, "3 6", -t * 20));
+  { const [sx, sy] = P(2.45, -.8, 0); OUT.lab.push(lbl(sx, sy + 8, "One brief", "c soft", o * br)); }
+  const ap = seg(t, ok, .5), [ax, ay] = P(3.0, -3.0, 2.0);
+  face("alex", ax, ay, 62, o * br);
+  OUT.svg.push(CHECK(ax + 24, ay + 22, 14, o * ap));
+  OUT.lab.push(lbl(ax, ay + 42, ap > .5 ? "Approved by Alex" : "Waits for Alex", "c" + (ap > .5 ? " org" : " soft"), o * br));
+}
+// twelve possible plans, settled by three choices
+function miniPlans(t, P, o) {
+  const k0 = K.allocate, vote = k0 + 4.6, c2 = k0 + 7.4, c3 = k0 + 8.9;
+  const keep = i => { const r = Math.floor(i / 4), c = i % 4; let k = 1;
+    k *= 1 - seg(t, vote, .7) * (r !== 1 ? 1 : 0);          // the vote picks one split of three
+    k *= 1 - seg(t, c2, .7) * (c >= 2 && r === 1 ? 1 : 0);  // how the gift is paid
+    k *= 1 - seg(t, c3, .7) * (c === 1 && r === 1 ? 1 : 0); // the earnout
+    return k; };
+  let left = 0;
+  for (let i = 0; i < 12; i++) {
+    const r = Math.floor(i / 4), c = i % 4, x = -1.8 + c * 1.15, y = -1.2 + r * 1.15, k = keep(i), win1 = i === 4 ? seg(t, c3 + .3, .6) : 0;
+    left += k > .5 ? 1 : 0;
+    OUT.svg.push(boxC(P, x, y, -(1 - k) * 1.2 + win1 * .5, .9, .9, .12 + win1 * .2, win1 > .5 ? COL.org : COL.ice, o * k * (.25 + .75 * k)));
+  }
+  const n = Math.max(1, left), [sx, sy] = P(-1.8, -1.2, 0);
+  OUT.lab.push(lbl(150, sy - 120, `${n} ${n === 1 ? "plan" : "plans"}${n === 12 ? "" : " left"}`, "big" + (n === 1 ? " org" : ""), o));
+}
+// ask: a question goes to AI, the draft waits at Alex's gate, the answer comes back to Sam
+function miniAsk(t, P, o) {
+  const k0 = K.activate, ask = k0 + 1.4, send = k0 + 6.4;
+  const S = [-3.2, 2.4, 1.2], A = [0, 0, .5], G = [3.0, -2.6, .8];
+  const [sx, sy] = P(...S); face("sam", sx, sy, 62, o); OUT.lab.push(lbl(sx, sy + 44, "Sam asks", "c soft", o));
+  OUT.svg.push(boxC(P, A[0], A[1], 0, 1.2, 1.2, .5, COL.pur, o)); { const [x, y] = P(A[0] - .6, A[1] + .6, 0); OUT.lab.push(lbl(x, y + 6, "AI drafts", "c pur", o)); }
+  const ap = seg(t, send, .5);
+  OUT.svg.push(disc(P, G[0], G[1], .02, .7, ap > .5 ? "rgba(239,106,0,.25)" : "rgba(90,111,174,.25)", o, ap > .5 ? "#EF6A00" : "#5A6FAE", 3));
+  const [gx, gy] = P(G[0], G[1], 1.7); face("alex", gx, gy, 62, o);
+  OUT.lab.push(lbl(gx, gy - 70, ap > .5 ? "Alex approved" : "Alex checks", "c" + (ap > .5 ? " org" : " soft"), o));
+  OUT.svg.push(LOCK(...P(G[0], G[1], .3), 30, ap > .5 ? "#EF6A00" : "#9AA7CC", o * (1 - ap)));
+  const q = seg(t, ask, 1.1), d = seg(t, ask + 1.4, 1.2), back = seg(t, send + .3, 1.4);
+  OUT.svg.push(packet(P, [[S[0], S[1], .5], [A[0], A[1], .7]], q, COL.ice, o * (q > 0 && q < 1 ? 1 : 0), .22));
+  OUT.svg.push(packet(P, [[A[0], A[1], .7], [G[0], G[1], .5]], d, COL.pur, o * (d > 0 ? 1 : 0) * (1 - (back > 0 ? 1 : 0)), .26));
+  OUT.svg.push(packet(P, [[G[0], G[1], .5], [G[0] - 1, G[1] + 3.2, .5], [S[0], S[1], .5]], back, COL.org, o * (back > 0 && back < 1 ? 1 : 0), .26));
+  OUT.svg.push(flowPath(P, [[S[0], S[1], .05], [A[0], A[1], .05], [G[0], G[1], .05]], "#5A6FAE", 2, o, t));
+}
+
+// ---------------------------------------------------------------- the film
+const T1 = "Equal. Ben already gets a salary and stock from the buyer.", T2 = " I've never said that to Mom.";
+const SAM_DRAFT = "At closing, expected next fall. Your share is $4.0M with an equal split and up to $4.5M if Ben's buyer equity counts. It can go to any bank. If you'd like an account next to the family's plan, I can introduce you to a PNC wealth advisor, with no obligation.";
+const CLAIRE_DRAFT = "Thursday, November 12, with a Hawthorn facilitator. We'll open with your mother's next chapter, then fairness. Your private answers stay private.";
+const BASE = { started: true, invited: true };
+const SAM_MSG = { id: "sam-demo", from: "sam", qi: 0, at: "Just now" };
+
+function build() {
+  let t = 0; CFG.scenes.forEach(s => { K[s.id] = t; t += s.dur; }); T_END = t;
+  const P = DEV.phone, T = DEV.tab, sh = [];
+  const add = (kind, o) => { const x = makeShot(kind, o); sh.push(x); return x; };
+
+  // ---- 1–3, world A
+  CAM_A = new Track({ ox: 1250, oy: 540, k: 116 });
+  CAM_A.to(0, K.stakes, { ox: 1255, oy: 550, k: 126 })
+       .to(K.stakes + .1, 1.6, { ox: 1120, oy: 530, k: 98 })
+       .to(K.between + .1, 2.2, { ox: 1250, oy: 500, k: 78 })
+       .to(K.signal - 1.0, 1.5, { ox: 1290 - 4.85 * IC * 150, oy: 600 - (4.85 * IS * 150 - .55 * IV * 150), k: 150 });
+  world(0, K.signal + 1.2, worldA);
+  head(.8, 4.7, { h: "Margaret is selling the company she built.", top: 400 });
+  head(4.9, K.stakes - .1, { h: "Her family has one question: what’s fair?", top: 400 });
+  head(K.stakes + .5, K.between - .1, { num: "55%", p: "of spouses and heirs leave the benefactor’s advisor.", src: "Natixis Investment Managers, 2026 Wealth Transfer Report", top: 300 });
+  head(K.between + .7, K.between + 5.3, { h: "Family Table sits between them.", p: "A consent-based AI layer for the family and their PNC advisor.", top: 370 });
+  head(K.between + 5.5, K.signal - .3, { h: "Align. Allocate. Activate.", p: "Three steps from a first signal to a plan the family trusts.", top: 370 });
+
+  // ---- 4 signal: the iPad stands up off Alex's platform
+  {
+    const k0 = K.signal, s = add("tab", { name: "signal", t0: k0 - .3, t1: k0 + 10.6, route: "advisor", state: {}, from: flat(T, 1290, 600, .2) });
+    s.to(k0 - .25, 1.35, home(T));
+    s.focus(k0 + 2.2, 1.2, () => s.qt(".section", "Why it moved"), 1.32, 1200, 600);
+    s.click(k0 + 6.6, '[data-act="start"]');
+    s.home(k0 + 7.8, 1.2);
+    s.to(k0 + 9.5, 1.0, flat(T, 1180, 840, .3));
+    head(k0 + .5, k0 + 9.6, { pill: 0, h: "A signal PNC already holds.", p: "Account activity says a sale is likely, a year early. Alex reviews it before anyone calls." });
+    mini(k0 + .9, k0 + 9.8, miniSignal);
+  }
+  // ---- 5 Margaret: preview, then her goals
+  {
+    const k0 = K.margaret, a = add("phone", { name: "preview", t0: k0 - .3, t1: k0 + 5.6, route: "preview", state: {}, from: flat(P, 1420, 820, .3) });
+    a.to(k0 - .2, 1.2, home(P));
+    a.focus(k0 + 1.0, 1.0, ".pv-drop", 1.15);
+    a.tap(k0 + 2.2, '[data-act="pv-sample"]');
+    a.scrollTo(k0 + 2.8, 1.0, () => a.R(".trace-wrap").y - 60);
+    a.focus(k0 + 2.8, 1.0, ".trace-wrap", 1.12);
+    const b = add("phone", { name: "goals", t0: k0 + 5.0, t1: k0 + 10.8, route: "me/margaret/setup", state: { started: true, pvRead: true }, cont: true, from: () => a.v.value(k0 + 5.0) });
+    b.scroll = new Track(() => ({ s: Math.max(0, b.R(() => b.qt("h2", "What Alex will see").closest("section")).y - 140) }));
+    b.focus(k0 + 5.0, 1.0, () => b.qt("h2", "What Alex will see").closest("section"), 1.12);
+    b.tap(k0 + 7.7, '[data-act="invite"]');
+    b.to(k0 + 9.7, 1.0, flat(P, 1500, 760, .3));
+    head(k0 + .5, k0 + 9.7, { pill: 0, h: "Margaret sets the goals.", p: "AI reads her documents and drafts her goals. She checks them, then invites her family." });
+    mini(k0 + .7, k0 + 9.8, miniDocs);
+  }
+  // ---- 6 private check-ins: the vaults, then Claire's phone stands up out of hers
+  {
+    const k0 = K.private;
+    CAM_B = new Track({ ox: 1270, oy: 560, k: 78 });
+    CAM_B.to(k0, 4.0, { ox: 1260, oy: 570, k: 84 }).to(k0 + 4.1, 1.4, { ox: 1350 - 2.2 * IC * 170, oy: 600 - (2.2 * IS * 170 - 1.2 * IV * 170), k: 170 });
+    world(k0 - .4, k0 + 6.2, worldB);
+    head(k0 + .4, k0 + 4.6, { pill: 0, h: "Speak in private.", p: "Each person checks in alone. Words stay in their vault. Only themes rise, with consent.", top: 330 });
+    const c = add("phone", { name: "claire", t0: k0 + 4.4, t1: k0 + 12.8, route: "me/claire/checkin", state: { answers: { q1: "" } }, from: flat(P, 1350, 600, .26) });
+    c.to(k0 + 4.5, 1.3, home(P));
+    const q1 = 'textarea[data-live="q1"]';
+    c.focus(k0 + 5.9, 1.0, '.q[data-q="q1"]', 1.22);
+    c.type(k0 + 6.4, k0 + 8.2, q1, T1); c.type(k0 + 8.5, k0 + 9.2, q1, T2, T1);
+    c.tap(k0 + 9.9, '[data-act="toggle-share"][data-id="q1"]');
+    c.to(k0 + 11.6, .95, flat(P, 1260, 760, .3));
+    head(k0 + 5.0, k0 + 11.7, { pill: 0, h: "Claire says what she’s never said.", p: "AI lifts out the themes. She chooses what Alex sees." });
+    mini(k0 + 5.3, k0 + 11.8, miniVault);
+  }
+  // ---- 7 the brief on Alex's iPad
+  {
+    const k0 = K.brief, b = add("tab", { name: "brief", t0: k0 - .3, t1: k0 + 11.6, route: "advisor/align", state: { ...BASE, shared: ["q1"], answers: { q1: T1 + T2 } }, from: flat(T, 1250, 760, .3) });
+    b.to(k0 - .2, 1.3, home(T));
+    b.focus(k0 + 1.6, 1.2, ".hero", 1.3, 1150, 560);
+    b.focus(k0 + 4.2, 1.3, '.tr-step[data-k="1"]', 1.25, 1210, 540);
+    b.scrollTo(k0 + 6.6, 1.1, () => b.R('[data-act="approve"]').y - 1024 + 120);
+    b.focus(k0 + 6.6, 1.1, '.tr-step[data-k="3"]', 1.25, 1210, 470);
+    b.click(k0 + 9.1, '[data-act="approve"]');
+    b.home(k0 + 9.7, 1.0);
+    b.to(k0 + 10.6, 1.0, flat(T, 1300, 840, .3));
+    dim(k0 + 4.0, k0 + 10.2);
+    head(k0 + .5, k0 + 10.6, { pill: 0, h: "AI prepares. Alex decides.", p: "Four check-ins and three family documents become one brief. The widest gap is fairness." });
+    mini(k0 + .7, k0 + 10.7, miniBrief);
+  }
+  // ---- 8 allocate: Sam votes, then settles the decision tree
+  {
+    const k0 = K.allocate, a = add("phone", { name: "vote", t0: k0 - .3, t1: k0 + 6.4, route: "me/sam/options", state: BASE, from: flat(P, 1400, 820, .3) });
+    a.to(k0 - .2, 1.2, home(P));
+    a.focus(k0 + 1.0, 1.0, '.opt[data-id="balanced"]', 1.18);
+    a.tap(k0 + 2.4, '.opt[data-id="balanced"]');
+    a.scrollTo(k0 + 3.0, .9, () => a.R('[data-act="vote"]').y - 520);
+    a.focus(k0 + 3.0, .9, '[data-act="vote"]', 1.18, null, null, 0, -120);
+    a.tap(k0 + 4.6, '[data-act="vote"]');
+    const d = add("phone", { name: "decide", t0: k0 + 5.8, t1: k0 + 12.8, route: "me/sam/decide", state: { ...BASE, votes: { sam: "balanced" } }, cont: true, from: () => a.v.value(k0 + 5.8) });
+    const trust = '[data-act="tree"][data-k="pay"][data-id="trust"]', half = '[data-act="tree"][data-k="earn"][data-id="half"]';
+    d.focus(k0 + 5.8, .9, trust, 1.18);
+    d.scrollTo(k0 + 6.0, .7, () => d.R(trust).cy - 470);
+    d.tap(k0 + 7.4, trust);
+    d.scrollTo(k0 + 7.7, .7, () => d.R(half).cy - 470);
+    d.tap(k0 + 8.9, half);
+    d.scrollTo(k0 + 9.5, .8, 0);
+    d.focus(k0 + 9.5, .9, ".hero", 1.25);
+    head(k0 + .5, k0 + 11.7, { pill: 1, h: "Twelve plans become one.", p: "Sam sees his own number under every split, and votes in private." });
+    mini(k0 + .8, k0 + 11.8, miniPlans);
+  }
+  // ---- 9 activate: Sam asks, Alex approves on the iPad, the answer reaches Sam
+  {
+    const k0 = K.activate, st = { ...BASE, votes: { sam: "balanced" } };
+    const q = add("phone", { name: "ask", t0: k0 - .1, t1: k0 + 4.4, route: "me/sam/ask", state: st, cont: true, from: () => SHOTS_BY.decide.v.value(k0 - .1) });
+    q.to(k0 - .1, .9, home(P));
+    q.focus(k0 + .6, 1.0, ".ask-hero", 1.18, null, null, 0, 120);
+    q.tap(k0 + 1.4, '.chip[data-act="send-q"][data-id="0"]');
+    q.to(k0 + 3.3, 1.0, flat(P, 1450, 800, .3));
+    const ib = add("tab", { name: "inbox", t0: k0 + 3.1, t1: k0 + 8.9, route: "advisor/inbox", state: { ...st, msgs: [SAM_MSG], replies: { "seed-claire": CLAIRE_DRAFT } }, from: flat(T, 1250, 800, .3) });
+    ib.to(k0 + 3.2, 1.2, home(T));
+    ib.focus(k0 + 4.2, 1.0, '.inmsg[data-msg="sam-demo"]', 1.2, 1200, 520);
+    ib.click(k0 + 6.4, '[data-act="send"][data-id="sam-demo"]');
+    ib.home(k0 + 6.9, .8);
+    ib.to(k0 + 7.8, 1.0, flat(T, 1250, 820, .3));
+    const r = add("phone", { name: "reply", t0: k0 + 7.6, t1: k0 + 12.9, route: "me/sam/ask", state: { ...st, msgs: [SAM_MSG], replies: { "sam-demo": SAM_DRAFT } }, from: flat(P, 1400, 800, .3) });
+    r.to(k0 + 7.7, 1.2, home(P));
+    r.focus(k0 + 8.6, 1.1, ".msg.alex", 1.22);
+    r.to(k0 + 11.5, 1.2, flat(P, 1290, 720, .25));
+    head(k0 + .4, k0 + 11.6, { pill: 2, h: "Ask a person, not a bot.", p: "AI drafts the answer. Alex checks it and sends it. Nothing reaches the family until he approves." });
+    mini(k0 + .6, k0 + 11.7, miniAsk);
+  }
+  // ---- 10–12 world C: one year on, the stack, the close
+  {
+    const Y = K.yearone, St = K.stack, Cl = K.close;
+    CAM_C = new Track({ ox: 1330, oy: 520, k: 120 });
+    CAM_C.to(Y - .6, 1.6, { ox: 1310, oy: 560, k: 96 })
+         .to(St + .2, 2.0, { ox: 1010, oy: 590, k: 64 })
+         .to(Cl - .1, 1.4, { ox: 960, oy: 560, k: 40 });
+    world(Y - .8, T_END, worldC);
+    head(Y + .4, St - .1, { num: t => t < Y + 3.2 ? "3 of 5" : t < Y + 4.0 ? "4 of 5" : "5 of 5", numCls: "mid", h: "family members work with PNC.", p: "One year on, the sale has closed and the plan is everyday banking.", top: 300 });
+    head(St + .4, Cl - .2, { h: "Why only PNC?", p: "Three proprietary assets in one consented stack.", top: 380 });
+    head(Cl + .5, T_END, { nodim: true, top: 520, end: () => `<h1>Family Table</h1><p>A plan the family trusts.</p><div class="team">Alen Ilmi, Rizaldy Utomo, Nindy Aditya Dewi and Aditya Mulya Pratama · Carnegie Mellon University</div><div class="note">Fictional people. Portraits are AI-generated.</div>` });
+  }
+  SHOTS = sh;
+  return sh;
+}
+let SHOTS_BY = {};
+function assign() {
+  const next = { phone: "A", tab: "A" };
+  SHOTS.forEach((s, i) => { s.index = i; SHOTS_BY[s.name] = s; s.slot = SLOTS[s.kind + next[s.kind]]; next[s.kind] = next[s.kind] === "A" ? "B" : "A"; });
+  // a shot that continues on the same device takes over its pose and its slot pair's other half
+  for (const s of SHOTS) for (const o of SHOTS) if (o !== s && o.slot === s.slot && o.index > s.index && o.t0 < s.t1) throw new Error(`slot clash: ${s.name} and ${o.name}`);
+}
+
+// ---------------------------------------------------------------- one frame
+let busy = false;
+window.frame = async t => {
+  if (busy) throw new Error("frame() re-entered"); busy = true;
+  const touched = new Set();
+  for (const s of SHOTS) if (!s.ready && t >= s.t0 - .05 && t < s.t1) await setup(s);
+  for (const s of SHOTS) {
+    if (!s.ready || t > s.t1) continue;
+    for (const a of s.acts) if (!a.done && t >= a.t) { a.done = true; await a.fn(); touched.add(s); }
+    for (const k of s.ticks) if (t >= k.t0 && !k.end) { k.fn(clamp((t - k.t0) / (k.t1 - k.t0))); if (t >= k.t1) k.end = true; touched.add(s); }
+  }
+  for (const s of touched) await settle(s.win());
+  // devices
+  for (const name in SLOTS) {
+    const S = SLOTS[name], live = SHOTS.filter(x => x.slot === S && x.ready && t >= x.t0 && t <= x.t1);
+    if (!live.length) { S.el.style.opacity = 0; continue; }
+    drawDev(live[live.length - 1], t);
+  }
+  // world and side diagrams
+  OUT = { svg: [], lab: [], faces: [] };
+  for (const w of WORLDS) if (t >= w.t0 && t <= w.t1) w.fn(t);
+  document.getElementById("gw").innerHTML = OUT.svg.join("");
+  document.getElementById("labt").innerHTML = OUT.lab.join("");
+  const used = {}; for (const n of FACE_NAMES) FACES[n].forEach(e => e.style.opacity = 0);
+  OUT.faces.sort((a, b) => a.depth - b.depth).forEach((f, i) => { const k = used[f.name] = (used[f.name] || 0); used[f.name]++; const e = FACES[f.name][k]; if (!e) return;
+    e.style.opacity = f.o.toFixed(3); e.style.width = e.style.height = f.d.toFixed(1) + "px"; e.style.zIndex = 10 + i;
+    e.style.transform = `translate(${(f.sx - f.d / 2).toFixed(1)}px,${(f.sy - f.d / 2).toFixed(1)}px)`; });
+  drawHeads(t);
+  // the very end settles to navy
+  document.getElementById("fade").style.opacity = seg(t, T_END - .8, .75).toFixed(3);
+  seekAnims(t);
+  busy = false;
+};
+window.boot = async () => {
+  CFG = await (await fetch("shots.json")).json(); XF = CFG.xfade;
+  await Promise.all([makeSlots(), makeFaces()]);
+  await document.fonts.ready;
+  for (const k in SLOTS) await settle(SLOTS[k].frame.contentWindow);
+  build(); assign();
+  window.TOTAL = T_END;
+  return SHOTS.map(s => ({ name: s.name, kind: s.kind, t0: +s.t0.toFixed(2), t1: +s.t1.toFixed(2), route: s.route }));
+};
+</script>
+</body>
+</html>

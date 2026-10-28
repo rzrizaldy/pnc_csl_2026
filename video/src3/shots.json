@@ -1,0 +1,69 @@
+{
+ "fps": 60,
+ "width": 1920,
+ "height": 1080,
+ "xfade": 0.6,
+ "lead": 0.4,
+ "scenes": [
+  {
+   "id": "family",
+   "dur": 8.0,
+   "line": "Margaret Wilson is selling the company she built. For her family, it raises one question: what's fair?"
+  },
+  {
+   "id": "stakes",
+   "dur": 7.5,
+   "line": "When the money moves, 55 percent of spouses and heirs leave the family's advisor."
+  },
+  {
+   "id": "between",
+   "dur": 10.0,
+   "line": "Family Table sits between the family and their PNC advisor, Alex Lee: a consent-based AI layer that guides them through three steps. Align. Allocate. Activate."
+  },
+  {
+   "id": "signal",
+   "dur": 10.0,
+   "line": "It starts with a signal PNC already holds: account activity that says a sale is likely, a year early. Alex reviews it, then calls Margaret."
+  },
+  {
+   "id": "margaret",
+   "dur": 10.0,
+   "line": "Margaret adds her documents. AI reads them and drafts her goals. She checks each one, and invites her family."
+  },
+  {
+   "id": "private",
+   "dur": 12.0,
+   "line": "Each family member checks in privately. Claire says what she's never told her mother. Her words stay hers. AI lifts out the themes, and she decides what Alex sees."
+  },
+  {
+   "id": "brief",
+   "dur": 11.0,
+   "line": "On Alex's side, AI turns four check-ins and three family documents into one brief. The widest gap is fairness. AI prepares; Alex makes the call."
+  },
+  {
+   "id": "allocate",
+   "dur": 12.0,
+   "line": "Then, Allocate. Sam sees his own number under every split and votes in private. Three choices turn twelve possible plans into one."
+  },
+  {
+   "id": "activate",
+   "dur": 12.0,
+   "line": "Then, Activate. Sam asks a question. AI drafts the answer from PNC's calculators; Alex checks it and sends it. Nothing reaches the family until the advisor approves."
+  },
+  {
+   "id": "yearone",
+   "dur": 9.0,
+   "line": "One year on, the sale has closed, the plan is everyday banking, and all five Wilsons work with PNC."
+  },
+  {
+   "id": "stack",
+   "dur": 10.0,
+   "line": "Why only PNC? Three proprietary assets in one consented stack: a signal PNC already holds, family intelligence that's private by default, and one household graph."
+  },
+  {
+   "id": "close",
+   "dur": 5.0,
+   "line": "Family Table. A plan the family trusts."
+  }
+ ]
+}

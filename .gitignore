@@ -20,3 +20,7 @@ video/family_table_silent.mp4
 video/family_table_vo_draft.mp4
 video/family_table_final.mp4
 video/*_preview.mp4
+# v5 film (video/src3): silent picture cut to RECORDING_SCRIPT.md v5
+video/build3/
+video/src3/node_modules
+video/family_table_v5_silent.mp4
