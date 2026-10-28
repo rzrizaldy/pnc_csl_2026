@@ -13,7 +13,7 @@ window.SEED = {
   // Order = seats around the family table, clockwise from the top.
   people: [
     { id: "margaret", name: "Margaret Wilson", short: "Margaret", age: 63, role: "Founder and CEO", inBiz: true, gen: 1,
-      line: "Wants a plan her family understands and trusts.",
+      line: "Needs a clear plan the family understands and trusts.",
       status: "checked", pnc: "Business banking", color: "#10214D" },
     { id: "tom", name: "Tom Wilson", short: "Tom", age: 65, role: "Margaret's husband, retired teacher", inBiz: false, gen: 1,
       line: "Not an owner, but his future depends on the plan.",
@@ -169,7 +169,7 @@ window.SEED = {
       ["Who is heard", "The founder, usually alone", "Every family member, privately"],
       ["When the family talks", "After the deal is signed", "Before the letter of intent"],
       ["Each child's number", "A guess, or a surprise", "Their own number, under every option"],
-      ["The next generation", "55% of heirs leave their parents' advisor", "Meets PNC before the money moves"],
+      ["The next generation", "55% of spouses and heirs will not retain the benefactor's advisor", "Meets PNC before the money moves"],
     ],
     month: [
       ["Week 1", "A call with your PNC advisor"],
@@ -278,7 +278,6 @@ window.SEED = {
     when: "November 2027",
     chosen: "balanced",
     pncBefore: 3, pncAfter: 5,
-    feeRate: 0.008, // illustrative blended fee from the economics sensitivity, not a forecast
     events: [
       { stage: "Align", what: "Alex called a year early. All five checked in. Fairness was settled on Nov 12 with a facilitator." },
       { stage: "Allocate", what: "The family chose the Balanced split." },

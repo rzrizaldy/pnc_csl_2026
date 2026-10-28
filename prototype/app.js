@@ -105,11 +105,11 @@
   const step = (k, title, body, cls = "", icon = "check") => `<li class="tr-step ${cls}" data-k="${k}"><span class="tr-ic"><span class="tr-n">${k + 1}</span>${ic(icon, 16, 2.6)}<span class="spin"></span></span><div class="tr-body"><b>${title}</b>${body}</div></li>`;
   const mark = `<svg viewBox="0 0 32 32" width="22" height="22" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="16" cy="16" r="5" fill="#EF6A00"/><circle cx="16" cy="5" r="2.4" fill="#fff"/><circle cx="26" cy="20" r="2.4" fill="#fff"/><circle cx="6" cy="20" r="2.4" fill="#fff"/></svg>`;
 
-  // Three steps. The deck's Signal and Join fold into Align; Continue folds into Activate.
+  // Three guided stages, named and described as in the deck.
   const STAGES = [
-    { id: "align", label: "Align", icon: "lock", line: "Surface views privately" },
-    { id: "allocate", label: "Allocate", icon: "scale", line: "Make trade-offs visible" },
-    { id: "activate", label: "Activate", icon: "chat", line: "Act with the advisor" },
+    { id: "align", label: "Align", icon: "lock", line: "Share priorities privately" },
+    { id: "allocate", label: "Allocate", icon: "scale", line: "Compare and propose" },
+    { id: "activate", label: "Activate", icon: "chat", line: "Act on the shared plan" },
   ];
 
   // ---------- visualisations ----------
@@ -196,8 +196,8 @@
   function splash() {
     // Portraits in faces/ are AI-generated; the people are fictional.
     const cast = [
-      ["margaret", "Margaret Wilson, 63", "Founder, selling the company", "Wants a plan the family trusts."],
-      ["alex", "Alex Lee", "PNC advisor", "Hears everyone before closing."],
+      ["margaret", "Margaret Wilson, 63", "Family business owner", "Needs a clear plan the family understands and trusts."],
+      ["alex", "Alex Lee", "PNC advisor", "Needs to understand family concerns before decisions are made."],
       ["tom", "Tom Wilson, 65", "Margaret's husband", "Not an owner. Still affected."],
       ["ben", "Ben Wilson, 40", "COO, staying on", "Thinks his years should count."],
       ["claire", "Claire Wilson, 37", "Nurse in Columbus", "Thinks equal is fair."],
@@ -208,21 +208,26 @@
         <div class="onb-hero">
           <div class="onb-copy">
             <h1>Crafting the family future, today</h1>
-            <p>Hearing the voice of the family before it even starts.</p>
+            <p>A consent-based AI coordination layer for PNC's commercial and private-bank clients.</p>
             <div class="onb-ctas"><button class="btn xl" data-act="tour-start">Start the 2-minute demo</button><a class="btn xl ghost-w" href="#/preview">Preview it for your family</a></div>
           </div>
           <div class="onb-how"><h2>How it works</h2>
-            <ol class="stages">${STAGES.map((s, i) => `<li style="--i:${i}"><span class="st-ic">${ic(s.icon, 18)}</span><span class="st-tx"><b>${s.label}</b><span>${s.line}</span></span></li>`).join("")}</ol></div>
+            <ol class="stages">${STAGES.map((s, i) => `<li style="--i:${i}"><span class="st-ic">${ic(s.icon, 18)}</span><span class="st-tx"><b>${s.label}</b><span>${s.line}</span></span></li>`).join("")}</ol>
+            <p class="onb-outcome"><b>Family outcome</b> Greater clarity on options, trade-offs and unanswered questions, fairness without confrontation, and confidence that a person reviews every answer.</p></div>
         </div></div></section>
       <section class="onb-end"><div class="in">
         <h2>A business exit puts both assets and family relationships in motion</h2>
-        <div class="ends">
+        <div class="ends five">
           <div><b data-count="124" data-fmt="t">$124T</b><span>projected U.S. wealth transfer through 2048</span></div>
-          <div><b data-count="83" data-fmt="p">83%</b><span>of business owners say family dynamics affect succession or exit planning</span></div>
-          <div><b data-count="55" data-fmt="p">55%</b><span>of spouses and heirs say they will not, or did not, retain their benefactor's advisor</span></div>
+          <div><b data-count="89" data-fmt="p">89%</b><span>of business owners want connected business and personal advice</span></div>
+          <div><b data-count="67" data-fmt="p">67%</b><span>still manage those needs separately</span></div>
+          <div><b data-count="83" data-fmt="p">83%</b><span>say family dynamics affect succession or exit planning</span></div>
+          <div><b data-count="55" data-fmt="p">55%</b><span>of spouses and heirs say they will not retain their benefactor's advisor</span></div>
         </div>
-        <p class="small muted">89% of owners want connected business and personal advice; 67% still manage those needs separately. Sources: Cerulli Associates (2024); PNC Private Bank Business Owner Wealth Insights 2026; Natixis Investment Managers Wealth Transfer Report 2026.</p>
+        <p class="onb-opp"><b>The PNC opportunity</b> Retaining post-sale assets and building relationships with the next generation. Building toward wealth management through deposits, custody, trust, lending and brokerage.</p>
+        <p class="small muted">Sources: Cerulli Associates, The Cerulli Report: U.S. High-Net-Worth and Ultra-High-Net-Worth Markets 2024; PNC Private Bank, Business Owner Wealth Insights 2026, Ipsos survey of 300 U.S. middle-market business owners; Natixis Investment Managers, 2026 Wealth Transfer Report, survey of 3,477 spouses and next-generation heirs.</p>
       </div></section>
+      ${stackHtml()}
       <section class="onb-cast"><div class="in"><h2>Meet the Wilsons</h2>
         <p class="muted">Margaret built Wilson Transport over 35 years. Now she's selling it for $48.0M, sure her children agree on what's fair.</p>
         <div class="cast-row">${cast.map(([id, n, r, w]) => `<div><img class="face" src="faces/${id}.jpg" alt="" width="56" height="56" loading="lazy"><span class="tx"><b>${n}</b><span>${r}</span><em>${w}</em></span></div>`).join("")}</div>
@@ -230,10 +235,57 @@
       </div></section>`;
   }
 
+
+  // ---------- the stack (deck slide 8): five layers, three proprietary assets ----------
+  // Bottom to top, as drawn. Each layer carries the deck's line and who it works with.
+  const STACK = [
+    { label: "PNC systems", title: "PNC systems", tag: "Proprietary early signal", line: "Permissioned commercial relationship signals may indicate that an advisor conversation is timely. Advisor reviews every signal before outreach.", works: "Business Banking, Private Bank, wealth and Hawthorn IFS", top: "#3B55A0", left: "#2A3D74", right: "#334A8C", ink: "#fff" },
+    { label: "Data and consent", title: "Data and consent", tag: "Proprietary household graph", line: "Member vaults, consent ledger and a graph of business, owners and heirs.", works: "Each member controls sharing; compliance audits the ledger", top: "#F4F1FA", left: "#D9D2EC", right: "#E8E3F4", ink: "#10214D" },
+    { label: "Formulas", title: "Deterministic formulas", line: "Proceeds calculator, gap score and decision tree; every number auditable.", works: "Tax and trust specialists own the rules", top: "#F4F1FA", left: "#D9D2EC", right: "#E8E3F4", ink: "#10214D" },
+    { label: "AI layer", title: "AI-infused services", tag: "Proprietary family intelligence", line: "NLP themes, Document AI and drafts behind one gateway, with review.", works: "Alex reviews every output before it reaches the client", top: "#F4F1FA", left: "#D9D2EC", right: "#E8E3F4", ink: "#10214D" },
+    { label: "Experience", title: "Experience", line: "One plan, two views: a family app and an advisor workbench.", works: "Margaret’s family and Alex", top: "#EF6A00", left: "#B84F00", right: "#D45E00", ink: "#fff" },
+  ];
+  // Isometric box: top face 240×120, 28 deep; layers 36 apart. Three nested groups so position, entrance and lift don't fight.
+  function stackSvg() {
+    const n = STACK.length, mark = `<g transform="translate(120,60) scale(2.4,1.2) translate(-16,-16)" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="#fff" stroke-width="2"/><circle cx="16" cy="16" r="5" fill="#10214D"/><circle cx="16" cy="5" r="2.6" fill="#fff"/><circle cx="26" cy="20" r="2.6" fill="#fff"/><circle cx="6" cy="20" r="2.6" fill="#fff"/></g>`;
+    const layers = STACK.map((l, i) => `<g transform="translate(30,${160 - i * 36})"><g class="stack-in" style="--i:${i}"><g class="stack-l" data-act="stack" data-id="${i}" role="button" tabindex="0" aria-label="${l.title}">
+        <polygon class="face" points="0,60 120,120 120,148 0,88" fill="${l.left}" stroke="rgba(255,255,255,.22)" stroke-width=".8"/><polygon class="face" points="120,120 240,60 240,88 120,148" fill="${l.right}" stroke="rgba(255,255,255,.22)" stroke-width=".8"/>
+        <polygon class="face top" points="0,60 120,0 240,60 120,120" fill="${l.top}" stroke="rgba(255,255,255,.3)" stroke-width=".8"/>${i === n - 1 ? mark : ""}
+        <text transform="translate(12,84) rotate(26.565)" font-size="13" font-weight="600" fill="${l.ink}">${l.label}</text></g></g></g>`).join("");
+    return `<svg class="stack-svg" viewBox="0 0 300 330" role="img" aria-label="Five layers: PNC systems, data and consent, formulas, AI layer, experience">${layers}</svg>`;
+  }
+  function stackHtml() {
+    const rows = [...STACK].reverse().map((l, k) => { const i = STACK.length - 1 - k;
+      return `<button class="stack-row" data-act="stack" data-id="${i}" aria-pressed="false"><b>${l.title}${l.tag ? ` <span class="stack-tag">${l.tag}</span>` : ""}</b><span>${l.line}</span><small><em>Works with:</em> ${l.works}</small></button>`; }).join("");
+    return `<section class="onb-stack" data-sel="-1"><div class="in"><div class="label">The secret sauce</div><h2>Three proprietary assets inside one consented, AI-infused stack</h2>
+      <div class="stack-wrap"><div class="stack-fig">${stackSvg()}</div><div class="stack-rows">${rows}</div></div></div></section>`;
+  }
+  let stackTimer = 0, stackOff = null, stackHeld = false;
+  const stopStack = () => { clearInterval(stackTimer); stackTimer = 0; if (stackOff) { stackOff(); stackOff = null; } stackHeld = false; };
+  function selectStack(i, byUser) {
+    const sec = app.querySelector(".onb-stack"); if (!sec) return;
+    sec.dataset.sel = i;
+    sec.querySelectorAll("[data-act=stack]").forEach(el => { const on = +el.dataset.id === i; el.classList.toggle("on", on); if (el.tagName === "BUTTON") el.setAttribute("aria-pressed", on); });
+    if (byUser) stackHeld = true;
+  }
+  // Builds the stack when it scrolls into view, then walks the layers until the person picks one.
+  function mountStack() {
+    stopStack();
+    const sec = app.querySelector(".onb-stack"); if (!sec) return;
+    const start = () => { sec.classList.add("in");
+      if (!motionOK) { selectStack(STACK.length - 1); return; }
+      let i = STACK.length - 1; setTimeout(() => selectStack(i), STACK.length * 150 + 500);
+      stackTimer = setInterval(() => { if (stackHeld || document.hidden) return; i = (i - 1 + STACK.length) % STACK.length; selectStack(i); }, 2600); };
+    // A plain rect check on scroll: it fires the moment the section shows, with no observer latency.
+    const check = () => { const r = sec.getBoundingClientRect(); if (r.top < innerHeight * 0.8 && r.bottom > 0) { stackOff(); stackOff = null; start(); } };
+    stackOff = () => { removeEventListener("scroll", check); removeEventListener("resize", check); };
+    addEventListener("scroll", check, { passive: true }); addEventListener("resize", check); check();
+  }
+
   // ---------- guided story: alternates the two sides ----------
   const TOUR = [
     { side: "Advisor", stage: "Align", route: "advisor", title: "Alex sees the sale coming",
-      hint: "PNC's own account data puts Wilson Transport at 81 out of 100, a year before closing. Tap Call Margaret.", target: '[data-act="start"]', done: () => state.started },
+      hint: "Permissioned activity in Wilson Transport's PNC accounts puts a sale at 81 out of 100, a year before closing. Alex reviews the signal before any outreach. Tap Call Margaret.", target: '[data-act="start"]', done: () => state.started },
     { side: "Family", stage: "Align", route: "preview", title: "Margaret previews what's possible",
       hint: "Before she talks to anyone, she adds what she has and AI reads it. Tap Use the Wilsons' documents.", target: '[data-act="pv-sample"]', done: () => state.pvRead },
     { side: "Family", stage: "Align", route: "me/margaret/docs", title: "Her documents go in. AI reads them.",
@@ -254,8 +306,10 @@
       prep: () => { if (!state.msgs.some(m => m.from === "sam")) state.msgs.push({ id: "sam-demo", from: "sam", qi: 0, at: "Just now" }); },
       hint: "Sam's question went to Alex. The draft uses calculator numbers and passes the checks. Approve and send.", target: '[data-act="send"][data-from="sam"]',
       done: () => state.msgs.some(m => m.from === "sam" && state.replies[m.id] != null) },
+    { side: "Family", stage: "Activate", route: "me/sam/plan", title: "Sam agrees in principle",
+      hint: "After the family meeting, each person sees their own next step and where the sale is. Counsel still confirms the plan. Tap Agree to the plan in principle.", target: '[data-act="agree"]', done: () => !!state.agreed.sam },
     { side: "Both sides", stage: "Activate", route: "year-one", title: "One year on",
-      hint: "The sale has closed. Every dollar is working in a PNC service, and all five Wilsons bank with PNC.", target: null, done: () => true },
+      hint: "The sale has closed. Every dollar is working in a PNC service, and all five Wilsons bank with PNC. A demo outcome, not live tracking.", target: null, done: () => true },
   ];
   function tourBar() {
     if (embedded || state.tour < 0 || route.startsWith("story/") || route === "") return "";
@@ -439,7 +493,7 @@
       <div class="rows">${CHAPTER.map(([id, t]) => { const on = state.chapter.includes(id); return `<button class="row pick ${on ? "on" : ""}" data-act="chapter" data-id="${id}" aria-pressed="${on}"><span class="ic ${on ? "g" : ""}">${ic(on ? "check" : "compass", 18, on ? 2.4 : 1.8)}</span><span class="tx"><b>${t}</b></span></button>`; }).join("")}</div></section>`;
     return `<div class="page"><div class="cols"><div class="col-main">
       <section class="hero"><div class="label">Your next step</div><h1 class="title">${STEPS[pid]}</h1>
-        <div style="margin-top:18px">${agreed ? `<button class="btn done block" disabled>${ic("check", 18, 2.4)} You agreed to the plan in principle</button>` : `<button class="btn block" data-act="agree" data-id="${pid}">Agree to the plan in principle</button>`}</div></section>
+        <div style="margin-top:18px">${agreed ? `<button class="btn done block" disabled>${ic("check", 18, 2.4)} You agreed to the plan in principle</button>` : `<button class="btn block" data-act="agree" data-id="${pid}">Agree to the plan in principle</button>`}<p class="micro faint center" style="margin-top:8px">Recorded for Alex. Counsel still confirms the plan.</p></div></section>
       ${chapter}
       <section class="section"><div class="section-head"><h2>Everyone's next step</h2></div><div class="rows">${S.people.filter(x => x.id !== pid).map(x => `<div class="row">${av(x, 36)}<span class="tx"><b>${x.short}</b><span>${STEPS_OTHERS[x.id]}</span></span>${state.agreed[x.id] ? `<span class="badge g">Agreed</span>` : ""}</div>`).join("")}</div></section>
       </div><aside class="col-side"><div class="panel"><div class="section-head"><h2>${pid === "margaret" ? "If you can't continue" : "If Margaret can't continue"}</h2><span class="badge g">Signed</span></div><p class="small muted" style="margin-top:6px">${S.contingency}</p></div>
@@ -452,7 +506,7 @@
     return `<div class="page"><div class="cols"><div class="col-main">
         <section class="hero"><div class="label">Wilson Transport, sale likelihood</div>
           <div class="value huge"><span data-count="${s.score}" data-fmt="i">${s.score}</span><span class="unit">/ 100</span></div>
-          <div class="delta up">▲ ${s.change} this month</div><div class="caption">A likely sale in ${s.horizon}, read from activity in the company's PNC accounts.</div>
+          <div class="delta up">▲ ${s.change} this month</div><div class="caption">A likely sale in ${s.horizon}, read from permissioned activity in the company's PNC accounts. Alex reviews every signal before any outreach.</div>
           <div class="chart">${lineChart(s.history)}<div class="chart-x"><span>Nov</span><span>Feb</span><span>May</span><span>Aug</span><span>Oct</span></div></div></section>
         <section class="section"><div class="section-head"><h2>Why it moved</h2><span class="aside">Share of the score</span></div>
           <div class="rows">${s.reasons.map(r => `<div class="row reason"><span class="tx"><b>${r.text}</b></span><span class="bar weight"><i style="width:${r.weight / 0.36 * 100}%;background:var(--orange)"></i></span><span class="rt">${Math.round(r.weight * 100)}%</span></div>`).join("")}</div>
@@ -525,7 +579,7 @@
         <div class="inmsg-actions"><button class="btn navy" data-act="send" data-id="${m.id}" data-from="${m.from}">${ic("send", 17)} Approve and send</button></div></article>`; };
     return `<div class="page"><div class="cols"><div class="col-main">
       <section class="hero"><div class="label">Waiting for you</div><div class="value huge">${w.length + reqs.length}</div>
-        <div class="caption">AI drafts each reply from the plan and the calculator. Nothing reaches the family until you send it.</div></section>
+        <div class="caption">AI drafts each reply from the plan and the calculator. Nothing reaches the family until you send it, and every reply is logged.</div></section>
       <section class="section">${w.length ? w.map(card).join("") : `<div class="empty-state">${ic("check", 22, 2.4)}<b>All replies sent</b><span>New questions from the family land here.</span></div>`}</section>
       </div><aside class="col-side">
         ${reqs.length ? `<section class="panel"><div class="section-head"><h2>Call requests</h2></div><div class="rows">${reqs.map(id => `<div class="row">${av(P[id], 36)}<span class="tx"><b>${P[id].short}</b><span>${state.calls[id]}</span></span><button class="btn sm navy" data-act="confirm-call" data-id="${id}">Confirm</button></div>`).join("")}</div></section>` : ""}
@@ -590,7 +644,7 @@
 
   // ---------- one year on ----------
   function yearOne() {
-    const Y = S.yearOne, ch = OPT[Y.chosen], g = gifts(ch.w), placed = heirSum(ch.w), fee = net() * Y.feeRate * 1000;
+    const Y = S.yearOne, ch = OPT[Y.chosen], g = gifts(ch.w), placed = heirSum(ch.w);
     const picks = state.chapter.length ? CHAPTER.filter(([id]) => state.chapter.includes(id)).map(([, , done]) => done) : ["Started the Wilson family foundation"];
     const fam = [
       [P.margaret, "Margaret's next chapter", picks[0] + (picks.length > 1 ? `, and ${picks.length - 1} more` : "")],
@@ -601,7 +655,7 @@
     const pnc = [
       ["repeat", "One yearly check-in", "The family meets every November. The plan and the decision log stay current."],
       ["users", `${Y.pncAfter} of 5 relationships`, `Up from ${Y.pncBefore}. Alex knows the next generation before the next transfer.`],
-      ["bank", `About $${Math.round(fee)}K a year`, "In fees on the $27.0M, at an illustrative 0.8% blended rate."],
+      ["bank", `${money(net())} retained`, "Post-sale assets at PNC, across deposits, custody, trust, lending and brokerage."],
     ];
     return `<section class="y1"><div class="in">
         <div class="label">${Y.when}</div><h1>One year on, the plan is everyday banking.</h1>
@@ -621,7 +675,7 @@
         <section class="panel"><div class="section-head"><h2>How they got here</h2></div><ol class="recap">${Y.events.map(e => `<li><span class="rc-ic">${ic("check", 14, 2.6)}</span><span class="tx"><b>${e.stage}</b><span>${e.what}</span></span></li>`).join("")}</ol></section>
       </aside></div>
       <div class="y1-actions">${state.tour >= 0 ? "" : `<button class="btn" data-act="tour-start">Replay the demo</button>`}<a class="btn ghost" href="#/">Back to the start</a></div>
-      <p class="micro faint center" style="margin-top:14px">A fictional outcome, derived from the demo's figures.</p></div>`;
+      <p class="micro faint center" style="margin-top:14px">A fictional post-sale snapshot, derived from the demo's figures. A demo outcome, not live tracking.</p></div>`;
   }
 
   // ---------- before PNC: scenario preview ----------
@@ -894,10 +948,10 @@
         <div class="stat"><b>83%</b><p>of business owners say family dynamics affect succession or exit planning.</p><small>PNC Business Owner Wealth Insights, 2026</small></div>
         <div class="stat"><b>67%</b><p>still manage business and personal finances separately, though 89% want them connected.</p><small>PNC Business Owner Wealth Insights, 2026</small></div>
         <div class="stat"><b>55%</b><p>of spouses and heirs will not, or did not, keep their benefactor's advisor.</p><small>Natixis Wealth Transfer Report, 2026</small></div></div>`,
-      sauce: `${eyebrow}<h1>Why only PNC can build this</h1><div class="stats pillars">
-        <div class="stat"><span class="pi">${ic("flag", 26)}</span><b>A signal PNC already holds</b><p>Business-account activity can flag a sale a year before closing.</p></div>
-        <div class="stat"><span class="pi">${ic("lock", 26)}</span><b>Private by default</b><p>Each person answers alone. The advisor sees the gaps, not the words.</p></div>
-        <div class="stat"><span class="pi">${ic("users", 26)}</span><b>One household graph</b><p>Heirs meet PNC before the money moves.</p></div></div>`,
+      sauce: `${eyebrow}<h1>Three proprietary assets inside one consented, AI-infused stack</h1><div class="stats pillars">
+        <div class="stat"><span class="pi">${ic("brief", 26)}</span><b>Proprietary family intelligence</b><p>NLP themes, Document AI and drafts behind one gateway. Alex reviews every output before it reaches the client.</p></div>
+        <div class="stat"><span class="pi">${ic("users", 26)}</span><b>Proprietary household graph</b><p>Member vaults, a consent ledger and a graph of business, owners and heirs. Each member controls sharing.</p></div>
+        <div class="stat"><span class="pi">${ic("pulse", 26)}</span><b>Proprietary early signal</b><p>Permissioned commercial relationship signals show when an advisor conversation is timely. The advisor reviews every signal before outreach.</p></div></div>`,
       close: `${eyebrow}<h1>A plan the family trusts. An advisor who hears everyone. Proceeds that stay.</h1><p class="sub" style="font-size:20px">Alen Ilmi, Rizaldy Utomo, Nindy Aditya Dewi and Aditya Mulya Pratama, Carnegie Mellon University</p>`,
     };
     return `<section class="storycard"><div class="inner">${cards[id] || cards.hook}</div></section>`;
@@ -972,6 +1026,7 @@
     if (arrive && motionOK) enter();
     numbers(arrive);
     if (arrive) playTrace();
+    if (route === "") mountStack(); else stopStack();
     renderSheet();
   }
 
@@ -1029,11 +1084,14 @@
     else if (a === "tour-next") { if (state.tour >= TOUR.length - 1) set({ tour: -1 }); else goStep(state.tour + 1); }
     else if (a === "tour-back") goStep(Math.max(0, state.tour - 1));
     else if (a === "tour-end") set({ tour: -1 });
+    else if (a === "stack") selectStack(+id, true);
     else if (a === "switch") { sheet = { kind: "switch" }; renderSheet(); }
     else if (a === "breakdown") { sheet = { kind: "breakdown" }; renderSheet(); }
     else if (a === "why") { sheet = { kind: "why" }; renderSheet(); }
     else if (a === "close") { sheet.kind = null; renderSheet(); }
   });
+  document.addEventListener("pointerover", e => { const el = e.target.closest && e.target.closest("[data-act=stack]"); if (el) selectStack(+el.dataset.id, true); });
+  document.addEventListener("keydown", e => { const el = e.target.closest && e.target.closest("g[data-act=stack]"); if (el && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); selectStack(+el.dataset.id, true); } });
   document.addEventListener("input", e => {
     const el = e.target;
     if (el.dataset.draft) { state.drafts[el.dataset.draft] = el.value; save(); }
