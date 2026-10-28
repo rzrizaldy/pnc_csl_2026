@@ -202,7 +202,7 @@
       <section class="onb-end"><div class="in">
         <h2>Where it ends, a year after the sale</h2>
         <div class="ends">
-          <div><b data-count="27" data-fmt="m">$27.0M</b><span>placed by a plan the whole family agreed</span></div>
+          <div><b data-count="27" data-fmt="m">$27.0M</b><span>placed by a plan the whole family agreed on</span></div>
           <div><b>5 of 5</b><span>family members working with PNC, up from 3</span></div>
           <div><b data-count="8.5" data-fmt="m">$8.5M</b><span>reached the two children who banked elsewhere</span></div>
         </div>
