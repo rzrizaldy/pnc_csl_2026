@@ -9,6 +9,18 @@ const BIN = path.join(process.env.HOME, "Library/Caches/ms-playwright/chromium_h
 const [root, out] = process.argv.slice(2);
 const SHOTS = path.join(__dirname, "../../prototype/shots");
 const BLOBS = {
+  "c3df44f46f8730bb04ac591f3e265f61": "../../slides/canva/raw/p1_preview.png",
+  "8bcedb65332eed8909956d0bf86083ab": "../../slides/canva/raw/p2_setup.png",
+  "4dd6b1639d2acee6f039ef34a53d56f8": "../../slides/canva/raw/p3_checkin.png",
+  "d2f47a7cc2add5ac5f01cb3dec1a278b": "../../slides/canva/raw/p4_decide.png",
+  "d59daa154b6060e96a22e972c90214a1": "../../slides/canva/raw/p5_ask.png",
+  "fe3a5a9f6b4663f1a5136c6ee75c8caa": "../../slides/canva/raw/d2_brief.png",
+  "ec877cd5e46ed532fa962c9f764c5bd9": "../../slides/canva/raw/d3_guide.png",
+  "7bda77cdf091d189984f112ac9ce2664": "../../slides/canva/raw/d4_inbox.png",
+  "be9555390a513ef93a7b24a1ab700976": "slide_preview_m.png",
+  "fa0b0d6ce2a47680f0954b59c30cabd0": "slide_setup_m.png",
+  "e10018dd1d0577b06bfb4bbc93382ffa": "slide_guide.png",
+  "ba23ff44203349fd5b042a9a0291bc5c": "slide_present.png",
   "bb6ce9bce7e651bd16badfc4b975f215": "me_sam_voted_m.png",
   "3bb084389be7f5aecbfa94e9515c5996": "me_claire_checkin_m.png",
   "c23687b87853216f7c4e53d773bcad8a": "slide_advisor_home.png",

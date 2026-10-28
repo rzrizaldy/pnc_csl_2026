@@ -259,15 +259,15 @@ A gap of 0.75 or more recommends a facilitator.
 3. journey (two lanes)
 4. blueprint (service blueprint)
 5. preview (before PNC, then onboarding goals)
-6. family (check-in, private vote, decision tree)
-7. advisor (signal, AI brief)
+6. family (AI client and family experience: Explore and Onboard lead-in, then the core journey Align, Allocate, Activate)
+7. advisor (AI advisor workbench: one AI tool per stage, what Alex decides)
 8. guide (meeting guide and presenter mode)
 9. endstate (the $27.0M across six PNC services)
-10. sauce
+10. sauce (added value: three assets, the stages each powers, value for PNC)
 11. architecture
 12. privacy (backup)
 
-Slide images are artifact assets; `video/src/slide_shots_v2.js` and `slide_crops.js` regenerate them, and `slides_check.js` maps them for local render checks.
+Two versions of Rz's three core slides exist: these in our PNC navy theme, and `slides/canva/family_table_3_slides.pptx` in the team Canva deck's look (see `slides/canva/README.md`). Slide images are artifact assets; `video/src/slide_shots_v2.js` and `slide_crops.js` regenerate them, and `slides_check.js` maps them for local render checks.
 
 ## 8. Design system and voice
 
