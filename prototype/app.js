@@ -203,7 +203,7 @@
         <div class="onb-hero">
           <div class="onb-copy">
             <h1>Crafting the family future, today</h1>
-            <p>Every voice in the family, heard before the sale.</p>
+            <p>Hearing the voice of the family before it even starts.</p>
             <div class="onb-ctas"><button class="btn xl" data-act="tour-start">Start the 2-minute demo</button><a class="btn xl ghost-w" href="#/preview">Preview it for your family</a></div>
           </div>
           <div class="onb-how"><h2>How it works</h2>
