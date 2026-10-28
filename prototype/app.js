@@ -16,7 +16,7 @@
   const fresh = () => ({ shared: [], optOut: false, approved: false, started: false, routed: {}, pick: "balanced", picked: {}, votes: {},
     answers: {}, intro: {}, invited: false, chapter: [], agreed: {}, msgs: [], replies: {}, drafts: {}, calls: {}, confirmed: {},
     shareReply: {}, tour: -1, pv: { value: 48, kids: 3, inBiz: 1 }, pvDocs: null, pvRead: false, pvFix: false, previewed: false, goals: ["fair", "live", "chapter"],
-    fairMeans: null, spend: 300, foundation: 2, keepName: false, tree: {}, pathSent: {}, presented: false });
+    fairMeans: null, goalFix: {}, spend: 300, foundation: 2, keepName: false, tree: {}, pathSent: {}, presented: false });
   let state = fresh();
   try {
     const qp = new URLSearchParams(location.search);
@@ -236,7 +236,7 @@
     { side: "Family", stage: "Align", route: "preview", title: "Margaret previews what's possible",
       hint: "Before she talks to anyone, she adds what she has and AI reads it. Tap Use the Wilsons' documents.", target: '[data-act="pv-sample"]', done: () => state.pvRead },
     { side: "Family", stage: "Align", route: "me/margaret/setup", title: "Margaret sets her goals",
-      hint: "PNC already filled in the facts. She sharpens what fair means to her, then invites the family.", target: '[data-act="invite"]', done: () => state.invited },
+      hint: "AI ranked three goals from her documents and pre-filled each one. Margaret checks them and invites the family.", target: '[data-act="invite"]', done: () => state.invited },
     { side: "Family", stage: "Align", route: "me/claire/checkin", title: "Claire says what she's never said",
       hint: "Her words stay on this screen unless she shares them. Share answer 1 with Alex.", target: '[data-act="toggle-share"][data-id="q1"]', done: () => state.shared.includes("q1") },
     { side: "Advisor", stage: "Align", route: "advisor/align", title: "The AI reads. Alex decides.", noScroll: true,
@@ -631,29 +631,54 @@
   }
 
   // ---------- onboarding: confirm the facts, choose and sharpen goals ----------
+  // AI's recommendations for Margaret's goals, from the documents and the numbers the prototype already has.
+  // Nothing is saved until she invites the family; "Change" opens the control for that goal.
+  const REC = { fair: "balanced", chapter: "foundation" };
+  const fairNow = () => state.fairMeans || REC.fair;
+  const chapterNow = () => state.chapter.length ? state.chapter : [REC.chapter];
   function setupPage() {
-    const sel = state.goals, G = Object.fromEntries(S.goals.map(g => [g.id, g])), years = 9000 / state.spend;
+    const sel = state.goals, G = Object.fromEntries(S.goals.map(g => [g.id, g])), years = 9000 / state.spend, fm = fairNow(), ch = chapterNow();
     const refine = {
-      fair: () => `<p class="rf-q">For you, fair means…</p><div class="rf-opts">${S.options.map(o => { const g = gifts(o.w); return `<button class="rf-opt ${state.fairMeans === o.id ? "on" : ""}" data-act="fair-means" data-id="${o.id}" aria-pressed="${state.fairMeans === o.id}"><b>${o.label}</b><span>Ben ${money(g.ben)}, Claire ${money(g.claire)}, Sam ${money(g.sam)}</span></button>`; }).join("")}</div>`,
+      fair: () => `<p class="rf-q">For you, fair means…</p><div class="rf-opts">${S.options.map(o => { const g = gifts(o.w); return `<button class="rf-opt ${fm === o.id ? "on" : ""}" data-act="fair-means" data-id="${o.id}" aria-pressed="${fm === o.id}"><b>${o.label}</b><span>Ben ${money(g.ben)}, Claire ${money(g.claire)}, Sam ${money(g.sam)}</span></button>`; }).join("")}</div>`,
       live: () => `<p class="rf-q">How much would you and Tom spend a year?</p><div class="pv-in"><label><span>A year</span><b data-spend>$${state.spend}K</b></label><input type="range" min="200" max="450" step="25" value="${state.spend}" data-act="spend" aria-label="Spending a year, in thousands"></div>
         <p class="rf-out"><b data-years>${Math.floor(years)} years</b> is how long your ${money(9)} lasts at that pace, before any growth.</p>`,
-      chapter: () => `<p class="rf-q">What could your next chapter look like?</p><div class="chips">${CHAPTER.map(([id, t]) => `<button class="chip ${state.chapter.includes(id) ? "on" : ""}" data-act="chapter" data-id="${id}" aria-pressed="${state.chapter.includes(id)}">${t}</button>`).join("")}</div>`,
+      chapter: () => `<p class="rf-q">What could your next chapter look like?</p><div class="chips">${CHAPTER.map(([id, t]) => `<button class="chip ${ch.includes(id) ? "on" : ""}" data-act="chapter" data-id="${id}" aria-pressed="${ch.includes(id)}">${t}</button>`).join("")}</div>`,
       give: () => `<p class="rf-q">How much of the ${money(6)} you invest goes to a family foundation?</p><div class="seg" role="group">${[1, 2, 3].map(x => `<button class="${state.foundation === x ? "on" : ""}" data-act="foundation" data-id="${x}" aria-pressed="${state.foundation === x}">${money(x)}</button>`).join("")}</div>`,
       name: () => `<div class="switch-row"><span class="tx"><b>Ask NorthPeak to keep the Wilson Transport name for 3 years</b><span>Alex adds it to the questions for the letter of intent.</span></span><button class="switch" role="switch" aria-checked="${state.keepName}" aria-label="Ask to keep the company name" data-act="keep-name"></button></div>`,
     };
+    const g = gifts(OPT[fm].w);
+    const rec = {
+      fair: [`${OPT[fm].label}: Ben ${money(g.ben)}, Claire ${money(g.claire)}, Sam ${money(g.sam)}`, fm === REC.fair ? "Ben keeps $1.5M of NorthPeak equity. Balanced counts half of it, so the gap between siblings narrows. The family's own view comes from the private check-ins." : "Your choice. AI recommended Balanced: Ben keeps $1.5M of NorthPeak equity, and Balanced counts half of it."],
+      live: [`$${state.spend}K a year, about ${Math.floor(years)} years covered`, state.spend === 300 ? `Your ${money(9)} live-on bucket covers that for ${Math.floor(years)} years, before growth.` : `Your choice. AI suggested $300K a year, which the ${money(9)} bucket covers for 30 years before growth.`],
+      chapter: [ch.map(id => CHAPTER.find(c => c[0] === id)[1]).join("; "), ch.length === 1 && ch[0] === REC.chapter ? "Your plan already sets aside $2.0M to give back. A foundation gives it a home, and you a role after 35 years of running the company." : "Your choice. AI recommended the foundation: your plan already sets aside $2.0M to give back."],
+      give: [`${money(state.foundation)} to a family foundation`, `From the ${money(6)} you invest and give back.`],
+      name: [state.keepName ? "Ask NorthPeak to keep the name for 3 years" : "Not asked yet", "Alex adds it to the questions for the letter of intent."],
+    };
+    const summary = id => rec[id][0];
+    const cards = sel.map((id, i) => `<article class="rec"><div class="rec-h"><span class="rk">${i + 1}</span><b>${G[id].label}</b>
+        <button class="linkbtn" data-act="goal-fix" data-id="${id}">${state.goalFix[id] ? "Done" : "Change"}</button></div>
+        <p class="rec-v">${rec[id][0]}</p><p class="rec-why">${rec[id][1]}</p>
+        ${state.goalFix[id] ? `<div class="rec-edit">${refine[id]()}<button class="linkbtn small" data-act="goal" data-id="${id}">Remove this goal</button></div>` : ""}</article>`).join("");
+    const others = S.goals.filter(x => !sel.includes(x.id));
     return `<div class="page"><div class="cols"><div class="col-main">
       <section class="hero"><div class="label">Set up your plan</div><h1 class="title">Tell Alex what matters most</h1>
-        <div class="caption">PNC has filled in what it already knows. Check it, then pick up to three goals and sharpen each one.</div></section>
+        <div class="caption">PNC filled in the facts. AI ranked your goals from your documents and the preview, and pre-filled each one. Check them, change any, then invite the family.</div></section>
       <section class="section"><div class="section-head"><h2>The facts</h2><span class="aside">Tell Alex if one is wrong</span></div>
         <div class="rows">${S.facts.map(([k, v, src]) => `<div class="row"><span class="ic g">${ic("check", 18, 2.4)}</span><span class="tx"><b>${k}</b><span>${src}</span></span><span class="rt">${v}</span></div>`).join("")}</div></section>
-      <section class="section"><div class="section-head"><h2>Your goals</h2><span class="aside">${sel.length} of 3 picked, in order</span></div>
-        <div class="goals">${S.goals.map(g => { const i = sel.indexOf(g.id); return `<button class="goal ${i >= 0 ? "on" : ""}" data-act="goal" data-id="${g.id}" aria-pressed="${i >= 0}"><span class="g-n">${i >= 0 ? i + 1 : ic(g.icon, 18)}</span><b>${g.label}</b></button>`; }).join("")}</div></section>
-      ${sel.map((id, i) => `<section class="section refine"><div class="section-head"><h2><span class="rk">${i + 1}</span>${G[id].label}</h2></div>${refine[id]()}</section>`).join("")}
+      <section class="section trace-wrap"><div class="section-head"><h2>How AI got there</h2><span class="aside">Simulated AI, real formulas</span></div>
+        <ol class="trace">${[
+          ["Read your documents and the preview", `Three years of statements, the shareholder register and NorthPeak's letter. ${money(net())} at closing; ${money(12)} of it could go to the children.`],
+          ["Ranked your goals", "Fairness first: one child stays with the buyer and two don't. Then what you live on, then what comes after 35 years of running the company."],
+          ["Pre-filled each one", "From the numbers, not from guesses. Change any of them below."],
+        ].map(([t, b], k) => step(k, t, `<p>${b}</p>`)).join("")}</ol></section>
+      <section class="section recs"><div class="section-head"><h2>What AI recommends</h2><span class="aside">${sel.length} goals, in order</span></div>
+        <div class="rec-list">${cards}</div>
+        ${others.length ? `<p class="rf-q" style="margin-top:14px">Also considered. Tap one to add it; with three already picked, it takes third place.</p><div class="goals">${others.map(x => `<button class="goal" data-act="goal" data-id="${x.id}" aria-pressed="false"><span class="g-n">${ic(x.icon, 18)}</span><b>${x.label}</b></button>`).join("")}</div>` : ""}</section>
       </div><aside class="col-side">
         <section class="panel"><div class="section-head"><h2>What Alex will see</h2></div><div class="rows">
-          ${sel.length ? sel.map((id, i) => `<div class="row"><span class="ic o">${i + 1}</span><span class="tx"><b>${G[id].label}</b><span>${id === "fair" ? (state.fairMeans ? "Fair means: " + OPT[state.fairMeans].label : "Not sharpened yet") : id === "live" ? `$${state.spend}K a year, about ${Math.floor(years)} years covered` : id === "chapter" ? `${state.chapter.length} idea${state.chapter.length === 1 ? "" : "s"} picked` : id === "give" ? `${money(state.foundation)} to a family foundation` : state.keepName ? "Ask to keep the name for 3 years" : "Not asked yet"}</span></span></div>`).join("") : `<p class="small muted">Pick at least one goal.</p>`}</div>
+          ${sel.length ? sel.map((id, i) => `<div class="row"><span class="ic o">${i + 1}</span><span class="tx"><b>${G[id].label}</b><span>${summary(id)}</span></span></div>`).join("") : `<p class="small muted">Pick at least one goal.</p>`}</div>
           <p class="micro faint" style="margin-top:8px">Your goals go to Alex. Your family sees only the options they lead to.</p>
-          <div style="margin-top:14px">${state.invited ? `<button class="btn done block" disabled>${ic("check", 18, 2.4)} Goals saved, family invited</button>` : `<button class="btn block" data-act="invite" ${sel.length ? "" : "disabled"}>Save my goals and invite the family</button>`}</div></section>
+          <div style="margin-top:14px">${state.invited ? `<button class="btn done block" disabled>${ic("check", 18, 2.4)} Goals saved, family invited</button>` : `<button class="btn block" data-act="invite" ${sel.length ? "" : "disabled"}>Looks right, invite the family</button>`}</div></section>
       </aside></div></div>`;
   }
 
@@ -850,7 +875,8 @@
     else if (a === "approve") set({ approved: true });
     else if (a === "unapprove") set({ approved: false });
     else if (a === "route") set({ routed: Object.assign({}, state.routed, { [id]: true }) });
-    else if (a === "invite") set({ invited: true });
+    else if (a === "invite") set({ invited: true, fairMeans: fairNow(), chapter: chapterNow() });
+    else if (a === "goal-fix") set({ goalFix: Object.assign({}, state.goalFix, { [id]: !state.goalFix[id] }), fairMeans: fairNow(), chapter: chapterNow() });
     else if (a === "chapter") set({ chapter: state.chapter.includes(id) ? state.chapter.filter(x => x !== id) : [...state.chapter, id] });
     else if (a === "intro") set({ intro: Object.assign({}, state.intro, { [id]: true }) });
     else if (a === "agree") set({ agreed: Object.assign({}, state.agreed, { [id]: true }) });
@@ -876,7 +902,7 @@
     else if (a === "pv-reset") set({ pvRead: false, pvDocs: null, pvFix: false });
     else if (a === "pv-kids") { const k = +id; set({ previewed: true, pv: Object.assign({}, state.pv, { preset: null, kids: k, inBiz: Math.min(state.pv.inBiz, k) }) }); }
     else if (a === "pv-inbiz") set({ previewed: true, pv: Object.assign({}, state.pv, { preset: null, inBiz: +id }) });
-    else if (a === "goal") { const g = state.goals; set({ goals: g.includes(id) ? g.filter(x => x !== id) : g.length < 3 ? [...g, id] : g }); }
+    else if (a === "goal") { const g = state.goals; set({ goals: g.includes(id) ? g.filter(x => x !== id) : g.length < 3 ? [...g, id] : [...g.slice(0, 2), id] }); } // a fourth goal takes third place
     else if (a === "fair-means") set({ fairMeans: id });
     else if (a === "foundation") set({ foundation: +id });
     else if (a === "keep-name") set({ keepName: !state.keepName });
