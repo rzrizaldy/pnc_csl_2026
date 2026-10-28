@@ -204,7 +204,7 @@
       ["sam", "Sam Wilson, 33", "Engineer in Austin", "How much, and when?"],
     ];
     return `<section class="onb"><div class="onb-in">
-        <header class="onb-top"><span class="brand">${mark}Family Table <small>PNC Private Bank</small></span><button class="onb-link" data-act="switch">Explore on your own</button></header>
+        <header class="onb-top"><span class="brand">${mark}Family Table <small>PNC Private Bank</small></span><span class="onb-links"><a class="onb-link" href="deck.html">The deck</a><button class="onb-link" data-act="switch">Explore on your own</button></span></header>
         <div class="onb-hero">
           <div class="onb-copy">
             <h1>Crafting the family future, today</h1>
@@ -966,7 +966,8 @@
       sheetRoot.innerHTML = shell("View as", `<div class="rows">
         <a class="row" href="#/advisor" data-act="close">${avAlex(40)}<span class="tx"><b>Alex Lee</b><span>PNC advisor, the advisor side</span></span>${chev}</a>
         ${S.people.map(p => `<a class="row" href="#/me/${p.id}" data-act="close">${av(p)}<span class="tx"><b>${p.name}</b><span>${p.role}</span></span>${chev}</a>`).join("")}
-        <a class="row" href="#/year-one" data-act="close"><span class="ic o">${ic("repeat")}</span><span class="tx"><b>One year on</b><span>Where the plan ends up</span></span>${chev}</a></div>`);
+        <a class="row" href="#/year-one" data-act="close"><span class="ic o">${ic("repeat")}</span><span class="tx"><b>One year on</b><span>Where the plan ends up</span></span>${chev}</a>
+        <a class="row" href="deck.html"><span class="ic">${ic("guide")}</span><span class="tx"><b>The deck, animated</b><span>Ten slides for the video</span></span>${chev}</a></div>`);
       return;
     }
     if (sheet.kind === "present") { sheetRoot.innerHTML = presentDeck(); return; }

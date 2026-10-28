@@ -16,6 +16,7 @@ Team: Alen Ilmi · Rizaldy Utomo · Nindy Aditya Dewi · Aditya Mulya Pratama, C
 | `case.html` | The Wilson case: personas and five moments where a family sale goes wrong, with sources |
 | `architecture.html` | Solution architecture: 6-layer stack, privacy boundary, service blueprint, request flow, model output contract, AI components, pilot |
 | `prototype/` | Mobile-first prototype. Static HTML/CSS/JS, no build step. Pick a side at `#/`, or take the tour at `?tour`; advisor at `#/advisor/...`, family members at `#/me/<id>/...` |
+| `prototype/deck.html` | The ten deck slides as animated 1920×1080 screens for the video. `#1`…`#10` pick a slide, arrow keys move, `?auto` plays through, `?clean` hides the progress bar |
 | `prototype/shots/` | Desktop (1920×1080) and mobile (`*_m.png`) screenshots |
 | `slides/claude_deck/` | Source of the consulting-style slides (Claude Slides format) |
 | `slides/build_secret_sauce.py` | Secret Sauce slide as editable PPTX shapes, for Canva import |
