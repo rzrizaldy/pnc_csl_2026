@@ -125,11 +125,15 @@ window.SEED = {
   // child who stays = 1.5/48 of the offer. Illustrative only.
   preview: {
     netRatio: 27 / 48, giftShare: 12 / 27, equityRatio: 1.5 / 48,
-    presets: [
-      { id: "wilson", label: "Like the Wilsons", value: 48, kids: 3, inBiz: 1 },
-      { id: "both", label: "Two children, both in it", value: 30, kids: 2, inBiz: 2 },
-      { id: "mixed", label: "Four children, two in it", value: 80, kids: 4, inBiz: 2 },
+    // Documents an owner can add before talking to anyone. The read is simulated; the figures match the Wilson deal.
+    docs: ["Financial statements, 2023 to 2025.pdf", "Shareholder register.pdf", "NorthPeak letter of intent.pdf"],
+    read: [
+      ["Read three years of statements", "Earnings of about $6.9M a year, from the income statements."],
+      ["Found the offer", "$48.0M from NorthPeak, in the letter of intent. About 7 times earnings."],
+      ["Read the shareholder register", "Three children hold shares. One is on the payroll: Ben, COO."],
+      ["Pulled the debt from the PNC accounts", "$3.5M outstanding on the credit line."],
     ],
+    found: { value: 48, kids: 3, inBiz: 1 },
     compare: [
       ["Who is heard", "The founder, usually alone", "Every family member, privately"],
       ["When the family talks", "After the deal is signed", "Before the letter of intent"],

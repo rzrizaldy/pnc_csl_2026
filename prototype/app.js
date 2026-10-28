@@ -15,7 +15,7 @@
   const KEY = "family-table-v8";
   const fresh = () => ({ shared: [], optOut: false, approved: false, started: false, routed: {}, pick: "balanced", picked: {}, votes: {},
     answers: {}, intro: {}, invited: false, chapter: [], agreed: {}, msgs: [], replies: {}, drafts: {}, calls: {}, confirmed: {},
-    shareReply: {}, tour: -1, pv: { preset: "wilson", value: 48, kids: 3, inBiz: 1 }, previewed: false, goals: ["fair", "live", "chapter"],
+    shareReply: {}, tour: -1, pv: { value: 48, kids: 3, inBiz: 1 }, pvDocs: null, pvRead: false, pvFix: false, previewed: false, goals: ["fair", "live", "chapter"],
     fairMeans: null, spend: 300, foundation: 2, keepName: false, tree: {}, pathSent: {}, presented: false });
   let state = fresh();
   try {
@@ -27,6 +27,8 @@
   } catch (e) { /* storage blocked: keep in-memory state */ }
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} };
   const set = patch => { Object.assign(state, patch); save(); render(); };
+  // Preview: the documents are "read" (simulated) and the facts fill the screen; the person can fix any number.
+  const readDocs = (names, own) => { Object.assign(state, { pvDocs: { names, own }, pvRead: true, previewed: true, pvFix: false, pv: Object.assign({}, S.preview.found) }); save(); render(true); };
   const ui = { callOpen: false, slide: 0 };
   let sheet = { kind: null };
 
@@ -98,6 +100,8 @@
   };
   const ic = (k, s = 20, w = 1.8) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${I[k]}"/></svg>`;
   const chev = `<span class="chev">${ic("chev", 18)}</span>`;
+  // One step of an AI trace. playTrace() runs them in order on arrival.
+  const step = (k, title, body, cls = "", icon = "check") => `<li class="tr-step ${cls}" data-k="${k}"><span class="tr-ic"><span class="tr-n">${k + 1}</span>${ic(icon, 16, 2.6)}<span class="spin"></span></span><div class="tr-body"><b>${title}</b>${body}</div></li>`;
   const mark = `<svg viewBox="0 0 32 32" width="22" height="22" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="16" cy="16" r="5" fill="#EF6A00"/><circle cx="16" cy="5" r="2.4" fill="#fff"/><circle cx="26" cy="20" r="2.4" fill="#fff"/><circle cx="6" cy="20" r="2.4" fill="#fff"/></svg>`;
 
   // Three steps. The deck's Signal and Join fold into Align; Continue folds into Activate.
@@ -230,7 +234,7 @@
     { side: "Advisor", stage: "Align", route: "advisor", title: "Alex sees the sale coming",
       hint: "PNC's own account data puts Wilson Transport at 81 out of 100, a year before closing. Tap Call Margaret.", target: '[data-act="start"]', done: () => state.started },
     { side: "Family", stage: "Align", route: "preview", title: "Margaret previews what's possible",
-      hint: "Before she commits to anything, she sees what a sale could mean for her family. Try another family: tap Four children, two in it.", target: '[data-act="pv-preset"][data-id="mixed"]', done: () => state.previewed },
+      hint: "Before she talks to anyone, she adds what she has and AI reads it. Tap Use the Wilsons' documents.", target: '[data-act="pv-sample"]', done: () => state.pvRead },
     { side: "Family", stage: "Align", route: "me/margaret/setup", title: "Margaret sets her goals",
       hint: "PNC already filled in the facts. She sharpens what fair means to her, then invites the family.", target: '[data-act="invite"]', done: () => state.invited },
     { side: "Family", stage: "Align", route: "me/claire/checkin", title: "Claire says what she's never said",
@@ -461,7 +465,6 @@
     if (n < MIN_GROUP) return `<div class="page"><section class="hero"><div class="label">Wilson family summary</div><div class="value">Not enough answers</div><div class="caption">The family summary appears when at least ${MIN_GROUP} members contribute.</div></section></div>`;
     const ths = summaryThemes().map(th => ({ th, g: gap(th) })).sort((a, b) => b.g - a.g), top = ths[0], low = ths[ths.length - 1];
     const will = S.docs.find(d => d.id === "will"), routed = state.routed.will;
-    const step = (k, title, body, cls = "", icon = "check") => `<li class="tr-step ${cls}" data-k="${k}"><span class="tr-ic"><span class="tr-n">${k + 1}</span>${ic(icon, 16, 2.6)}<span class="spin"></span></span><div class="tr-body"><b>${title}</b>${body}</div></li>`;
     const steps = [
       step(0, `Read ${n} private check-ins`, `<p>Turned each person's words into a stance on ${S.themes.length} themes. The words stay in each person's own vault.</p>
         <div class="chips static">${S.themes.map(t => `<span class="chip">${t.short}</span>`).join("")}</div>`),
@@ -596,17 +599,28 @@
           kid(`In the business, ×${pv.inBiz}`, inCash, R, max) + kid(`Not in it, ×${out}`, target, 0, max));
     return `<div class="page"><div class="cols"><div class="col-main">
       <section class="hero"><div class="label">Before you talk to anyone: what could a sale mean for your family?</div>
-        <div class="pv-presets">${seg("pv-preset", X.presets.map(p => p.id), pv.preset, id => X.presets.find(p => p.id === id).label)}</div>
-        <div class="pv-in"><label><span>Offer for the business</span><b data-pvval>$${pv.value}M</b></label>
+        ${!state.pvRead ? `<div class="pv-drop">
+          <label class="pv-drop-in" for="pv-files">${ic("doc", 26)}<b>Add what you have</b><span>Financial statements, the shareholder register, the buyer's letter if there is one. Nothing leaves your device in this prototype.</span></label>
+          <input type="file" id="pv-files" multiple data-act="pv-files" class="visually-hidden">
+          <button class="btn block" data-act="pv-sample">Use the Wilsons' documents</button></div>`
+        : `<div class="pv-files">${state.pvDocs.names.map(d => `<span class="file-chip">${ic("doc", 15)}${esc(d)}</span>`).join("")}<button class="linkbtn" data-act="pv-reset">Start over</button></div>
+          ${state.pvDocs.own ? `<p class="micro faint" style="margin-top:8px">Your files stayed on this device. In the prototype, AI reads the Wilsons' sample set instead.</p>` : ""}`}</section>
+      ${!state.pvRead ? `<section class="section"><div class="pv-empty">Add your documents, or use the Wilsons', and the numbers appear here: what reaches the family at closing, and how it could split.</div></section>` : `
+      <section class="section trace-wrap"><div class="section-head"><h2>How AI read it</h2><span class="aside">Simulated AI, real formulas</span></div>
+        <ol class="trace">${X.read.map(([t, b], k) => step(k, t, `<p>${b}</p>`)).join("")}</ol></section>
+      <section class="section"><div class="section-head"><h2>What AI found</h2><button class="aside" data-act="pv-fix">${state.pvFix ? "Done" : "Fix a number"}</button></div>
+        <div class="rows">${[["Offer for the business", "$" + pv.value + "M", "NorthPeak letter of intent"], ["Company debt", money(S.deal.debt), "Wilson Transport's PNC accounts"], ["Children", String(pv.kids), "Shareholder register"], ["Working in the business", String(pv.inBiz), "Payroll"]].map(([k, v, src]) => `<div class="row"><span class="tx"><b>${k}</b><span>${src}</span></span><span class="rt">${v}</span></div>`).join("")}</div>
+        ${state.pvFix ? `<div class="pv-fixbox"><div class="pv-in"><label><span>Offer for the business</span><b data-pvval>$${pv.value}M</b></label>
           <input type="range" min="10" max="100" step="2" value="${pv.value}" data-act="pv-value" aria-label="Offer for the business, in millions"></div>
-        <div class="pv-row"><div><span class="lab">Children</span>${seg("pv-kids", [1, 2, 3, 4], pv.kids)}</div>
-          <div><span class="lab">Working in the business</span>${seg("pv-inbiz", [...Array(pv.kids + 1).keys()], pv.inBiz)}</div></div></section>
-      <section class="section"><div class="section-head"><h2>Likely to reach your family at closing</h2></div>
+          <div class="pv-row"><div><span class="lab">Children</span>${seg("pv-kids", [1, 2, 3, 4], pv.kids)}</div>
+          <div><span class="lab">Working in the business</span>${seg("pv-inbiz", [...Array(pv.kids + 1).keys()], pv.inBiz)}</div></div></div>` : ""}
+        <p class="micro faint" style="margin-top:10px">Check these before you rely on them. A PNC tax specialist confirms real figures.</p></section>`}
+      ${state.pvRead ? `<section class="section"><div class="section-head"><h2>Likely to reach your family at closing</h2></div>
         <div class="value huge">${m1(netV)}</div>
         <p class="caption">After typical debt, fees and tax, with any earnout left out. ${m1(pot)} of it could go to the children.</p>
         <div class="alloc" style="margin-top:14px" aria-hidden="true">${S.deal.buckets.map(b => `<i style="flex:${b.value};background:${b.color}"></i>`).join("")}</div>
         <div class="alloc-legend">${S.deal.buckets.map(b => `<div><span class="dot" style="background:${b.color}"></span><b>${m1(netV * b.value / net())}</b><span>${b.label}</span></div>`).join("")}</div></section>
-      <section class="section"><div class="section-head"><h2>${mixed ? "Two ways to split it" : "How it splits"}</h2><span class="aside">Navy cash, orange equity</span></div><div class="pv-cards">${cards}</div></section>
+      <section class="section"><div class="section-head"><h2>${mixed ? "Two ways to split it" : "How it splits"}</h2><span class="aside">Navy cash, orange equity</span></div><div class="pv-cards">${cards}</div></section>` : ""}
       </div><aside class="col-side">
         <section class="panel"><div class="section-head"><h2>What changes with Family Table</h2></div>
           <div class="cmp"><div class="cmp-h"><span></span><span>Without a plan</span><span>With Family Table</span></div>${X.compare.map(([k, a, b]) => `<div class="cmp-r"><b>${k}</b><span>${a}</span><span>${b}</span></div>`).join("")}</div></section>
@@ -857,7 +871,9 @@
     else if (a === "call-open") { ui.callOpen = true; render(); }
     else if (a === "call" && v) { ui.callOpen = false; set({ calls: Object.assign({}, state.calls, { [v]: S.slots[+id] }) }); }
     else if (a === "confirm-call") set({ confirmed: Object.assign({}, state.confirmed, { [id]: true }) });
-    else if (a === "pv-preset") { const pr = S.preview.presets.find(x => x.id === id); set({ previewed: true, pv: { preset: id, value: pr.value, kids: pr.kids, inBiz: pr.inBiz } }); }
+    else if (a === "pv-sample") readDocs(S.preview.docs, false);
+    else if (a === "pv-fix") set({ pvFix: !state.pvFix });
+    else if (a === "pv-reset") set({ pvRead: false, pvDocs: null, pvFix: false });
     else if (a === "pv-kids") { const k = +id; set({ previewed: true, pv: Object.assign({}, state.pv, { preset: null, kids: k, inBiz: Math.min(state.pv.inBiz, k) }) }); }
     else if (a === "pv-inbiz") set({ previewed: true, pv: Object.assign({}, state.pv, { preset: null, inBiz: +id }) });
     else if (a === "goal") { const g = state.goals; set({ goals: g.includes(id) ? g.filter(x => x !== id) : g.length < 3 ? [...g, id] : g }); }
@@ -895,7 +911,8 @@
   // The preview recalculates when the slider is released, so dragging stays smooth.
   document.addEventListener("change", e => {
     const el = e.target;
-    if (el.dataset.act === "pv-value") { const y = scrollY; state.pv = Object.assign({}, state.pv, { preset: null, value: +el.value }); state.previewed = true; save(); render(); scrollTo(0, y); }
+    if (el.dataset.act === "pv-value") { const y = scrollY; state.pv = Object.assign({}, state.pv, { value: +el.value }); state.previewed = true; save(); render(); scrollTo(0, y); }
+    if (el.dataset.act === "pv-files") { const names = [...el.files].map(f => f.name).slice(0, 6); readDocs(names.length ? names : S.preview.docs, names.length > 0); }
   });
   document.addEventListener("keydown", e => { if (e.key === "Escape" && sheet.kind) { sheet.kind = null; renderSheet(); } });
   window.addEventListener("hashchange", () => {

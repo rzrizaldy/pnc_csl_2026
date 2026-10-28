@@ -6,7 +6,7 @@ const BIN = path.join(process.env.HOME, "Library/Caches/ms-playwright/chromium_h
 const BASE = process.argv[2] || "http://localhost:4311/prototype/";
 const OUT = path.join(__dirname, "../../prototype/shots");
 const PHONE = [
-  ["preview", "slide_preview_m", { pv: { preset: "mixed", value: 80, kids: 4, inBiz: 2 } }, null],
+  ["preview", "slide_preview_m", { pvRead: true, pvDocs: { names: ["Financial statements, 2023 to 2025.pdf", "Shareholder register.pdf", "NorthPeak letter of intent.pdf"], own: false }, pv: { value: 48, kids: 3, inBiz: 1 } }, null],
   ["me/margaret/setup", "slide_setup_m", { fairMeans: "balanced" }, ".refine"],
   ["me/sam/decide", "slide_decide_m", { votes: { sam: "balanced" }, tree: { sam: { count: "balanced", pay: "trust" } } }, null],
 ];
