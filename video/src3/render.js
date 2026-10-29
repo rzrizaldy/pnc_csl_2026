@@ -50,11 +50,13 @@ const ff = (...a) => execFileSync("ffmpeg", ["-y", "-hide_banner", "-loglevel", 
     total = t0; warp = t => { const g = segs.find(g => t < g.t0 + g.D) || segs[segs.length - 1]; return Math.min(story - 1e-6, g.s0 + (t - g.t0) * g.d / g.D); };
   }
   const frames = Math.round(total * FPS);
+  // --subs cues.json (from take.py subs): subtitles in film time
+  if (arg("subs")) await page.evaluate(c => { window.SUBS = c; }, JSON.parse(fs.readFileSync(arg("subs"), "utf8")));
   console.log(`${shots.length} device shots, ${total.toFixed(3)} s, ${frames} frames`);
   const cdp = await ctx.newCDPSession(page);
   const grab = async () => Buffer.from((await cdp.send("Page.captureScreenshot", { format: "jpeg", quality: 93, optimizeForSpeed: true })).data, "base64");
   let clockMs = 0;
-  const step = async f => { const tau = warp(f / FPS), ms = Math.round(tau * 1000); if (ms > clockMs) await page.clock.runFor(ms - clockMs); clockMs = Math.max(clockMs, ms); await page.evaluate(x => window.frame(x), tau); };
+  const step = async f => { const tau = warp(f / FPS), ms = Math.round(tau * 1000); if (ms > clockMs) await page.clock.runFor(ms - clockMs); clockMs = Math.max(clockMs, ms); await page.evaluate(([x, o]) => window.frame(x, o), [tau, f / FPS]); };
 
   if (MODE === "stills") {
     const out = path.join(BUILD, "stills"); fs.rmSync(out, { recursive: true, force: true }); fs.mkdirSync(out, { recursive: true });
@@ -76,7 +78,7 @@ const ff = (...a) => execFileSync("ffmpeg", ["-y", "-hide_banner", "-loglevel", 
     console.log("stills in", path.relative(ROOT, out));
   } else {
     fs.mkdirSync(BUILD, { recursive: true });
-    const pic = path.join(BUILD, TAKE ? "picture_take.mp4" : "picture.mp4");
+    const pic = path.join(BUILD, arg("pic", TAKE ? "picture_take.mp4" : "picture.mp4"));
     const enc = spawn("ffmpeg", ["-y", "-hide_banner", "-loglevel", "error", "-f", "image2pipe", "-framerate", String(FPS), "-c:v", "mjpeg", "-i", "-",
       "-vf", `scale=${CFG.width}:${CFG.height}:flags=lanczos:out_color_matrix=bt709,format=yuv420p`,
       "-c:v", "libx264", "-preset", "slow", "-crf", "16", "-r", String(FPS), "-colorspace", "bt709", "-color_primaries", "bt709", "-color_trc", "bt709",

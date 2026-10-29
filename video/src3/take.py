@@ -7,6 +7,9 @@ nothing is duplicated or dropped.
     python3 take.py plan <take>          finds the 12 line starts, writes take.json (scene durations, offset)
     node render.js video --take take.json  renders the warped picture to video/build3/picture_take.mp4
     python3 take.py mux <take> [--ver v6]  face bubble (bottom left) + cleaned voice -> video/family_table_<ver>_final.mp4
+    python3 take.py subs <take>          short subtitle cues timed to the voice -> take_subs.json + video/family_table_v6_final_v2.srt
+    node render.js video --take take.json --subs take_subs.json --pic picture_take_subs.mp4
+    python3 take.py mux <take> --pic picture_take_subs.mp4 --name family_table_v6_final_v2.mp4
 
 Line starts: the take's pauses (silencedetect) are matched to where each line should end if the reader
 kept an even pace (word counts from shots.json), so a long pause inside a line doesn't count as a break.
@@ -64,10 +67,10 @@ def plan(take):
         print(f"  {i:2d}  take {s:6.2f} s  ->  film {sum(durs[:i - 1]) + LEAD:6.2f} s   {l[:60]}")
 
 
-def mux(take, ver="v6"):
+def mux(take, ver="v6", pic_name="picture_take.mp4", name=None):
     T = json.loads((D / "take.json").read_text())
-    pic = VIDEO / "build3" / "picture_take.mp4"
-    out = VIDEO / f"family_table_{ver}_final.mp4"
+    pic = VIDEO / "build3" / pic_name
+    out = VIDEO / (name or f"family_table_{ver}_final.mp4")
     if out.exists():
         out = out.with_name(out.stem + "_new.mp4"); print(f"final exists; writing {out.name}")
     total, off = T["total"], T["offset"]
@@ -102,7 +105,66 @@ def mux(take, ver="v6"):
     print(out)
 
 
+STOP = {"the", "a", "an", "and", "of", "to", "their", "that", "in", "into", "from", "with", "her", "his", "what", "one"}
+
+
+def phrases(line, limit=58):
+    """Splits a line at its punctuation into phrases short enough for one small subtitle line. Short bits join
+    the next phrase, and a long clause splits near its middle but never right after "the", "and" and the like."""
+    parts = [p.strip() for p in re.split(r"(?<=[,;:.?!])\s+", line) if p.strip()]
+    out = []
+    for p in parts:
+        if out and (len(out[-1]) < 20 or (len(out[-1]) + 1 + len(p) <= limit and not out[-1].endswith((".", "?", "!")))) and len(out[-1]) + 1 + len(p) <= limit + 14:
+            out[-1] += " " + p
+        else:
+            out.append(p)
+    res = []
+    for p in out:
+        if len(p) <= limit + 14:
+            res.append(p); continue
+        w = p.split()
+        ks = [k for k in range(2, len(w) - 1) if w[k - 1].lower().strip(",;:") not in STOP]
+        k = min(ks, key=lambda k: abs(len(" ".join(w[:k])) - len(p) / 2))
+        res += [" ".join(w[:k]), " ".join(w[k:])]
+    return res
+
+
+def subs(take):
+    """Cues in film time: each line's phrases share its speech time by length, and each break snaps to a real
+    pause in the voice when there's one within 0.7 s."""
+    T = json.loads((D / "take.json").read_text())
+    off, starts, total = T["offset"], T["line_starts"], T["total"]
+    small = pauses(take, d=0.16)
+    ends = []                                                                # where each line's speech ends
+    for i, s in enumerate(starts):
+        nxt = starts[i + 1] if i + 1 < len(starts) else probe(take, "duration")
+        inside = [p for p in small if s < p[0] < nxt and p[1] >= nxt - 0.05]
+        ends.append(inside[0][0] if inside else nxt - 0.4)
+    cues = []
+    for i, s in enumerate(CFG["scenes"]):
+        ph, a, b = phrases(s["line"]), starts[i], ends[i]
+        n = sum(len(p) for p in ph); t = a; bounds = [a]
+        for p in ph[:-1]:
+            t += (b - a) * len(p) / n
+            near = [q for q in small if a < q[0] < b and abs((q[0] + q[1]) / 2 - t) < 0.7]
+            bounds.append((lambda q: (q[0] + q[1]) / 2)(min(near, key=lambda q: abs((q[0] + q[1]) / 2 - t))) if near else t)
+        bounds.append(b)
+        for k, p in enumerate(ph):
+            a0 = bounds[k] - off - (0.15 if k == 0 else 0)
+            b0 = bounds[k + 1] - off + (0.35 if k == len(ph) - 1 else -0.02)
+            cues.append({"a": round(max(0, a0), 3), "b": round(min(b0, total - 0.9), 3), "text": p})
+    for c, d in zip(cues, cues[1:]):                                         # never two on screen at once
+        c["b"] = min(c["b"], d["a"] - 0.04)
+    (D / "take_subs.json").write_text(json.dumps(cues, indent=1) + "\n")
+    ts = lambda x: "%02d:%02d:%02d,%03d" % (x // 3600, x % 3600 // 60, x % 60, round(x % 1 * 1000))
+    srt = VIDEO / "family_table_v6_final_v2.srt"
+    srt.write_text("\n".join(f"{i}\n{ts(c['a'])} --> {ts(c['b'])}\n{c['text']}\n" for i, c in enumerate(cues, 1)))
+    print(f"{len(cues)} cues, longest {max(len(c['text']) for c in cues)} chars -> take_subs.json, {srt.name}")
+
+
 if __name__ == "__main__":
     cmd, take = sys.argv[1], sys.argv[2]
-    ver = sys.argv[sys.argv.index("--ver") + 1] if "--ver" in sys.argv else "v6"
-    plan(take) if cmd == "plan" else mux(take, ver)
+    opt = lambda k, d=None: sys.argv[sys.argv.index(k) + 1] if k in sys.argv else d
+    if cmd == "plan": plan(take)
+    elif cmd == "subs": subs(take)
+    else: mux(take, opt("--ver", "v6"), opt("--pic", "picture_take.mp4"), opt("--name"))
