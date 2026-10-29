@@ -496,7 +496,8 @@ function worldC(t) {
 
 // ---------------------------------------------------------------- side diagrams beside the device shots
 const MINI = { ox: 430, oy: 830, k: 50 };
-function mini(t0, t1, fn) { world(t0, t1, t => { const o = win(t, t0, t1, .7) * dimAt(t); if (o > .002) fn(t, iso(push(MINI, t, t0, .012)), o); }); }
+// dx shifts a diagram right; the bottom-left corner stays clear for a presenter bubble
+function mini(t0, t1, fn, dx = 0) { world(t0, t1, t => { const o = win(t, t0, t1, .7) * dimAt(t); if (o > .002) fn(t, iso(push({ ...MINI, ox: MINI.ox + dx }, t, t0, .012)), o); }); }
 // signal: three account tiles pulse up into one signal that Alex reviews
 function miniSignal(t, P, o) {
   const k0 = K.signal, call = k0 + 6.6, node = [0, 0, 3.0];
@@ -639,7 +640,7 @@ function build() {
     s.home(k0 + 7.8, 1.2);
     s.to(k0 + 9.5, 1.0, flat(T, 1180, 840, .3));
     head(k0 + .5, k0 + 9.6, { pill: 0, h: "A signal PNC already holds.", p: "Account activity says a sale is likely, a year early. Alex reviews it before anyone calls." });
-    mini(k0 + .9, k0 + 9.8, miniSignal);
+    mini(k0 + .9, k0 + 9.8, miniSignal, 30);
   }
   // ---- 5 Margaret: preview, then her goals
   {
@@ -655,7 +656,7 @@ function build() {
     b.tap(k0 + 7.7, '[data-act="invite"]');
     b.to(k0 + 9.7, 1.0, flat(P, 1500, 760, .3));
     head(k0 + .5, k0 + 9.7, { pill: 0, h: "Margaret sets the goals.", p: "AI reads her documents and drafts her goals. She checks them, then invites her family." });
-    mini(k0 + .7, k0 + 9.8, miniDocs);
+    mini(k0 + .7, k0 + 9.8, miniDocs, 70);
   }
   // ---- 6 private check-ins: the vaults, then Claire's phone stands up out of hers
   {
@@ -672,7 +673,7 @@ function build() {
     c.tap(k0 + 9.9, '[data-act="toggle-share"][data-id="q1"]');
     c.to(k0 + 11.6, .95, flat(P, 1260, 760, .3));
     head(k0 + 5.0, k0 + 11.7, { pill: 0, h: "Claire says what she’s never said.", p: "AI lifts out the themes. She chooses what Alex sees." });
-    mini(k0 + 5.3, k0 + 11.8, miniVault);
+    mini(k0 + 5.3, k0 + 11.8, miniVault, 80);
   }
   // ---- 7 the brief on Alex's iPad
   {
@@ -687,7 +688,7 @@ function build() {
     b.to(k0 + 10.6, 1.0, flat(T, 1300, 840, .3));
     dim(k0 + 4.0, k0 + 10.2);
     head(k0 + .5, k0 + 10.6, { pill: 0, h: "AI prepares. Alex decides.", p: "Four check-ins and three family documents become one brief. The widest gap is fairness." });
-    mini(k0 + .7, k0 + 10.7, miniBrief);
+    mini(k0 + .7, k0 + 10.7, miniBrief, 80);
   }
   // ---- 8 allocate: Sam votes, then settles the decision tree
   {
@@ -729,7 +730,7 @@ function build() {
     r.focus(k0 + 8.6, 1.1, ".msg.alex", 1.22);
     r.to(k0 + 11.5, 1.2, flat(P, 1290, 720, .25));
     head(k0 + .4, k0 + 11.6, { pill: 2, h: "Ask a person, not a bot.", p: "AI drafts the answer. Alex checks it and sends it. Nothing reaches the family until he approves." });
-    mini(k0 + .6, k0 + 11.7, miniAsk);
+    mini(k0 + .6, k0 + 11.7, miniAsk, 50);
   }
   // ---- 10–12 world C: one year on, the stack, the close
   {

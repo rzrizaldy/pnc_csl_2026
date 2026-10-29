@@ -42,12 +42,19 @@ const ff = (...a) => execFileSync("ffmpeg", ["-y", "-hide_banner", "-loglevel", 
   await page.goto(`http://127.0.0.1:${port}/video/src3/stage.html`, { waitUntil: "load" });
   const shots = await page.evaluate(() => window.boot());
   await page.clock.pauseAt(T0 + 120000);
-  const total = await page.evaluate(() => window.TOTAL), frames = Math.round(total * FPS);
+  // --take take.json (from take.py plan): film time is warped so every scene starts when its line starts in the take
+  const story = await page.evaluate(() => window.TOTAL), TAKE = arg("take") ? JSON.parse(fs.readFileSync(arg("take"), "utf8")) : null;
+  let total = story, warp = t => t;
+  if (TAKE) {
+    let s0 = 0, t0 = 0; const segs = CFG.scenes.map((s, i) => { const g = { s0, t0, d: s.dur, D: TAKE.durs[i] }; s0 += s.dur; t0 += TAKE.durs[i]; return g; });
+    total = t0; warp = t => { const g = segs.find(g => t < g.t0 + g.D) || segs[segs.length - 1]; return Math.min(story - 1e-6, g.s0 + (t - g.t0) * g.d / g.D); };
+  }
+  const frames = Math.round(total * FPS);
   console.log(`${shots.length} device shots, ${total.toFixed(3)} s, ${frames} frames`);
   const cdp = await ctx.newCDPSession(page);
   const grab = async () => Buffer.from((await cdp.send("Page.captureScreenshot", { format: "jpeg", quality: 93, optimizeForSpeed: true })).data, "base64");
   let clockMs = 0;
-  const step = async f => { const ms = Math.round(f * 1000 / FPS); if (ms > clockMs) await page.clock.runFor(ms - clockMs); clockMs = ms; await page.evaluate(x => window.frame(x), f / FPS); };
+  const step = async f => { const tau = warp(f / FPS), ms = Math.round(tau * 1000); if (ms > clockMs) await page.clock.runFor(ms - clockMs); clockMs = Math.max(clockMs, ms); await page.evaluate(x => window.frame(x), tau); };
 
   if (MODE === "stills") {
     const out = path.join(BUILD, "stills"); fs.rmSync(out, { recursive: true, force: true }); fs.mkdirSync(out, { recursive: true });
@@ -69,7 +76,7 @@ const ff = (...a) => execFileSync("ffmpeg", ["-y", "-hide_banner", "-loglevel", 
     console.log("stills in", path.relative(ROOT, out));
   } else {
     fs.mkdirSync(BUILD, { recursive: true });
-    const pic = path.join(BUILD, "picture.mp4");
+    const pic = path.join(BUILD, TAKE ? "picture_take.mp4" : "picture.mp4");
     const enc = spawn("ffmpeg", ["-y", "-hide_banner", "-loglevel", "error", "-f", "image2pipe", "-framerate", String(FPS), "-c:v", "mjpeg", "-i", "-",
       "-vf", `scale=${CFG.width}:${CFG.height}:flags=lanczos:out_color_matrix=bt709,format=yuv420p`,
       "-c:v", "libx264", "-preset", "slow", "-crf", "16", "-r", String(FPS), "-colorspace", "bt709", "-color_primaries", "bt709", "-color_trc", "bt709",
@@ -82,6 +89,7 @@ const ff = (...a) => execFileSync("ffmpeg", ["-y", "-hide_banner", "-loglevel", 
       if (f % 600 === 0) console.log(`frame ${f}/${frames}  ${((Date.now() - t0) / 1000).toFixed(0)} s`);
     }
     enc.stdin.end(); await new Promise(r => enc.on("close", r));
+    if (TAKE) { console.log(`warped picture: ${path.relative(ROOT, pic)} (${total.toFixed(2)} s); next: python3 take.py mux <take>`); await browser.close(); srv.close(); return; }
     const dur = (frames / FPS).toFixed(3), outp0 = path.join(VIDEO, `family_table_${arg("ver", "v6")}_silent.mp4`);
     let outp = outp0;
     if (fs.existsSync(outp) && !process.argv.includes("--force")) { outp = outp0.replace(/\.mp4$/, `_${Date.now()}.mp4`); console.log(`${path.basename(outp0)} exists; writing ${path.basename(outp)} instead`); }
