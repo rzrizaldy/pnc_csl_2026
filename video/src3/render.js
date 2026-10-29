@@ -1,4 +1,4 @@
-// Renders the v5 film (silent, cut to RECORDING_SCRIPT.md v5) from stage.html, deterministically.
+// Renders the final film (v6; silent, cut to RECORDING_SCRIPT_v6.md) from stage.html, deterministically.
 //
 //   node render.js stills [--every 2] [--from 0] [--to 116] [--at 3,10.5]
 //                         stills at those film times plus contact sheets in video/build3/stills/

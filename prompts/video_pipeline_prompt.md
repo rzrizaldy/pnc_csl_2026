@@ -29,8 +29,8 @@ You are building a 2-minute pitch video for **Family Table**, a student concept 
 ### Inputs
 1. **Repo:** `git clone https://github.com/rzrizaldy/pnc_csl_2026`. Read these first:
    - `PROJECT_CONTEXT.md` for the facts, numbers, personas and the "never reintroduce" list
-   - `video/RECORDING_SCRIPT.md` for the 11 narration lines (v3)
-   - `video/VIDEO_PLAN.md` for the storyboard
+   - `video/archive/RECORDING_SCRIPT_v5.md` for the 11 narration lines (v3)
+   - `video/archive/VIDEO_PLAN.md` for the storyboard
 2. **Live prototype:** https://rzrizaldy.github.io/pnc_csl_2026/prototype/
    - `?reset` clears its state, and `?tour` starts the guided demo.
    - `window.FT.set({...})` sets demo state, and `location.hash = "#/route"` changes screens.

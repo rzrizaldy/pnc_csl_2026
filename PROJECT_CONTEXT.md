@@ -1,6 +1,6 @@
 # Family Table: full project context
 
-The single document an agent or teammate reads before touching this repo. Updated Oct 27, 2026. When state changes, update it in place rather than appending a diary. Shorter working notes live in `current-context-what-next.md`; team coordination lives in `TEAM_NOTES.md`.
+The single document an agent or teammate reads before touching this repo. Updated Oct 27, 2026. When state changes, update it in place rather than appending a diary. Shorter working notes live in `current-context-what-next.md`; team coordination lives in `docs/TEAM_NOTES.md`.
 
 ---
 
@@ -218,17 +218,22 @@ A gap of 0.75 or more recommends a facilitator.
 | `site.css` | Site styles. Phone mockup: 300×626 frame, iframe scaled 0.718 |
 | `prototype/` | The app: `index.html`, `app.js`, `data.js`, `styles.css`. Static, hash routes, no build |
 | `prototype/shots/` | Screenshots used by the site and slides |
-| `slides/claude_deck/` | Source of the Claude Slides deck (`deck.json` and `slides/*.html`) |
-| `slides/build_secret_sauce.py`, `secret_sauce.pptx` | Editable PPTX of the sauce slide, for Canva |
-| `video/VIDEO_PLAN.md`, `video/RECORDING_SCRIPT.md` | Old video plan (v3); voice-over script **v5** (12 lines, 254 words, timed to the v5 picture) |
-| `video/src3/` | **The final film (v5)**: `STORYBOARD.md`, `shots.json` (timing + script lines), `stage.html` (iso world, devices, copy), `render.js`, `cues.py` |
+| `slides/claude_three/` | The 4 core slides (client, advisor, sauce, feasibility), Claude Slides source for https://claude.ai/artifact/4i1gadSusfcxXqzgcHbiaz |
+| `slides/claude_deck/` | Source of the earlier 12-slide Claude Slides deck (`deck.json` and `slides/*.html`) |
+| `slides/canva/` | The 3 core slides as an editable PPTX in the team Canva look |
+| `slides/secret_sauce/build_secret_sauce.py`, `secret_sauce.pptx` | Editable PPTX of the sauce slide, for Canva |
+| `video/RECORDING_SCRIPT_v6.md`, `video/family_table_v6_cues.srt` | The current voice-over script (12 lines, about 255 words) and its cues |
+| `video/family_table_v6_final_v2.srt` | The final subtitles, timed to Nindy's take |
+| `video/archive/` | Earlier plan (v3), script v5 and cue files (v4, v5) |
+| `video/src3/` | **The final film (v6)**: `STORYBOARD.md`, `shots.json` (timing + script lines), `stage.html` (iso world, devices, copy, subtitles), `render.js`, `cues.py`, `take.py` (voice take: plan, subs, mux) |
+| `video/apple/` | The music-only film (superseded) |
 | `video/src2/` | The v4 voice-over film (superseded): `shots.json`, `stage.html`, `cards.html`, `render.js`, `vo.py`, `ingest.py` |
 | `video/src/*.js` | Playwright tooling, listed in §9 |
 | `docs/TWO_WAY_JOURNEY.md` | Reassessment: each persona goal mapped to a screen |
 | `docs/DEVILS_ADVOCATE_REVIEW.md` | Scorecard, kill shots, judge Q&A, economics |
 | `docs/DEVILS_ADVOCATE_APP_REWORK.md` | Why the app was rebuilt around a splash, a story mode and big numbers; the screen list |
 | `docs/DISCOVERY_WORKSHEET.md` | Interview guide (four interviews still to do) |
-| `TEAM_NOTES.md`, `current-context-what-next.md` | Team coordination; short working log |
+| `docs/TEAM_NOTES.md`, `current-context-what-next.md` | Team coordination; short working log |
 
 **Prototype routes** (rebuilt Oct 27, round 6):
 - Splash `#/`: what Family Table does, the six stages, the end state as three big numbers, one button that starts the demo. "Explore on your own" opens a View as sheet.
@@ -272,14 +277,21 @@ A gap of 0.75 or more recommends a facilitator.
 
 Rz's three core slides (AI Client & Family Experience, AI Advisor Workbench, Added Value: The Secret Sauce & Core Innovation) also exist as a standalone three-slide Claude Slides deck in the PNC navy theme, with the same content as the PPTX: https://claude.ai/artifact/4i1gadSusfcxXqzgcHbiaz (source in `slides/claude_three/`). Versions: these in the full deck, that standalone deck, and `slides/canva/family_table_3_slides.pptx` in the team Canva deck's look (see `slides/canva/README.md`). Slide images are artifact assets; `video/src/slide_shots_v2.js` and `slide_crops.js` regenerate them, and `slides_check.js` maps them for local render checks.
 
-**Final film (v5, the one to submit):** `video/src3/`. A silent picture, cut to `video/RECORDING_SCRIPT.md` v5 (12 lines, 254 words). The voice is recorded later to fixed cues in `video/family_table_v5_cues.srt`. See `video/src3/STORYBOARD.md`.
-- **Order:** follows Adit's cut (`video/adit/family_table_silent2.mp4`, from a teammate's Claude): family → 55% → Family Table between the family and Alex → signal → Margaret → private check-ins → brief → Allocate → Activate → one year on (5 of 5) → why only PNC → close ("A plan the family trusts.").
+**Final film (v6, the one to submit):** `video/src3/`. Nindy's voice and face over the isometric product film, with subtitles. It runs 1:59.9. See `video/src3/STORYBOARD.md`.
+- **Order:** follows Adit's cut (`video/adit/family_table_silent2.mp4`, from a teammate's Claude): family → $124T → Family Table between the family and Alex → signal → Margaret → private check-ins → brief → Allocate → Activate → one year on (5 of 5) → why only PNC → animated mark ("A plan the family trusts.").
 - **One isometric world** drawn as SVG. Devices stand up out of it and lie back down into it: phones for the family, an iPad for Alex. Every product shot is inside a device frame. Each device shot has a small live iso diagram beside it.
-- **The layered stack** (vantis.sh style) closes the argument.
-- **Numbers on screen:** only 55% and 5 of 5 (Rz's call, Oct 28).
-- **Render:** 60 fps, deterministic (fake clock, live prototype). `node render.js stills --every 2`, then `node render.js video` → `video/family_table_v5_silent.mp4` (gitignored).
+- **Devices hold pixel-still between moves.** That's Rz's v6 note about jiggle, so don't add a slow creep back.
+- **The layered stack** (vantis.sh style) closes the argument. Its top-layer mark matches the app mark.
+- **Numbers on screen:** only $124T (Cerulli, 2024) and 5 of 5 (Rz's calls, Oct 28).
+- **Voice take, uncut** (`take.py`): the film is warped 0.8–1.2× per scene so each scene starts on its line. The face is a round bubble at the bottom left, the only corner the film keeps clear; the side diagrams are shifted right for it.
+- **Subtitles:** small, centred on the bottom band. Devices never go below y = 990.
+- **Outputs (gitignored, shared by Drive):**
+  - `video/family_table_v6_final_v2.mp4`: with subtitles
+  - `video/family_table_v6_final.mp4`: without subtitles
+  - `video/family_table_v6_silent.mp4`: the picture only
+- **Render:** see the README, "Build the film".
 
-**Previous voice-over film (v4, superseded by v5):** `video/src2/`. Thirteen TTS-timed lines on cards plus full-bleed prototype footage. `python3 vo.py tts`, `node render.js video`, and `ingest.py` for a real take. Rz found its numbers too many and its look too close to a screen recording.
+**Previous voice-over film (v4, superseded):** `video/src2/`. Thirteen TTS-timed lines on cards plus full-bleed prototype footage. `python3 vo.py tts`, `node render.js video`, and `ingest.py` for a real take. Rz found its numbers too many and its look too close to a screen recording.
 
 **Earlier film (music-only, Apple-keynote style, superseded):** `video/apple/`. `STORYBOARD.md` has the 15 scenes from the Canva deck before the appendix. `capture.js` grabs the screens, `film.html` holds the GSAP timeline, `music.py` writes the synced 96 BPM score, and `node render.js video` renders `video/family_table_film.mp4` (120 s, 1920×1080, −14 LUFS). The MP4 is gitignored; share it by Drive.
 
@@ -368,6 +380,6 @@ Serve the repo root first: `python3 -m http.server 4320` (the scripts default to
 ## 11. Open items for the team
 1. Four interviews, with permission to quote (`docs/DISCOVERY_WORKSHEET.md`). This is the biggest scoring gap.
 2. The Canva deck's journey slides: use the two-lane or blueprint version (Adit).
-3. Lock script v3. Then the video pipeline runs: TTS draft → Nindy records → final.
+3. Video: done (v6 final with voice, bubble and subtitles). Upload to Drive with link access.
 4. Alen sanity-checks the 0.8% fee and the engagement-letter answer.
 5. Rz shares the slides artifact and exports the PDF.

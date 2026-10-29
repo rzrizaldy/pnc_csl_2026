@@ -19,7 +19,7 @@ The prototype, site, slides and script now use **our own personas from the Canva
 - **Journey uses the deck's 6 stages:** Signal, Join, Align, Allocate, Activate, Continue, in two lanes with the handoff between them.
 - **The tour alternates sides** in 6 steps: Alex calls, Margaret invites, Claire shares, Alex approves, Sam compares, Alex introduces PNC.
 - **Slides (Claude Slides, 9):** cover, two sides, journey, service blueprint, family app, advisor workbench, secret sauce, architecture, privacy.
-- **Video script v3** is in `video/RECORDING_SCRIPT.md`, about 240 words.
+- **Video script v3** is in `video/archive/RECORDING_SCRIPT_v5.md`, about 240 words.
 
 **Needs the team:**
 1. Nindy: the persona slide (p5) already matches. Keep it.
@@ -60,8 +60,8 @@ Roadmap can merge into slide 10 to stay within 10 slides, or it can replace slid
 | Clickable prototype, 8 screens (4 advisor + 4 family), fictional Wilson family, PNC Private Bank design system | https://rzrizaldy.github.io/pnc_csl_2026/prototype/?reset | ✅ v1 live |
 | Showcase page (architecture, AI components, prototype links) for GitHub Pages | https://rzrizaldy.github.io/pnc_csl_2026/ | ✅ live |
 | Slides: two sides, journey, service blueprint, family app, advisor workbench, secret sauce, architecture, privacy backup (consulting style, Wilson case) | Claude Slides: https://claude.ai/artifact/B7bV9cQnWU4FCvbQWLHYf2 (source in `slides/claude_deck/`) | ✅ refreshed; Rz shares the link |
-| Secret Sauce slide as editable PPTX (Canva drag-and-drop import) | `slides/secret_sauce.pptx` | ✅ alternative |
-| Video plan + recording script for Nindy | `video/VIDEO_PLAN.md`, `video/RECORDING_SCRIPT.md` | ✅ **please review by Tue noon** |
+| Secret Sauce slide as editable PPTX (Canva drag-and-drop import) | `slides/secret_sauce/secret_sauce.pptx` | ✅ alternative |
+| Video plan + recording script for Nindy | `video/archive/VIDEO_PLAN.md`, `video/archive/RECORDING_SCRIPT_v5.md` | ✅ **please review by Tue noon** |
 | Draft video (robot voice), then final with Nindy's voice and face bubble | `video/` → Drive link | Tue after script lock |
 | Prototype screenshots for slides 7–8 | `prototype/shots/` | ✅ done |
 
@@ -101,7 +101,7 @@ If an interview contradicts one of these, tell Rz. The prototype will change to 
 | 1:25–1:45 | Secret sauce | diagram |
 | 1:45–2:00 | Value to PNC + close | end card |
 
-**For Nindy:** one take in QuickTime → File → New Movie Recording (webcam + mic), reading the script with 2-second pauses between lines. Rz's script will split the take on those pauses, sync the screens, add the round face bubble, captions and music. Full instructions are in `video/RECORDING_SCRIPT.md`.
+**For Nindy:** one take in QuickTime → File → New Movie Recording (webcam + mic), reading the script with 2-second pauses between lines. Rz's script will split the take on those pauses, sync the screens, add the round face bubble, captions and music. Full instructions are in `video/archive/RECORDING_SCRIPT_v5.md`.
 
 ## 6. Rules for everyone
 

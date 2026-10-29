@@ -1,6 +1,6 @@
 # Family Table: the voice-over film (video/src2)
 
-The final 2-minute pitch film. A spoken voice-over drives it: 13 lines, one scene each. There's no music and no sound effects. Bold story cards carry the facts from the team's Canva deck, and footage of the live prototype shows the product. The script is in `../RECORDING_SCRIPT.md` (v4).
+**Superseded by `video/src3/` (the v6 film).** This is the v4 voice-over film. A spoken voice-over drives it: 13 lines, one scene each. There's no music and no sound effects. Bold story cards carry the facts from the team's Canva deck, and footage of the live prototype shows the product. The script is in `../archive/RECORDING_SCRIPT_v5.md` (v4 is in git history).
 
 ## Outputs (all gitignored; share them by Drive)
 | File | What |
@@ -8,7 +8,7 @@ The final 2-minute pitch film. A spoken voice-over drives it: 13 lines, one scen
 | `video/family_table_vo_draft.mp4` | Picture with the macOS TTS draft voice, for team review |
 | `video/family_table_silent.mp4` | Picture with a silent AAC 48 kHz stereo track, to rehearse or record the real voice over |
 | `video/family_table_final.mp4` | Picture with Nindy's recording, after `ingest.py` |
-| `video/family_table_vo_cues.srt` | One cue per line, from scene start + 0.3 s to scene end − 0.3 s (committed) |
+| `video/archive/family_table_vo_cues.srt` | One cue per line, from scene start + 0.3 s to scene end − 0.3 s (committed) |
 
 All three MP4s are 1920×1080, 60 fps, H.264 (CRF 16, BT.709) with AAC audio, and run under 120 s.
 

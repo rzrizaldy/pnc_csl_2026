@@ -6,7 +6,7 @@
 
 A scene lasts  dur = max(min, speech + air + hold)  seconds, and its line starts `lead` seconds after the scene starts.
 Clips go to video/build/vo/, the mixed track to video/build/vo_<src>.wav (48 kHz stereo, -16 LUFS integrated),
-the cues to video/family_table_vo_cues.srt (scene start + 0.3 s to scene end - 0.3 s).
+the cues to video/archive/family_table_vo_cues.srt (scene start + 0.3 s to scene end - 0.3 s).
 """
 import argparse, json, re, subprocess, sys, wave
 from pathlib import Path
@@ -16,7 +16,7 @@ VIDEO = HERE.parent
 BUILD = VIDEO / "build"
 CLIPS = BUILD / "vo"
 SHOTS = HERE / "shots.json"
-SRT = VIDEO / "family_table_vo_cues.srt"
+SRT = VIDEO / "archive" / "family_table_vo_cues.srt"
 LIMIT = 120.0
 
 

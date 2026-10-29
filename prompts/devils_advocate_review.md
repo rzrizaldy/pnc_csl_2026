@@ -22,12 +22,12 @@ Take four perspectives, one after another:
   - Core concepts must come from the team.
 
 ## Scan this folder first (read, don't skim)
-- `README.md`, `TEAM_NOTES.md`, `current-context-what-next.md`: the team's own account. Treat these as claims to verify, not facts.
+- `README.md`, `docs/TEAM_NOTES.md`, `current-context-what-next.md`: the team's own account. Treat these as claims to verify, not facts.
 - `index.html`, `case.html`, `architecture.html`, `site.css`: the public showcase. Live at https://rzrizaldy.github.io/pnc_csl_2026/.
 - `prototype/` (`index.html`, `app.js`, `data.js`, `styles.css`): the clickable prototype. `data.js` holds every number and all simulated AI answers.
 - `prototype/shots/`: screenshots. `*_m.png` are mobile.
-- `slides/claude_deck/`: the consulting slides (7 HTML slides + `deck.json`). `slides/build_secret_sauce.py` is an older PPTX version.
-- `video/VIDEO_PLAN.md`, `video/RECORDING_SCRIPT.md`: the 2-minute video plan and script (not yet recorded).
+- `slides/claude_deck/`: the consulting slides (7 HTML slides + `deck.json`). `slides/secret_sauce/build_secret_sauce.py` is an older PPTX version.
+- `video/archive/VIDEO_PLAN.md`, `video/archive/RECORDING_SCRIPT_v5.md`: the 2-minute video plan and script (not yet recorded).
 
 Run the prototype and click through it as each persona: Alex, Walt, Dale, Kyle, Sloane. Do it at phone width (390px) and desktop width.
 

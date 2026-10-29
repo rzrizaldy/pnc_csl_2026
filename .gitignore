@@ -1,29 +1,20 @@
+# OS and tooling
 .DS_Store
-node_modules/
+node_modules
 __pycache__/
-# raw recordings and render intermediates stay local
-video/raw/
-video/build/
-*.wav
+.claude/worktrees/
+
+# Media stays local: renders, recordings, music and teammates' drafts are large and are shared through Drive.
+# Small committed media (PNG screenshots, the PPTX slides, .srt cues) is not matched here.
+*.mp4
 *.mov
 *.m4a
-video/src/node_modules/
-.claude/worktrees/
-video/apple/silent.mp4
-video/apple/preview/
-video/apple/node_modules
-video/family_table_film.mp4
-# voice-over film (video/src2): renders, clips and intermediates stay local
+*.wav
+
+# Video build folders and local-only inputs
 video/build/
-video/src2/node_modules
-video/family_table_silent.mp4
-video/family_table_vo_draft.mp4
-video/family_table_final.mp4
-video/*_preview.mp4
-# v5 film (video/src3): silent picture cut to RECORDING_SCRIPT.md v5
 video/build3/
-video/src3/node_modules
-video/family_table_v5_silent.mp4
-video/family_table_rehearsal_*.mp4
-video/family_table_v6_silent.mp4
-video/family_table_*_final*.mp4
+video/raw/
+video/apple/preview/
+video/adit/
+video/recording human/

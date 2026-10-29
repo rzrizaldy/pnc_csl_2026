@@ -1,6 +1,6 @@
 # Family Table: voice-over to record (for Nindy), v5
 
-The picture is finished and silent: `video/family_table_v5_silent.mp4`, 1:56.5. Record the voice to the picture. Each line has a fixed window, shown below and in `video/family_table_v5_cues.srt`. Play the silent film with the subtitles on and read each line as its cue appears.
+The picture is finished and silent: `video/family_table_v5_silent.mp4`, 1:56.5. Record the voice to the picture. Each line has a fixed window, shown below and in `video/archive/family_table_v5_cues.srt`. Play the silent film with the subtitles on and read each line as its cue appears.
 
 Target: **about 254 words, at an easy pace of about 150 words a minute**. Each line fits its window with a little air.
 **Bold** = stress this word. ` / ` = a small breath.

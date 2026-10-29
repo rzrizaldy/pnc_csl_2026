@@ -109,7 +109,7 @@ Every 10 families like the Hales is about $270M at closing. The national pool is
 
 1. Four interviews, with permission to quote (`docs/DISCOVERY_WORKSHEET.md`).
 2. Make the Canva deck use the Hale family and the 4-step journey.
-3. Record the video (`video/RECORDING_SCRIPT.md`).
+3. Record the video (`video/archive/RECORDING_SCRIPT_v5.md`).
 4. Ask Alen to sanity-check the 0.8% fee and the engagement-letter answer with a banker.
 
 ## Round 2: design devil's advocate (template tells and ease)

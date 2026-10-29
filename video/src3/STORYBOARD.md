@@ -1,6 +1,6 @@
 # Family Table film v5: storyboard
 
-A silent picture cut to a recording script (`../RECORDING_SCRIPT.md`, v5). Narration is recorded later and laid over it; there's no music.
+A silent picture cut to a recording script (`../RECORDING_SCRIPT_v6.md`, v6). Narration is recorded later and laid over it; there's no music.
 
 **Brief (Rz, Oct 28):**
 - Follow Adit's cut (`video/adit/family_table_silent2.mp4`) for the order and the family-and-advisor relationship.
